@@ -3,8 +3,6 @@ import 'package:bit_switch/services/device_control_service.dart';
 import 'package:bit_switch/core/soap_client.dart';
 import 'package:bit_switch/models/wemo_device.dart';
 import 'package:bit_switch/core/exceptions.dart';
-import 'package:bit_switch/core/constants.dart';
-import 'package:bit_switch/models/device_state.dart';
 
 class MockSoapClient extends SoapClient {
   final Future<Map<String, String>> Function(

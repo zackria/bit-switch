@@ -178,21 +178,21 @@ void main() {
       
       // Known UUID
       final r1 = SsdpClient.parseResponse(
-        (baseResponse + 'USN: uuid:Socket-1_0-123\r\n\r\n').codeUnits,
+        ('${baseResponse}USN: uuid:Socket-1_0-123\r\n\r\n').codeUnits,
         InternetAddress('1.1.1.1'),
       );
       expect(r1, isNotNull);
 
       // Known UUID with Belkin prefix
       final r2 = SsdpClient.parseResponse(
-        (baseResponse + 'USN: uuid:Belkin:device:Socket:1\r\n\r\n').codeUnits,
+        ('${baseResponse}USN: uuid:Belkin:device:Socket:1\r\n\r\n').codeUnits,
         InternetAddress('1.1.1.1'),
       );
       expect(r2, isNotNull);
 
       // Unknown UUID and no Belkin in SERVER
       final r3 = SsdpClient.parseResponse(
-        (baseResponse + 'USN: uuid:Unknown-1_0-123\r\n\r\n').codeUnits,
+        ('${baseResponse}USN: uuid:Unknown-1_0-123\r\n\r\n').codeUnits,
         InternetAddress('1.1.1.1'),
       );
       expect(r3, isNull);

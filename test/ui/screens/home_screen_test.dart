@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +14,6 @@ import 'package:bit_switch/core/exceptions.dart';
 import 'package:bit_switch/ui/screens/device_detail_screen.dart';
 import 'package:bit_switch/ui/screens/settings_screen.dart';
 import 'package:bit_switch/models/wemo_device.dart';
-import 'package:bit_switch/models/device_state.dart';
 import 'package:bit_switch/ui/widgets/device_card.dart';
 
 // Mock Services

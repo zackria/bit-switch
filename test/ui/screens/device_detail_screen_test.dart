@@ -7,7 +7,6 @@ import 'package:bit_switch/providers/device_provider.dart';
 import 'package:bit_switch/services/device_control_service.dart';
 import 'package:bit_switch/services/device_discovery_service.dart';
 import 'package:bit_switch/models/wemo_device.dart';
-import 'package:bit_switch/models/device_state.dart';
 import 'package:bit_switch/core/soap_client.dart';
 import 'package:bit_switch/core/exceptions.dart';
 import 'package:bit_switch/core/ssdp_client.dart';

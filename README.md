@@ -13,47 +13,62 @@ A Flutter application for controlling Legacy Wemo smart home devices on iOS and 
 
 ## Supported Devices
 
-| Device Type | Features |
-|-------------|----------|
-| Smart Plug (Switch) | On/Off control |
-| Light Switch | On/Off control |
-| Dimmer | On/Off, Brightness control |
-| Insight Plug | On/Off, Energy monitoring |
-| Motion Sensor | Motion detection status |
-| Outdoor Plug | On/Off control |
-| Maker | On/Off, Sensor state |
-| Bridge | Bridge status |
+| Device Type         | Features                   |
+| ------------------- | -------------------------- |
+| Smart Plug (Switch) | On/Off control             |
+| Light Switch        | On/Off control             |
+| Dimmer              | On/Off, Brightness control |
+| Insight Plug        | On/Off, Energy monitoring  |
+| Motion Sensor       | Motion detection status    |
+| Outdoor Plug        | On/Off control             |
+| Maker               | On/Off, Sensor state       |
+| Bridge              | Bridge status              |
+
+## Thoroughly tested with strong code coverage
+
+![Code Coverage](./App%20Store/Code%20Coverage%20Screenshot/code_coverage.png)
+
+## Buy me a coffee
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/zackdawood)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK (3.10.0 or higher)
+- Flutter SDK (3.10.0 or higher) [https://flutter.dev/](https://flutter.dev/)
 - iOS 12.0+ / Android 5.0 (API 21)+
 - Wemo devices on the same local network
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/bit-switch.git
 cd bit-switch
 ```
 
 2. Install dependencies:
+
 ```bash
 flutter pub get
 ```
 
 3. Create multiple specific platforms
+
+```bash
 flutter create --platforms=android,ios .
+```
 
 4. Generate App Icons (Optional but recommended for new builds):
+
 ```bash
 dart run flutter_launcher_icons
 ```
 
 **android Icons:**
+
 ```bash
 # Copy android Default icons
 ICONS="App Store/android_images"
@@ -61,9 +76,10 @@ DEST="android/app/src/main"
 
 cp -R "$ICONS/res" "$DEST/res"
 
-``
+```
 
 **iOS Icons:**
+
 ```bash
 # Copy iOS Default icons
 ICONS="App Store/bitSwitchIcon_v1 Exports"
@@ -88,6 +104,7 @@ cp "$ICONS/bitSwitchIcon_v1-iOS-Default-83.5x83.5@2x.png" "$DEST/Icon-App-83.5x8
 ```
 
 5. Run the app:
+
 ```bash
 # For iOS
 flutter run -d ios

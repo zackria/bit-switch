@@ -53,6 +53,16 @@ flutter create --platforms=android,ios .
 dart run flutter_launcher_icons
 ```
 
+**android Icons:**
+```bash
+# Copy android Default icons
+ICONS="App Store/android_images"
+DEST="android/app/src/main"
+
+cp -R "$ICONS/res" "$DEST/res"
+
+``
+
 **iOS Icons:**
 ```bash
 # Copy iOS Default icons

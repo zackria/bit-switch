@@ -45,12 +45,39 @@ cd bit-switch
 flutter pub get
 ```
 
-3. Generate App Icons (Optional but recommended for new builds):
+3. Create multiple specific platforms
+flutter create --platforms=android,ios .
+
+4. Generate App Icons (Optional but recommended for new builds):
 ```bash
 dart run flutter_launcher_icons
 ```
 
-4. Run the app:
+**iOS Icons:**
+```bash
+# Copy iOS Default icons
+ICONS="App Store/bitSwitchIcon_v1 Exports"
+DEST="ios/Runner/Assets.xcassets/AppIcon.appiconset"
+
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-1024x1024@1x.png" "$DEST/Icon-App-1024x1024@1x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-20x20@2x.png" "$DEST/Icon-App-20x20@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-20x20@3x.png" "$DEST/Icon-App-20x20@3x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-29x29@2x.png" "$DEST/Icon-App-29x29@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-29x29@3x.png" "$DEST/Icon-App-29x29@3x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-38x38@2x.png" "$DEST/Icon-App-38x38@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-38x38@3x.png" "$DEST/Icon-App-38x38@3x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-40x40@2x.png" "$DEST/Icon-App-40x40@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-40x40@3x.png" "$DEST/Icon-App-40x40@3x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-60x60@2x.png" "$DEST/Icon-App-60x60@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-60x60@3x.png" "$DEST/Icon-App-60x60@3x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-64x64@2x.png" "$DEST/Icon-App-64x64@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-64x64@3x.png" "$DEST/Icon-App-64x64@3x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-68x68@2x.png" "$DEST/Icon-App-68x68@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-76x76@2x.png" "$DEST/Icon-App-76x76@2x.png"
+cp "$ICONS/bitSwitchIcon_v1-iOS-Default-83.5x83.5@2x.png" "$DEST/Icon-App-83.5x83.5@2x.png"
+```
+
+5. Run the app:
 ```bash
 # For iOS
 flutter run -d ios
@@ -67,6 +94,22 @@ flutter build ios --release
 
 # Android
 flutter build apk --release
+```
+
+### Testing with coverage
+
+```bash
+flutter test --coverage
+
+genhtml coverage/lcov.info --output=coverage/html
+
+open coverage/html/index.html
+```
+
+### Note: In MacOS you need lcov for using genhml
+
+```bash
+brew install lcov
 ```
 
 ## Architecture

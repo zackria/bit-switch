@@ -1,0 +1,66 @@
+Name: App Atlas
+
+Subtitle: Track, organize, & export apps
+
+Promotional Text
+App Atlas gives you full visibility into your Mac—see every app, its source and size, remove bloat, and export your app inventory fast.
+
+Keywords
+app atlas, app inventory, app manager, app scanner
+
+Support URL
+https://binaryboots.com/
+
+Description
+App Atlas — Know Every App on Your Mac
+
+Whether you’re setting up a new Mac, managing multiple devices, or staying organized, App Atlas gives you a complete, structured view of every application installed on your system. From Mac App Store downloads to internet-installed tools, nothing is overlooked.
+
+Deep & Accurate App Discovery
+
+Scans /Applications, /System/Applications, and ~/Applications
+
+Detects Mac App Store apps, iOS apps on Mac, and Internet / DMG installs
+
+Automatically captures Name, Bundle ID, Version, Category, and Path
+
+Built for Migration, Backup & Sharing
+
+Export your full app library to CSV, JSON, or Text
+
+Rebuild your setup effortlessly on a new Mac
+
+Keep documentation snapshots or share app lists with your team
+
+See Your Mac in a New Way
+
+Clean dashboard with clear software insights
+
+App source breakdown (App Store vs Internet)
+
+Understand which categories dominate your system
+
+Find Anything Instantly
+
+Lightning-fast, real-time search
+
+Filter by Category or Source
+
+Sort by Name, Version, Size, or Source
+
+Designed for macOS
+
+Sleek, native macOS interface
+
+Detailed app inspector panel
+
+Full Light & Dark Mode support
+
+One-click Reveal in Finder
+
+Multilingual Experience
+
+Fully localized in:
+English, Spanish, French, German, Arabic, and Simplified Chinese
+
+Take control of your Mac. Stay organized, migrate smarter, and understand your software like never before — with App Atlas.

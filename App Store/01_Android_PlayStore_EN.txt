@@ -1,0 +1,6 @@
+App name *: Z Counter
+
+Short description *: Z Counter — Smart, Motion-Powered Counter
+
+Full description *: 
+

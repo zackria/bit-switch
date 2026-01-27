@@ -1,6 +1,24 @@
-App name *: Z Counter
+App name *: Bit Switch 
 
-Short description *: Z Counter — Smart, Motion-Powered Counter
+Short description *: Local control for legacy WeMo  discover, toggle, and provision Wi‑Fi.
 
 Full description *: 
 
+Bit Switch Local-first Wemo control — no cloud required for discovery and control.
+Full device support: switches, dimmers, light switches, Insight plugs (energy), motion sensors, outdoor plugs, Maker, and bridge.
+Built-in Wi‑Fi provisioning: scan networks, AES-encrypt password for device setup.
+
+What's New / Improvements
+
+Device discovery made robust via SSDP/UPnP (M‑SEARCH → setup.xml parsing) for reliable on‑network detection.
+Improved Wi‑Fi provisioning flow with AES-128-CBC password encryption (see Wemo crypto implementation).
+UI improvements: clearer Wi‑Fi setup dialog, error messages, password visibility toggle, and status indicators for connection/handshake.
+Better state handling and error reporting when controlling devices (GetBinaryState / SetBinaryState SOAP calls).
+Dark mode and theme refinements.
+
+Compatibility & Requirements
+
+Device and phone must be on the same Wi‑Fi network.
+Router must allow UDP multicast for SSDP discovery.
+Android SDK: runs on devices API 24+; tested up to target SDK 36.
+Wi‑Fi scanning requires location permissions (user must grant at runtime).

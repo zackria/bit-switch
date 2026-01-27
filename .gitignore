@@ -5,3 +5,5 @@ ios
 build
 .dart_tool/
 .flutter-plugins-dependencies
+bitswitch-release-key.jks
+App Store/bitSwitchIcon_v1.af~lock~

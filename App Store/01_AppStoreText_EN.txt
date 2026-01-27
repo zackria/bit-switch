@@ -1,66 +1,46 @@
-Name: App Atlas
+Name: Bit Switch 
 
-Subtitle: Track, organize, & export apps
+Subtitle: Legacy Control for WeMo Device
 
 Promotional Text
-App Atlas gives you full visibility into your Mac—see every app, its source and size, remove bloat, and export your app inventory fast.
+Local control for legacy WeMo  discover, toggle, and provision Wi‑Fi.
 
 Keywords
-app atlas, app inventory, app manager, app scanner
+wifi switch, legacy wemo, bit switch
 
 Support URL
 https://binaryboots.com/
 
+https://binaryboots.com/privacy.html
+
 Description
-App Atlas — Know Every App on Your Mac
 
-Whether you’re setting up a new Mac, managing multiple devices, or staying organized, App Atlas gives you a complete, structured view of every application installed on your system. From Mac App Store downloads to internet-installed tools, nothing is overlooked.
+Bit Switch provides fast, private, and reliable local control for legacy WeMo devices — no cloud required. Discover devices on your local network, control switches and dimmers, view energy usage from Insight plugs, receive motion sensor state, and provision Wi‑Fi securely using AES-encrypted credentials for device setup.
 
-Deep & Accurate App Discovery
+Full device support: switches, dimmers, light switches, Insight energy plugs, motion sensors, outdoor plugs, Maker devices, and bridges.
+Robust discovery: SSDP/UPnP discovery with M‑SEARCH reliable on-network detection.
+Secure provisioning: built-in Wi‑Fi setup with AES-128-CBC password encryption to keep credentials private during device configuration.
+Reliable control: improved GetBinaryState / SetBinaryState handling with clear status and error reporting.
+Usability: streamlined Wi‑Fi setup dialog, password visibility toggle, and status indicators for connection and handshake.
+Appearance: supports dark mode and refined themes for a modern, readable UI.
 
-Scans /Applications, /System/Applications, and ~/Applications
+Why Bit Switch
 
-Detects Mac App Store apps, iOS apps on Mac, and Internet / DMG installs
+Local-first: device discovery and control happen on your network — no cloud required or used for device control.
+Privacy-focused: provisioning uses AES encryption; credentials are never sent to external services.
+Practical: works with a wide range of legacy Belkin WeMo hardware still in the wild.
 
-Automatically captures Name, Bundle ID, Version, Category, and Path
+What's New
 
-Built for Migration, Backup & Sharing
+Improved SSDP/UPnP discovery for more reliable on-network detection.
+Enhanced Wi‑Fi provisioning flow with AES-128-CBC encryption of passwords.
+UI improvements: clearer Wi‑Fi setup flow, better error messages, and password visibility toggle.
+Better state handling for GetBinaryState / SetBinaryState calls.
+Dark mode and theme refinements.
 
-Export your full app library to CSV, JSON, or Text
+Compatibility & Privacy
 
-Rebuild your setup effortlessly on a new Mac
-
-Keep documentation snapshots or share app lists with your team
-
-See Your Mac in a New Way
-
-Clean dashboard with clear software insights
-
-App source breakdown (App Store vs Internet)
-
-Understand which categories dominate your system
-
-Find Anything Instantly
-
-Lightning-fast, real-time search
-
-Filter by Category or Source
-
-Sort by Name, Version, Size, or Source
-
-Designed for macOS
-
-Sleek, native macOS interface
-
-Detailed app inspector panel
-
-Full Light & Dark Mode support
-
-One-click Reveal in Finder
-
-Multilingual Experience
-
-Fully localized in:
-English, Spanish, French, German, Arabic, and Simplified Chinese
-
-Take control of your Mac. Stay organized, migrate smarter, and understand your software like never before — with App Atlas.
+Devices and phone must be on the same Wi‑Fi network.
+Router must allow UDP multicast for SSDP discovery.
+Wi‑Fi scanning requires location permission; permissions are requested at runtime and used only for scanning and provisioning.
+No cloud account required; local network control only. See our privacy policy on the support site for details.

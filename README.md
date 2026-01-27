@@ -80,6 +80,9 @@ cp -R "$ICONS/res" "$DEST/res"
 
 **iOS Icons:**
 
+> **Important:** iOS App Store rejects icons that contain an alpha channel (transparency).
+> After copying, run the `sips` command below to strip the alpha channel from all icons.
+
 ```bash
 # Copy iOS Default icons
 ICONS="App Store/bitSwitchIcon_v1 Exports"
@@ -101,6 +104,13 @@ cp "$ICONS/bitSwitchIcon_v1-iOS-Default-64x64@3x.png" "$DEST/Icon-App-64x64@3x.p
 cp "$ICONS/bitSwitchIcon_v1-iOS-Default-68x68@2x.png" "$DEST/Icon-App-68x68@2x.png"
 cp "$ICONS/bitSwitchIcon_v1-iOS-Default-76x76@2x.png" "$DEST/Icon-App-76x76@2x.png"
 cp "$ICONS/bitSwitchIcon_v1-iOS-Default-83.5x83.5@2x.png" "$DEST/Icon-App-83.5x83.5@2x.png"
+
+# Remove alpha channel from all icons (required by App Store)
+for icon in "$DEST"/*.png; do
+  sips -s format jpeg -s formatOptions 100 "$icon" --out "$icon.jpg"
+  sips -s format png "$icon.jpg" --out "$icon"
+  rm "$icon.jpg"
+done
 ```
 
 5. Run the app:
@@ -209,6 +219,13 @@ Control commands are sent via SOAP over HTTP:
 1. Some routers block local network access - check your router settings
 2. On iOS, ensure "Local Network" permission is granted in Settings
 3. Try power cycling the Wemo device
+
+## Want to add a feature? Follow the steps below to clone, install, and update
+
+- Contribute! I'll be happy to accept pull requests!
+- Bug hunting! [Report](https://github.com/zackria/bit-switch/issues) them!
+- Feature request? Please let me know by filling an [issue](https://github.com/zackria/bit-switch/issues)!
+- Star this project on [GitHub](https://github.com/zackria/bit-switch).
 
 ## Contributing
 

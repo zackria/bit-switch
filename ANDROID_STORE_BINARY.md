@@ -242,3 +242,46 @@ keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab
 ```
 
 If it shows your release certificate info (not "Android Debug"), the signing is correct.
+
+### App Works in Debug Mode but Not in Release (Network Issues)
+
+**Symptoms:** The app works perfectly when running `flutter run` (debug mode) or on an emulator, but the release build fails to discover devices or make network requests. The app may be stuck on "Discovering devices" or show network errors.
+
+**Cause:** Flutter's default project structure has three Android manifest files that get merged:
+
+```
+android/app/src/
+├── main/AndroidManifest.xml      # Base manifest for ALL builds
+├── debug/AndroidManifest.xml     # Merged ONLY for debug builds
+└── profile/AndroidManifest.xml   # Merged ONLY for profile builds
+```
+
+The `debug/AndroidManifest.xml` includes the `INTERNET` permission for Flutter's development tools (hot reload, debugger), but this is **not** included in release builds. Additionally, Android blocks cleartext HTTP traffic by default in release builds.
+
+**Fix:** Add the required permissions and cleartext traffic flag to `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Network permissions for device discovery and control -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+
+    <application
+        android:usesCleartextTraffic="true"
+        ...>
+```
+
+**Why these are needed:**
+- `INTERNET` - Required for all network access (HTTP requests to devices)
+- `ACCESS_NETWORK_STATE` - Check network connectivity status
+- `ACCESS_WIFI_STATE` - Check WiFi connection status
+- `CHANGE_WIFI_MULTICAST_STATE` - Required for SSDP multicast discovery
+- `android:usesCleartextTraffic="true"` - Allows HTTP (non-HTTPS) traffic, essential since Wemo devices use HTTP on the local network
+
+After making these changes, rebuild:
+```bash
+flutter clean
+flutter build appbundle --release
+```

@@ -8,7 +8,7 @@ class SettingsProvider extends ChangeNotifier {
 
   bool _autoRefreshEnabled = false;
   int _autoRefreshIntervalSeconds = 30;
-  int _discoveryTimeoutSeconds = 60;
+  int _discoveryTimeoutSeconds = 15;
   bool _isLoaded = false;
   late final Future<void> _loadFuture;
 
@@ -27,7 +27,7 @@ class SettingsProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _autoRefreshEnabled = prefs.getBool(_autoRefreshEnabledKey) ?? false;
     _autoRefreshIntervalSeconds = prefs.getInt(_autoRefreshIntervalKey) ?? 30;
-    _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 60;
+    _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 15;
     _isLoaded = true;
     notifyListeners();
   }

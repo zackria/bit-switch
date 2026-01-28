@@ -61,6 +61,12 @@ flutter pub get
 flutter create --platforms=android,ios .
 ```
 
+Note: if you need for specific org the follow the instruction below
+
+```
+flutter create --platforms=android,ios  --org com.binaryboots .
+```
+
 4. Generate App Icons (Optional but recommended for new builds):
 
 ```bash

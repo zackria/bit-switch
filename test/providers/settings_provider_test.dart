@@ -16,7 +16,7 @@ void main() {
 
       expect(provider.autoRefreshEnabled, false);
       expect(provider.autoRefreshIntervalSeconds, 30);
-      expect(provider.discoveryTimeoutSeconds, 60);
+      expect(provider.discoveryTimeoutSeconds, 15);
       expect(provider.isLoaded, true);
     });
 
@@ -53,14 +53,14 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getInt('discovery_timeout_seconds'), 120);
     });
-    
+
     test('should not notify if value unchanged', () async {
       final provider = SettingsProvider();
       await provider.ensureLoaded();
-      
+
       var notifyCount = 0;
       provider.addListener(() => notifyCount++);
-      
+
       await provider.setAutoRefreshEnabled(false); // Default is false
       expect(notifyCount, 0);
     });

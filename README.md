@@ -11,9 +11,15 @@ A Flutter application for controlling Legacy Wemo smart home devices on iOS and 
 - **Dark Mode**: Supports system light/dark theme preferences
 - **No Cloud Required**: All communication happens locally on your network
 
-<a href="https://play.google.com/store/apps/details?id=com.binaryboots.bit_switch"><img src="./App%20Store/available-on-the-app-store-badge.png" alt="Available on the App Store" width="200" /></a>
+### Available on the Google Playstore
 
 <a href="https://play.google.com/store/apps/details?id=com.binaryboots.bit_switch"><img src="./App%20Store/get-it-on-google-play-badge.png" alt="Get it on Google Play" width="200" /></a>
+
+### Available on the App Store (coming soon)
+
+<a href="https://binaryboots.com" title="App Store listing in progress"><img src="./App%20Store/available-on-the-app-store-badge.png" alt="Available on the App Store (coming soon)" width="200" /></a>
+
+> Note: App Store listing is in progress — this link is a placeholder.
 
 ## Supported Devices
 

@@ -22,8 +22,8 @@ A Flutter application for controlling Legacy Wemo smart home devices on iOS and 
 > Note: App Store listing is in progress
 
 <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-start;">
-  <img src="./App%20Store/Android%20Screenshots/01_Android.png" alt="Android Screenshot" style="max-width:48%;height:auto;" />
-  <img src="./App%20Store/iOS%20Screenshots/01_iOS.png" alt="iOS Screenshot" style="max-width:48%;height:auto;" />
+  <img src="./App%20Store/Android%20Screenshots/01_Android.png" alt="Android Screenshot" style="max-width:25%;height:auto;" />
+  <img src="./App%20Store/iOS%20Screenshots/01_iOS.png" alt="iOS Screenshot" style="max-width:25%;height:auto;" />
 </div>
 
 ## Supported Devices

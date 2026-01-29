@@ -22,7 +22,14 @@ class SettingsScreen extends StatelessWidget {
                 title: const Text('Discovery Timeout'),
                 subtitle: Text('${settings.discoveryTimeoutSeconds} seconds'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showTimeoutDialog(context, settings),
+                onTap: () => _showDiscoveryTimeoutDialog(context, settings),
+              ),
+              ListTile(
+                leading: const Icon(Icons.network_ping),
+                title: const Text('Request Timeout'),
+                subtitle: Text('${settings.requestTimeoutSeconds} seconds per request'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showRequestTimeoutDialog(context, settings),
               ),
               SwitchListTile(
                 secondary: const Icon(Icons.autorenew),
@@ -92,7 +99,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showTimeoutDialog(BuildContext context, SettingsProvider settings) {
+  void _showDiscoveryTimeoutDialog(BuildContext context, SettingsProvider settings) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -113,7 +120,57 @@ class SettingsScreen extends StatelessWidget {
                     if (context.mounted) {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Timeout set to $seconds seconds')),
+                        SnackBar(content: Text('Discovery timeout set to $seconds seconds')),
+                      );
+                    }
+                  },
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRequestTimeoutDialog(BuildContext context, SettingsProvider settings) {
+    final devices = Provider.of<DeviceProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Request Timeout'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('How long to wait for device responses:'),
+            const SizedBox(height: 8),
+            const Text(
+              'Increase if you see "Connection closed" errors.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: [2, 3, 5, 8, 10].map((seconds) {
+                return ChoiceChip(
+                  label: Text('${seconds}s'),
+                  selected: seconds == settings.requestTimeoutSeconds,
+                  onSelected: (selected) async {
+                    await settings.setRequestTimeoutSeconds(seconds);
+                    // Apply the timeout to the control service
+                    devices.controlService.setRequestTimeout(
+                      Duration(seconds: seconds),
+                    );
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Request timeout set to $seconds seconds')),
                       );
                     }
                   },

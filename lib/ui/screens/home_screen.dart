@@ -41,6 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await settings.ensureLoaded();
 
+    // Initialize the request timeout from settings
+    provider.controlService.setRequestTimeout(
+      Duration(seconds: settings.requestTimeoutSeconds),
+    );
+
     unawaited(provider.discoverDevices(
       timeout: Duration(seconds: settings.discoveryTimeoutSeconds),
     ));

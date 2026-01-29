@@ -53,6 +53,11 @@ class DeviceControlService {
   })  : _soapClient = soapClient ?? SoapClient(),
         _delay = delay ?? ((d) => Future.delayed(d));
 
+  /// Update the request timeout for device communication
+  void setRequestTimeout(Duration timeout) {
+    _soapClient.timeout = timeout;
+  }
+
   /// Get the current binary state of a device
   Future<DeviceState> getState(WemoDevice device) async {
     try {

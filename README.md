@@ -19,7 +19,11 @@ A Flutter application for controlling Legacy Wemo smart home devices on iOS and 
 
 <a href="https://binaryboots.com" title="App Store listing in progress"><img src="./App%20Store/available-on-the-app-store-badge.png" alt="Available on the App Store (coming soon)" width="200" /></a>
 
-> Note: App Store listing is in progress — this link is a placeholder.
+> Note: App Store listing is in progress
+
+<img src="./App%20Store/Android%20Screenshots/01_Android.png" alt="Android Screenshot" style="max-width:100%;height:auto;" />
+
+<img src="./App%20Store/iOS%20Screenshots/01_iOS.png" alt="iOS Screenshot" style="max-width:100%;height:auto;" />
 
 ## Supported Devices
 

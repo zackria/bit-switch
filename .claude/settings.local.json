@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(flutter test:*)"
+      "Bash(flutter test:*)",
+      "Bash(flutter analyze:*)",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(flutter pub get:*)",
+      "Bash($HOME/development/flutter/bin/flutter pub:*)",
+      "Bash(mdfind:*)",
+      "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter pub get:*)",
+      "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter analyze:*)",
+      "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter test:*)"
     ]
   }
 }

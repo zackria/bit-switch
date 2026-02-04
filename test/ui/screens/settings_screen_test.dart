@@ -28,7 +28,11 @@ class MockSoapClient extends SoapClient {
 
 class MockSsdpClient extends SsdpClient {
   @override
-  Stream<SsdpResponse> discover({Duration timeout = const Duration(seconds: 5), String searchTarget = ''}) async* {
+  Stream<SsdpResponse> discover({
+    Duration timeout = const Duration(seconds: 5),
+    String searchTarget = '',
+    void Function(String)? onDebugLog,
+  }) async* {
     // Empty
   }
 }
@@ -47,18 +51,34 @@ void main() {
       );
       await settingsProvider.ensureLoaded();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settingsProvider),
-          ChangeNotifierProvider.value(value: deviceProvider),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Discovery Timeout'), findsOneWidget);
-      expect(find.text('Auto-refresh'), findsOneWidget);
-      expect(find.text('About Bit Switch'), findsOneWidget);
-      expect(find.text('Network Diagnostics'), findsOneWidget);
+        // DEBUG: dump widget tree to help diagnose missing widgets in CI/tests
+        debugDumpApp();
+
+        // DEBUG: print all Text widget contents
+        final allTextWidgets = find.byType(Text);
+        final texts = tester.widgetList(allTextWidgets).map((w) {
+          final t = w as Text;
+          return t.data ?? (t.textSpan?.toPlainText() ?? '<rich>');
+        }).toList();
+        print('DEBUG TEXTS: $texts');
+
+        expect(find.text('Discovery Timeout'), findsOneWidget);
+        expect(find.text('Auto-refresh'), findsOneWidget);
+        expect(find.text('About Bit Switch'), findsOneWidget);
+        expect(find.text('Network Diagnostics'), findsOneWidget);
+      });
     });
 
     testWidgets('changes auto refresh', (tester) async {
@@ -69,15 +89,20 @@ void main() {
       );
       await settingsProvider.ensureLoaded();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settingsProvider),
-          ChangeNotifierProvider.value(value: deviceProvider),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
 
-      await tester.tap(find.byType(Switch));
+      await tester.tap(find.byType(Switch).first);
       await tester.pump();
 
       expect(settingsProvider.autoRefreshEnabled, true);
@@ -92,27 +117,34 @@ void main() {
       );
       await settingsProvider.ensureLoaded();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settingsProvider),
-          ChangeNotifierProvider.value(value: deviceProvider),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
 
       await tester.tap(find.text('Discovery Timeout'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Discovery Timeout'), findsNWidgets(2)); 
+      expect(find.text('Discovery Timeout'), findsNWidgets(2));
       expect(find.text('30s'), findsOneWidget);
-      
+
       await tester.tap(find.text('30s'));
       await tester.pumpAndSettle();
-      
+
       expect(settingsProvider.discoveryTimeoutSeconds, 30);
     });
-    
-    testWidgets('shows refresh interval option when auto refresh enabled', (tester) async {
+
+    testWidgets('shows refresh interval option when auto refresh enabled', (
+      tester,
+    ) async {
       final settingsProvider = SettingsProvider();
       final deviceProvider = DeviceProvider(
         controlService: DeviceControlService(soapClient: MockSoapClient()),
@@ -121,23 +153,28 @@ void main() {
       await settingsProvider.ensureLoaded();
       await settingsProvider.setAutoRefreshEnabled(true);
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settingsProvider),
-          ChangeNotifierProvider.value(value: deviceProvider),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
-      
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
+
       expect(find.text('Auto-refresh Interval'), findsOneWidget);
-      
+
       await tester.tap(find.text('Auto-refresh Interval'));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Auto-refresh Interval'), findsNWidgets(2));
       await tester.tap(find.text('60s'));
       await tester.pumpAndSettle();
-      
+
       expect(settingsProvider.autoRefreshIntervalSeconds, 60);
       deviceProvider.dispose();
     });
@@ -150,19 +187,27 @@ void main() {
       );
       await settingsProvider.ensureLoaded();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settingsProvider),
-          ChangeNotifierProvider.value(value: deviceProvider),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
 
       await tester.tap(find.text('About Bit Switch'));
       await tester.pumpAndSettle();
 
-      expect(find.text('About Bit Switch'), findsNWidgets(2)); // Tile + Dialog title
-      expect(find.textContaining('1.0.0'), findsNWidgets(2)); // Tile + Dialog
+      expect(
+        find.text('About Bit Switch'),
+        findsNWidgets(2),
+      ); // Tile + Dialog title
+      expect(find.textContaining('1.0.1'), findsNWidgets(2)); // Tile + Dialog
       expect(find.text('Close'), findsOneWidget);
     });
 
@@ -174,13 +219,18 @@ void main() {
       );
       await settingsProvider.ensureLoaded();
 
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: settingsProvider),
-          ChangeNotifierProvider.value(value: deviceProvider),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
-      ));
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
 
       await tester.tap(find.text('Network Diagnostics'));
       await tester.pumpAndSettle();

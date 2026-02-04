@@ -72,6 +72,15 @@ Verify the following settings under Runner > Signing & Capabilities:
 
 - Access WiFi Information (for SSID detection)
 
+## Update file /bit-switch/ios/Runner/Info.plist
+
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Location permission is required to access WiFi network information.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Location permission is required to access WiFi network information.</string>
+```
+
 Ensure these are enabled in both the Apple Developer portal App ID and the Xcode project.
 
 5. Install CocoaPods dependencies

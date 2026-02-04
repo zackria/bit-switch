@@ -13,7 +13,10 @@ class MockSsdpClient extends SsdpClient {
   MockSsdpClient({required this.discoverHandler, this.probeHandler});
 
   @override
-  Stream<SsdpResponse> discover({Duration timeout = const Duration(seconds: 5), String searchTarget = ''}) {
+  Stream<SsdpResponse> discover(
+      {Duration timeout = const Duration(seconds: 5),
+      String searchTarget = '',
+      void Function(String)? onDebugLog}) {
     return discoverHandler();
   }
 

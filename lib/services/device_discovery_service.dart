@@ -11,26 +11,47 @@ class DeviceDiscoveryService {
   final SsdpClient _ssdpClient;
   final http.Client _httpClient;
 
-  DeviceDiscoveryService({
-    SsdpClient? ssdpClient,
-    http.Client? httpClient,
-  })  : _ssdpClient = ssdpClient ?? SsdpClient(),
-        _httpClient = httpClient ?? http.Client();
+  DeviceDiscoveryService({SsdpClient? ssdpClient, http.Client? httpClient})
+    : _ssdpClient = ssdpClient ?? SsdpClient(),
+      _httpClient = httpClient ?? http.Client();
 
   /// Discover all Wemo devices on the local network
   Stream<WemoDevice> discoverDevices({
     Duration timeout = WemoConstants.ssdpTimeout,
+    void Function(String)? onDebugLog,
   }) async* {
-    await for (final response in _ssdpClient.discover(timeout: timeout)) {
-      try {
-        final device = await _fetchDeviceInfo(response);
-        if (device != null) {
-          yield device;
+    onDebugLog?.call('SSDP discover starting...');
+    try {
+      await for (final response in _ssdpClient.discover(
+        timeout: timeout,
+        onDebugLog: onDebugLog,
+      )) {
+        try {
+          onDebugLog?.call('SSDP response: ${response.location}');
+          final device = await _fetchDeviceInfo(response);
+          if (device != null) {
+            onDebugLog?.call('Parsed device: ${device.name}');
+            yield device;
+          } else {
+            onDebugLog?.call(
+              'Failed to parse device from ${response.location}',
+            );
+          }
+        } catch (e) {
+          onDebugLog?.call('Error fetching device info: $e');
+          // Continue discovering even if one device fails
+          // Error details available in the exception if needed
         }
-      } catch (e) {
-        // Continue discovering even if one device fails
-        // Error details available in the exception if needed
       }
+      onDebugLog?.call('SSDP discover stream ended');
+    } on DiscoveryException {
+      // DiscoveryException from SSDP client - rethrow as-is
+      onDebugLog?.call('Discovery exception occurred');
+      rethrow;
+    } catch (e) {
+      // Any other error - wrap in DiscoveryException
+      onDebugLog?.call('Unexpected error during discovery: $e');
+      throw DiscoveryException('Device discovery failed', e);
     }
   }
 
@@ -45,24 +66,37 @@ class DeviceDiscoveryService {
     return devices;
   }
 
-  /// Fetch device information from setup.xml
+  /// Fetch device information from setup.xml with retry logic
   Future<WemoDevice?> _fetchDeviceInfo(SsdpResponse ssdpResponse) async {
-    try {
-      final response = await _httpClient
-          .get(Uri.parse(ssdpResponse.location))
-          .timeout(WemoConstants.requestTimeout);
+    int retries = 0;
+    Exception? lastException;
 
-      if (response.statusCode != 200) {
-        throw NetworkException('HTTP ${response.statusCode}');
+    while (retries < 3) {
+      try {
+        final response = await _httpClient
+            .get(Uri.parse(ssdpResponse.location))
+            .timeout(WemoConstants.requestTimeout);
+
+        if (response.statusCode != 200) {
+          throw NetworkException('HTTP ${response.statusCode}');
+        }
+
+        return _parseSetupXml(response.body, ssdpResponse);
+      } catch (e) {
+        lastException = e is Exception ? e : Exception(e.toString());
+        retries++;
+
+        if (retries < 3) {
+          // Wait before retrying (exponential backoff: 200ms, 400ms)
+          await Future.delayed(Duration(milliseconds: 200 * retries));
+        }
       }
-
-      return _parseSetupXml(response.body, ssdpResponse);
-    } catch (e) {
-      throw DiscoveryException(
-        'Failed to fetch device info from ${ssdpResponse.location}',
-        e,
-      );
     }
+
+    throw DiscoveryException(
+      'Failed to fetch device info from ${ssdpResponse.location} after $retries attempts',
+      lastException,
+    );
   }
 
   /// Parse the setup.xml document to extract device information
@@ -78,13 +112,31 @@ class DeviceDiscoveryService {
       }
 
       // Extract device properties
-      final friendlyName = deviceElement.findElements('friendlyName').firstOrNull?.innerText;
-      final manufacturer = deviceElement.findElements('manufacturer').firstOrNull?.innerText;
-      final modelName = deviceElement.findElements('modelName').firstOrNull?.innerText;
-      final serialNumber = deviceElement.findElements('serialNumber').firstOrNull?.innerText;
+      final friendlyName = deviceElement
+          .findElements('friendlyName')
+          .firstOrNull
+          ?.innerText;
+      final manufacturer = deviceElement
+          .findElements('manufacturer')
+          .firstOrNull
+          ?.innerText;
+      final modelName = deviceElement
+          .findElements('modelName')
+          .firstOrNull
+          ?.innerText;
+      final serialNumber = deviceElement
+          .findElements('serialNumber')
+          .firstOrNull
+          ?.innerText;
       final udn = deviceElement.findElements('UDN').firstOrNull?.innerText;
-      final firmwareVersion = deviceElement.findElements('firmwareVersion').firstOrNull?.innerText;
-      final macAddress = deviceElement.findElements('macAddress').firstOrNull?.innerText;
+      final firmwareVersion = deviceElement
+          .findElements('firmwareVersion')
+          .firstOrNull
+          ?.innerText;
+      final macAddress = deviceElement
+          .findElements('macAddress')
+          .firstOrNull
+          ?.innerText;
 
       if (friendlyName == null || udn == null) {
         return null;

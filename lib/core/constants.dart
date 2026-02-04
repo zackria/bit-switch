@@ -8,7 +8,7 @@ class WemoConstants {
   static const String ssdpMulticastAddress = '239.255.255.250';
   static const int ssdpPort = 1900;
   static const String ssdpSearchTarget = 'urn:Belkin:service:basicevent:1';
-  static const Duration ssdpTimeout = Duration(seconds: 5);
+  static const Duration ssdpTimeout = Duration(seconds: 12);
 
   // Device communication
   static const List<int> devicePorts = [
@@ -26,8 +26,10 @@ class WemoConstants {
   static const int maxRetries = 3;
 
   // SOAP namespaces
-  static const String soapEnvelopeNs = 'http://schemas.xmlsoap.org/soap/envelope/';
-  static const String soapEncodingNs = 'http://schemas.xmlsoap.org/soap/encoding/';
+  static const String soapEnvelopeNs =
+      'http://schemas.xmlsoap.org/soap/envelope/';
+  static const String soapEncodingNs =
+      'http://schemas.xmlsoap.org/soap/encoding/';
 
   // Belkin service URNs
   static const String basicEventService = 'urn:Belkin:service:basicevent:1';
@@ -55,4 +57,11 @@ class WemoConstants {
   static const String setupXmlPath = '/setup.xml';
   static const String controlPath = '/upnp/control';
   static const String eventPath = '/upnp/event';
+
+  // Pairing mode constants
+  static const String wemoApDefaultIp = '10.22.22.1';
+  static final RegExp wemoApSsidPattern = RegExp(r'^WeMo\.\w+$');
+  static const Duration pairingDiscoveryTimeout = Duration(seconds: 15);
+  static const Duration wifiSetupTimeout = Duration(seconds: 60);
+  static const Duration ssidPollInterval = Duration(seconds: 2);
 }

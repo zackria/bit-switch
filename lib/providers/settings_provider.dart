@@ -6,11 +6,13 @@ class SettingsProvider extends ChangeNotifier {
   static const _autoRefreshIntervalKey = 'auto_refresh_interval_seconds';
   static const _discoveryTimeoutKey = 'discovery_timeout_seconds';
   static const _requestTimeoutKey = 'request_timeout_seconds';
+  static const _showDebugOptionKey = 'show_debug_option';
 
   bool _autoRefreshEnabled = false;
   int _autoRefreshIntervalSeconds = 30;
   int _discoveryTimeoutSeconds = 15;
   int _requestTimeoutSeconds = 3;
+  bool _showDebugOption = false;
   bool _isLoaded = false;
   late final Future<void> _loadFuture;
 
@@ -22,6 +24,7 @@ class SettingsProvider extends ChangeNotifier {
   int get autoRefreshIntervalSeconds => _autoRefreshIntervalSeconds;
   int get discoveryTimeoutSeconds => _discoveryTimeoutSeconds;
   int get requestTimeoutSeconds => _requestTimeoutSeconds;
+  bool get showDebugOption => _showDebugOption;
   bool get isLoaded => _isLoaded;
 
   Future<void> ensureLoaded() => _loadFuture;
@@ -32,6 +35,7 @@ class SettingsProvider extends ChangeNotifier {
     _autoRefreshIntervalSeconds = prefs.getInt(_autoRefreshIntervalKey) ?? 30;
     _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 15;
     _requestTimeoutSeconds = prefs.getInt(_requestTimeoutKey) ?? 3;
+    _showDebugOption = prefs.getBool(_showDebugOptionKey) ?? false;
     _isLoaded = true;
     notifyListeners();
   }
@@ -66,5 +70,13 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_requestTimeoutKey, seconds);
+  }
+
+  Future<void> setShowDebugOption(bool value) async {
+    if (_showDebugOption == value) return;
+    _showDebugOption = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_showDebugOptionKey, value);
   }
 }

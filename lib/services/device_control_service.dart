@@ -417,7 +417,7 @@ class DeviceControlService {
         await _delay(const Duration(seconds: 2));
 
         try {
-          final status = await _getWifiStatus(device);
+          final status = await getWifiStatus(device);
           if (status != WifiSetupStatus.connecting) {
             return status;
           }
@@ -437,8 +437,8 @@ class DeviceControlService {
     }
   }
 
-  /// Get current WiFi setup status
-  Future<WifiSetupStatus> _getWifiStatus(WemoDevice device) async {
+  /// Get current WiFi setup status (public for pairing)
+  Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
     try {
       final response = await _soapClient.call(
         host: device.host,
@@ -481,6 +481,111 @@ class DeviceControlService {
       if (e is WemoException) rethrow;
       throw DeviceException(
         'Failed to close WiFi connection',
+        deviceName: device.name,
+        cause: e,
+      );
+    }
+  }
+
+  /// Mark setup as complete on the device
+  /// Called after WiFi is configured to finalize pairing
+  Future<void> setSetupDoneStatus(WemoDevice device) async {
+    try {
+      await _soapClient.call(
+        host: device.host,
+        port: device.port,
+        serviceName: 'WiFiSetup1',
+        action: 'SetSetupDoneStatus',
+        serviceType: WemoConstants.wifiSetupService,
+      );
+    } catch (e) {
+      if (e is WemoException) rethrow;
+      throw DeviceException(
+        'Failed to mark setup as done',
+        deviceName: device.name,
+        cause: e,
+      );
+    }
+  }
+
+  /// Close the device's setup mode
+  /// Called after WiFi is configured to exit setup mode
+  Future<void> closeSetup(WemoDevice device) async {
+    try {
+      await _soapClient.call(
+        host: device.host,
+        port: device.port,
+        serviceName: 'WiFiSetup1',
+        action: 'CloseSetup',
+        serviceType: WemoConstants.wifiSetupService,
+      );
+    } catch (e) {
+      if (e is WemoException) rethrow;
+      throw DeviceException(
+        'Failed to close setup',
+        deviceName: device.name,
+        cause: e,
+      );
+    }
+  }
+
+  /// Send ConnectHomeNetwork command to the device
+  /// This is separated from setupWifi for more control in the pairing flow
+  Future<void> connectToHomeNetwork(
+    WemoDevice device, {
+    required String ssid,
+    required String password,
+    String authMode = 'WPAPSK',
+    String encryption = 'AES',
+  }) async {
+    try {
+      // Get device info for encryption
+      final mac = device.macAddress ?? '';
+      final serial = device.serialNumber ?? '';
+
+      if (mac.isEmpty || serial.isEmpty) {
+        throw DeviceException(
+          'Device MAC address or serial number not available',
+          deviceName: device.name,
+        );
+      }
+
+      // Encrypt the password using the device's encryption method
+      String encryptedPassword;
+      try {
+        encryptedPassword = WemoCrypto.encryptPassword(
+          password: password,
+          mac: mac,
+          serial: serial,
+          method: 1,
+        );
+      } catch (_) {
+        encryptedPassword = WemoCrypto.encryptPassword(
+          password: password,
+          mac: mac,
+          serial: serial,
+          method: 2,
+        );
+      }
+
+      // Send the connect command
+      await _soapClient.call(
+        host: device.host,
+        port: device.port,
+        serviceName: 'WiFiSetup1',
+        action: 'ConnectHomeNetwork',
+        serviceType: WemoConstants.wifiSetupService,
+        arguments: {
+          'ssid': ssid,
+          'auth': authMode,
+          'password': encryptedPassword,
+          'encrypt': encryption,
+        },
+      );
+    } catch (e) {
+      if (e is WemoException) rethrow;
+      throw DeviceException(
+        'Failed to connect to home network',
         deviceName: device.name,
         cause: e,
       );

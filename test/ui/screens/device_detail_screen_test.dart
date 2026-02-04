@@ -45,7 +45,9 @@ class MockDiscoveryService extends DeviceDiscoveryService {
   MockDiscoveryService(this.devicesToDiscover) : super(ssdpClient: SsdpClient());
 
   @override
-  Stream<WemoDevice> discoverDevices({Duration timeout = const Duration(seconds: 10)}) async* {
+  Stream<WemoDevice> discoverDevices(
+      {Duration timeout = const Duration(seconds: 10),
+      void Function(String)? onDebugLog}) async* {
     for (final device in devicesToDiscover) {
       yield device;
     }
@@ -108,123 +110,137 @@ void main() {
     });
 
     testWidgets('shows device name and type', (tester) async {
-      await deviceProvider.discoverDevices(timeout: Duration.zero);
-      await tester.pumpWidget(createScreen(deviceProvider));
-      await tester.pumpAndSettle();
-      expect(find.text('Test Device'), findsOneWidget);
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+        expect(find.text('Test Device'), findsOneWidget);
+      });
     });
 
     testWidgets('shows device info from appBar', (tester) async {
-      await deviceProvider.discoverDevices(timeout: Duration.zero);
-      await tester.pumpWidget(createScreen(deviceProvider));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.info_outline));
-      await tester.pumpAndSettle();
-      expect(find.text('Device Information'), findsOneWidget);
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byIcon(Icons.info_outline));
+        await tester.pumpAndSettle();
+        expect(find.text('Device Information'), findsOneWidget);
+      });
     });
 
     testWidgets('completes wifi setup flow with validation', (tester) async {
-      await deviceProvider.discoverDevices(timeout: Duration.zero);
-      await tester.pumpWidget(createScreen(deviceProvider));
-      await tester.pumpAndSettle();
-      
-      await tester.ensureVisible(find.text('WiFi Setup'));
-      await tester.tap(find.text('WiFi Setup'));
-      await tester.pumpAndSettle();
-      
-      // Test validation
-      await tester.tap(find.text('Connect'));
-      await tester.pump();
-      expect(find.text('Please enter or select a network name'), findsOneWidget);
-      
-      // Tap scan in AppBar
-      await tester.tap(find.byTooltip('Scan for networks'));
-      await tester.pumpAndSettle();
-      expect(find.text('TestWiFi'), findsOneWidget);
-      
-      // Select network
-      await tester.tap(find.text('TestWiFi'));
-      await tester.pump();
-      
-      // Test password validation
-      await tester.tap(find.text('Connect'));
-      await tester.pump();
-      expect(find.text('Please enter the network password'), findsOneWidget);
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+        
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+        
+        // Test validation
+        await tester.tap(find.text('Connect'));
+        await tester.pump();
+        expect(find.text('Please enter or select a network name'), findsOneWidget);
+        
+        // Tap scan in AppBar
+        await tester.tap(find.byTooltip('Scan for networks'));
+        await tester.pumpAndSettle();
+        expect(find.text('TestWiFi'), findsOneWidget);
+        
+        // Select network
+        await tester.tap(find.text('TestWiFi'));
+        await tester.pump();
+        
+        // Test password validation
+        await tester.tap(find.text('Connect'));
+        await tester.pump();
+        expect(find.text('Please enter the network password'), findsOneWidget);
 
-      // Enter password
-      await tester.enterText(find.widgetWithText(TextField, 'Password'), 'password123');
-      
-      // Connect
-      await tester.tap(find.text('Connect'));
-      await tester.pump();
+        // Enter password
+        await tester.enterText(find.widgetWithText(TextField, 'Password'), 'password123');
+        
+        // Connect
+        await tester.tap(find.text('Connect'));
+        await tester.pump();
+      });
     });
 
     testWidgets('performs WiFi reset', (tester) async {
-       await deviceProvider.discoverDevices(timeout: Duration.zero);
-       await tester.pumpWidget(createScreen(deviceProvider));
-       await tester.pumpAndSettle();
-       
-       await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
-       await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
-       await tester.pumpAndSettle();
-       
-       await tester.tap(find.text('Reset WiFi Settings'));
-       await tester.pump();
-       await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
-       await tester.pumpAndSettle();
-       await tester.tap(find.text('Yes, Reset'));
-       await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+        
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+        
+        await tester.tap(find.text('Reset WiFi Settings'));
+        await tester.pump();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Yes, Reset'));
+        await tester.pumpAndSettle();
+      });
     });
 
     testWidgets('performs Factory reset', (tester) async {
-       await deviceProvider.discoverDevices(timeout: Duration.zero);
-       await tester.pumpWidget(createScreen(deviceProvider));
-       await tester.pumpAndSettle();
-       
-       await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
-       await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
-       await tester.pumpAndSettle();
-       
-       await tester.tap(find.text('Factory Reset'));
-       await tester.pumpAndSettle();
-       // Confirmation dialog for Factory Reset uses "Factory Reset" as button text
-       await tester.tap(find.widgetWithText(TextButton, 'Factory Reset'));
-       await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+        
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+        
+        await tester.tap(find.text('Factory Reset'));
+        await tester.pumpAndSettle();
+        // Confirmation dialog for Factory Reset uses "Factory Reset" as button text
+        await tester.tap(find.widgetWithText(TextButton, 'Factory Reset'));
+        await tester.pumpAndSettle();
+      });
     });
 
     testWidgets('shows insight stats for Insight device', (tester) async {
-      final insight = testDevice.copyWith(type: WemoDeviceType.insight);
-      final provider = DeviceProvider(
-        controlService: DeviceControlService(
-          soapClient: MockSoapClient((h, p, s, a, t, ar) async {
-            if (a == 'GetInsightParams') return {'InsightParams': '1|0|0|0|0|0|0|1500|3000000|6000000|0'};
-            return {'BinaryState': '1'};
-          }),
-        ),
-        discoveryService: MockDiscoveryService([insight]),
-      );
-      await provider.discoverDevices(timeout: Duration.zero);
-      await tester.runAsync(() async => provider.refreshDeviceState(insight.id));
-      await tester.pumpWidget(createScreen(provider, overrideDevice: insight));
-      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        final insight = testDevice.copyWith(type: WemoDeviceType.insight);
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              if (a == 'GetInsightParams') return {'InsightParams': '1|0|0|0|0|0|0|1500|3000000|6000000|0'};
+              return {'BinaryState': '1'};
+            }),
+          ),
+          discoveryService: MockDiscoveryService([insight]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+        await provider.refreshDeviceState(insight.id);
+        await tester.pumpWidget(createScreen(provider, overrideDevice: insight));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Energy Statistics'), findsOneWidget);
-      expect(find.text('1.5 W'), findsOneWidget);
+        expect(find.text('Energy Statistics'), findsOneWidget);
+        expect(find.text('1.5 W'), findsOneWidget);
+      });
     });
 
     testWidgets('shows warning when unreachable', (tester) async {
-      final provider = DeviceProvider(
-        controlService: DeviceControlService(
-          soapClient: MockSoapClient((h, p, s, a, t, ar) async {
-            throw NetworkException('Connection Refused');
-          }),
-        ),
-        discoveryService: MockDiscoveryService([testDevice]),
-      );
-      await provider.discoverDevices(timeout: Duration.zero);
-      await tester.pumpWidget(createScreen(provider));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Device is unreachable'), findsOneWidget);
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              throw NetworkException('Connection Refused');
+            }),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Device is unreachable'), findsOneWidget);
+      });
     });
   });
 }

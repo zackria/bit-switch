@@ -7,6 +7,15 @@ import 'package:bit_switch/models/device_state.dart';
 import 'package:bit_switch/core/soap_client.dart';
 import 'package:bit_switch/core/ssdp_client.dart';
 import 'package:bit_switch/core/exceptions.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:bit_switch/providers/device_provider.dart';
+import 'package:bit_switch/services/device_control_service.dart';
+import 'package:bit_switch/services/device_discovery_service.dart';
+import 'package:bit_switch/models/wemo_device.dart';
+import 'package:bit_switch/models/device_state.dart';
+import 'package:bit_switch/core/soap_client.dart';
+import 'package:bit_switch/core/ssdp_client.dart';
+import 'package:bit_switch/core/exceptions.dart';
 
 // Mock Services
 class MockControlService extends DeviceControlService {
@@ -14,13 +23,16 @@ class MockControlService extends DeviceControlService {
   final Future<void> Function(WemoDevice, bool)? setStateHandler;
 
   MockControlService({this.getStateHandler, this.setStateHandler})
-      : super(soapClient: SoapClient()); // Base soap client unused
+    : super(soapClient: SoapClient()); // Base soap client unused
 
   @override
   Future<DeviceState> getState(WemoDevice device) async {
     if (getStateHandler != null) return getStateHandler!(device);
     return DeviceState(
-        isOn: false, isReachable: true, lastUpdated: DateTime.now());
+      isOn: false,
+      isReachable: true,
+      lastUpdated: DateTime.now(),
+    );
   }
 
   @override
@@ -56,9 +68,10 @@ class MockDiscoveryService extends DeviceDiscoveryService {
   MockDiscoveryService(this.devices) : super(ssdpClient: SsdpClient());
 
   @override
-  Stream<WemoDevice> discoverDevices(
-      {Duration timeout = const Duration(seconds: 10),
-      void Function(String)? onDebugLog}) async* {
+  Stream<WemoDevice> discoverDevices({
+    Duration timeout = const Duration(seconds: 10),
+    void Function(String)? onDebugLog,
+  }) async* {
     for (final device in devices) {
       yield device;
     }
@@ -160,7 +173,10 @@ void main() {
           getStateHandler: (d) async {
             refreshCount++;
             return DeviceState(
-                isOn: false, isReachable: true, lastUpdated: DateTime.now());
+              isOn: false,
+              isReachable: true,
+              lastUpdated: DateTime.now(),
+            );
           },
         ),
         discoveryService: MockDiscoveryService([device]),
@@ -169,7 +185,8 @@ void main() {
       await provider.discoverDevices(timeout: Duration.zero);
 
       provider.startPeriodicRefresh(
-          interval: const Duration(milliseconds: 100));
+        interval: const Duration(milliseconds: 100),
+      );
       await Future.delayed(const Duration(milliseconds: 250));
       provider.stopPeriodicRefresh();
 
@@ -194,9 +211,10 @@ void main() {
       final provider = DeviceProvider(
         controlService: MockControlService(
           getStateHandler: (d) async => DeviceState(
-              isOn: currentState,
-              isReachable: true,
-              lastUpdated: DateTime.now()),
+            isOn: currentState,
+            isReachable: true,
+            lastUpdated: DateTime.now(),
+          ),
           setStateHandler: (d, isOn) async {
             currentState = isOn;
           },
@@ -233,11 +251,16 @@ void main() {
           getStateHandler: (d) async {
             callCount++;
             return DeviceState(
-                isOn: false, isReachable: true, lastUpdated: DateTime.now());
+              isOn: false,
+              isReachable: true,
+              lastUpdated: DateTime.now(),
+            );
           },
         ),
-        discoveryService:
-            MockDiscoveryService([device, device.copyWith(id: 'dev2')]),
+        discoveryService: MockDiscoveryService([
+          device,
+          device.copyWith(id: 'dev2'),
+        ]),
       );
       await provider.discoverDevices(timeout: Duration.zero);
       callCount = 0; // Reset after initial discovery refresh
@@ -298,9 +321,10 @@ void main() {
 class FailingDiscoveryService extends DeviceDiscoveryService {
   FailingDiscoveryService() : super(ssdpClient: SsdpClient());
   @override
-  Stream<WemoDevice> discoverDevices(
-      {Duration timeout = const Duration(seconds: 10),
-      void Function(String)? onDebugLog}) async* {
+  Stream<WemoDevice> discoverDevices({
+    Duration timeout = const Duration(seconds: 10),
+    void Function(String)? onDebugLog,
+  }) async* {
     throw DiscoveryException('Network Error');
   }
 }

@@ -126,8 +126,11 @@ class SoapClient {
     }
 
     throw NetworkException(
-      'Failed to call $action on $host:$port after $maxRetries attempts',
-      lastException,
+      'Failed to call $action after $maxRetries attempts',
+      host: host,
+      port: port,
+      attemptCount: maxRetries,
+      cause: lastException,
     );
   }
 
@@ -202,7 +205,8 @@ class SoapClient {
 
       throw SoapException(
         'HTTP $statusCode',
-        errorCode: statusCode,
+        action: action,
+        httpStatusCode: statusCode,
       );
     }
 
@@ -231,6 +235,7 @@ class SoapClient {
 
         throw SoapException(
           faultString ?? 'Unknown SOAP fault',
+          action: action,
           faultCode: faultCode,
           faultString: faultString,
           errorCode: errorCode,
@@ -248,7 +253,10 @@ class SoapClient {
             .firstOrNull;
 
         if (responseElement == null) {
-          throw SoapException('No response element found for $action');
+          throw SoapException(
+            'No response element found for $action',
+            action: action,
+          );
         }
 
         return _extractResponseValues(responseElement);
@@ -257,7 +265,7 @@ class SoapClient {
       return _extractResponseValues(responseElements.first);
     } catch (e) {
       if (e is SoapException) rethrow;
-      throw SoapException('Failed to parse SOAP response', cause: e);
+      throw SoapException('Failed to parse SOAP response', action: action, cause: e);
     }
   }
 

@@ -12,7 +12,8 @@ class MockSoapClient extends SoapClient {
     String action,
     String serviceType,
     Map<String, String>? arguments,
-  ) handler;
+  )
+  handler;
 
   MockSoapClient(this.handler);
 
@@ -43,7 +44,14 @@ void main() {
     );
 
     test('getState should return device state', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'GetBinaryState');
         return {'BinaryState': '1'};
       });
@@ -56,7 +64,14 @@ void main() {
 
     test('getState should handle complex binary state (dimmer)', () async {
       final dimmer = device.copyWith(type: WemoDeviceType.dimmer);
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         return {'BinaryState': '1|50'};
       });
 
@@ -68,7 +83,14 @@ void main() {
     });
 
     test('setState should call correct SOAP action', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'SetBinaryState');
         expect(args?['BinaryState'], '1');
         return {'BinaryState': '1'};
@@ -80,7 +102,14 @@ void main() {
 
     test('turnOn/turnOff should call setState', () async {
       var callCount = 0;
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         callCount++;
         expect(args?['BinaryState'], callCount == 1 ? '1' : '0');
         return {'BinaryState': args!['BinaryState']!};
@@ -93,7 +122,14 @@ void main() {
 
     test('toggle should flip state', () async {
       var callCount = 0;
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         if (action == 'GetBinaryState') {
           return {'BinaryState': '0'};
         }
@@ -115,13 +151,26 @@ void main() {
       final service = DeviceControlService();
       expect(
         () => service.setBrightness(device, 50),
-        throwsA(isA<DeviceException>().having((e) => e.message, 'message', contains('does not support brightness'))),
+        throwsA(
+          isA<DeviceException>().having(
+            (e) => e.message,
+            'message',
+            contains('does not support brightness'),
+          ),
+        ),
       );
     });
 
     test('setBrightness should call SetBinaryState with brightness', () async {
       final dimmer = device.copyWith(type: WemoDeviceType.dimmer);
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'SetBinaryState');
         expect(args?['brightness'], '50');
         expect(args?['BinaryState'], '1'); // Should be 1 if brightness > 0
@@ -134,10 +183,15 @@ void main() {
 
     test('getInsightParams should return valid state', () async {
       final insight = device.copyWith(type: WemoDeviceType.insight);
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'GetInsightParams');
-        // "state|lastchange|onfor|ontoday|ontotal|timeperiod|avgpower|currpower|todaymw|totalmw|powerthreshold"
-        // 1|0|0|100|200|0|0|5000|3000000|6000000|0
         return {'InsightParams': '1|0|0|100|200|0|0|5000|3000000|6000000|0'};
       });
 
@@ -147,33 +201,49 @@ void main() {
       expect(state.isOn, true);
       expect(state.currentPowerMw, 5000);
       expect(state.todayOnTimeSeconds, 100);
-      // 3000000 / (60*1000*1000) = 0.05 kWh
       expect(state.todayKwh, 3000000 / 60000000);
     });
 
     test('getInsightParams should handle malformed strings', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         return {'InsightParams': 'short|string'};
       });
 
       final service = DeviceControlService(soapClient: mockClient);
       final insight = device.copyWith(type: WemoDeviceType.insight);
-      
+
       final state = await service.getInsightParams(insight);
       expect(state.error, contains('Invalid Insight parameters format'));
     });
 
-    test('getInsightParams should handle invalid numbers (gracefully with zeros)', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
-        return {'InsightParams': '1|0|0|0|0|0|0|not_a_number|0|0|0'};
-      });
+    test(
+      'getInsightParams should handle invalid numbers (gracefully with zeros)',
+      () async {
+        final mockClient = MockSoapClient((
+          host,
+          port,
+          service,
+          action,
+          type,
+          args,
+        ) async {
+          return {'InsightParams': '1|0|0|0|0|0|0|not_a_number|0|0|0'};
+        });
 
-      final service = DeviceControlService(soapClient: mockClient);
-      final insight = device.copyWith(type: WemoDeviceType.insight);
-      
-      final state = await service.getInsightParams(insight);
-      expect(state.currentPowerMw, 0);
-    });
+        final service = DeviceControlService(soapClient: mockClient);
+        final insight = device.copyWith(type: WemoDeviceType.insight);
+
+        final state = await service.getInsightParams(insight);
+        expect(state.currentPowerMw, 0);
+      },
+    );
 
     test('getInsightParams should throw if not insight', () async {
       final service = DeviceControlService();
@@ -184,7 +254,14 @@ void main() {
     });
 
     test('resetDevice should handle success', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'ReSetup');
         return {'Reset': 'success'};
       });
@@ -193,9 +270,16 @@ void main() {
       final result = await service.resetDevice(device);
       expect(result, ResetResult.success);
     });
-    
-     test('factoryReset should call ReSet', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+
+    test('factoryReset should call ReSet', () async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'ReSet');
         return {};
       });
@@ -205,7 +289,14 @@ void main() {
     });
 
     test('getAvailableNetworks should parse AP list', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'GetApList');
         return {'ApList': 'HomeWiFi|6|80|WPA2|AES,GuestWiFi|11|50|Open|None'};
       });
@@ -221,12 +312,19 @@ void main() {
 
     test('setupWifi should try to connect', () async {
       var statusCallCount = 0;
-      
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         if (action == 'ConnectHomeNetwork') {
-           expect(args?['ssid'], 'MyWiFi');
-           expect(args?['password'], isNotNull);
-           return {};
+          expect(args?['ssid'], 'MyWiFi');
+          expect(args?['password'], isNotNull);
+          return {};
         }
         if (action == 'GetNetworkStatus') {
           statusCallCount++;
@@ -240,22 +338,30 @@ void main() {
         soapClient: mockClient,
         delay: (d) async {}, // No delay
       );
-      
+
       final status = await service.setupWifi(
         device,
         ssid: 'MyWiFi',
         password: 'password',
-        timeout: const Duration(seconds: 10), 
+        timeout: const Duration(seconds: 10),
       );
-      
+
       expect(status, WifiSetupStatus.connected);
       expect(statusCallCount, 2);
     });
 
     test('setupWifi should return failed on timeout', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         if (action == 'ConnectHomeNetwork') return {};
-        if (action == 'GetNetworkStatus') return {'NetworkStatus': '0'}; // Still connecting
+        if (action == 'GetNetworkStatus')
+          return {'NetworkStatus': '0'}; // Still connecting
         return {};
       });
 
@@ -275,9 +381,16 @@ void main() {
     });
 
     test('setupWifi should return handshake status', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         if (action == 'ConnectHomeNetwork') return {};
-        if (action == 'GetNetworkStatus') return {'NetworkStatus': '3'}; 
+        if (action == 'GetNetworkStatus') return {'NetworkStatus': '3'};
         return {};
       });
 
@@ -296,7 +409,14 @@ void main() {
     });
 
     test('closeWifiConnection should call CloseNetwork', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         expect(action, 'CloseNetwork');
         return {};
       });
@@ -306,7 +426,14 @@ void main() {
     });
 
     test('getState should throw DeviceException on client error', () async {
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         throw Exception('Network error');
       });
 
@@ -317,13 +444,20 @@ void main() {
     test('setBrightness should clamp values', () async {
       final dimmer = device.copyWith(type: WemoDeviceType.dimmer);
       int? sentBrightness;
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         sentBrightness = int.tryParse(args?['brightness'] ?? '');
         return {};
       });
 
       final service = DeviceControlService(soapClient: mockClient);
-      
+
       await service.setBrightness(dimmer, 150);
       expect(sentBrightness, 100);
 
@@ -331,28 +465,48 @@ void main() {
       expect(sentBrightness, 0);
     });
 
-    test('_parseInsightParams should return error state on malformed data', () async {
-      final insight = device.copyWith(type: WemoDeviceType.insight);
-      final mockClient = MockSoapClient((host, port, service, action, type, args) async {
-        return {'InsightParams': 'too|short'};
-      });
+    test(
+      '_parseInsightParams should return error state on malformed data',
+      () async {
+        final insight = device.copyWith(type: WemoDeviceType.insight);
+        final mockClient = MockSoapClient((
+          host,
+          port,
+          service,
+          action,
+          type,
+          args,
+        ) async {
+          return {'InsightParams': 'too|short'};
+        });
 
-      final service = DeviceControlService(soapClient: mockClient);
-      final state = await service.getInsightParams(insight);
+        final service = DeviceControlService(soapClient: mockClient);
+        final state = await service.getInsightParams(insight);
 
-      expect(state.error, contains('Invalid Insight parameters format'));
-    });
+        expect(state.error, contains('Invalid Insight parameters format'));
+      },
+    );
 
     test('resetDevice should return failed/resetRemote', () async {
-       final mockClient = MockSoapClient((host, port, service, action, type, args) async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
         if (args?['Reset'] == '1|0') return {'Reset': 'failed'};
         return {'Reset': 'reset_remote_control'};
       });
 
       final service = DeviceControlService(soapClient: mockClient);
-      
+
       expect(await service.resetDevice(device, data: true), ResetResult.failed);
-      expect(await service.resetDevice(device, wifi: true), ResetResult.resetRemote);
+      expect(
+        await service.resetDevice(device, wifi: true),
+        ResetResult.resetRemote,
+      );
     });
 
     test('WifiNetwork toString should be correct', () {

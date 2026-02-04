@@ -11,7 +11,8 @@
       "Bash(mdfind:*)",
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter pub get:*)",
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter analyze:*)",
-      "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter test:*)"
+      "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter test:*)",
+      "Bash(dart analyze:*)"
     ]
   }
 }

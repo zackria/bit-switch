@@ -73,7 +73,14 @@ class DeviceControlService {
       return _parseBinaryState(binaryState, device);
     } catch (e) {
       if (e is WemoException) rethrow;
-      throw DeviceException('Failed to get state', deviceName: device.name, cause: e);
+      throw DeviceException(
+        'Failed to get state',
+        deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'getState',
+        cause: e,
+      );
     }
   }
 
@@ -93,6 +100,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to set state to ${isOn ? "on" : "off"}',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'setState',
         cause: e,
       );
     }
@@ -141,6 +151,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to set brightness to $clampedBrightness',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'setBrightness',
         cause: e,
       );
     }
@@ -170,6 +183,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to get Insight parameters',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'getInsightParams',
         cause: e,
       );
     }
@@ -278,6 +294,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to reset device',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'resetDevice',
         cause: e,
       );
     }
@@ -302,6 +321,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to factory reset device',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'factoryReset',
         cause: e,
       );
     }
@@ -325,6 +347,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to get available networks',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'getAvailableNetworks',
         cause: e,
       );
     }
@@ -432,6 +457,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to setup WiFi',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'setupWifi',
         cause: e,
       );
     }
@@ -482,6 +510,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to close WiFi connection',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'closeWifiConnection',
         cause: e,
       );
     }
@@ -503,6 +534,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to mark setup as done',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'setSetupDoneStatus',
         cause: e,
       );
     }
@@ -524,6 +558,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to close setup',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'closeSetup',
         cause: e,
       );
     }
@@ -587,6 +624,9 @@ class DeviceControlService {
       throw DeviceException(
         'Failed to connect to home network',
         deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: 'connectToHomeNetwork',
         cause: e,
       );
     }

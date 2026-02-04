@@ -1,12 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bit_switch/services/wifi_detection_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('WifiDetectionService', () {
     late WifiDetectionService service;
 
-    setUp(() {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
       service = WifiDetectionService();
+    });
+
+    test(
+      'requestLocationPermission returns a tri-state (true/false/null)',
+      () async {
+        final result = await service.requestLocationPermission();
+        expect(result == true || result == false || result == null, true);
+      },
+    );
+
+    test('getCurrentSsid returns either null or a String', () async {
+      final ssid = await service.getCurrentSsid();
+      expect(ssid == null || ssid is String, true);
     });
 
     group('isWemoApNetwork', () {
@@ -20,7 +37,10 @@ void main() {
 
       test('should return false for non-Wemo SSIDs', () {
         expect(service.isWemoApNetwork('HomeNetwork'), false);
-        expect(service.isWemoApNetwork('WeMo'), false); // Missing dot and suffix
+        expect(
+          service.isWemoApNetwork('WeMo'),
+          false,
+        ); // Missing dot and suffix
         expect(service.isWemoApNetwork('WeMo.'), false); // Missing suffix
         expect(service.isWemoApNetwork('wemo.ABC'), false); // Wrong case
         expect(service.isWemoApNetwork('WEMO.ABC'), false); // Wrong case

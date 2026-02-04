@@ -12,28 +12,33 @@ import 'package:bit_switch/ui/screens/home_screen.dart';
 // A test SSDP client that yields no responses to avoid network/timer usage.
 class _TestSsdpClient extends SsdpClient {
   @override
-  Stream<SsdpResponse> discover(
-      {Duration timeout = const Duration(seconds: 3),
-      String searchTarget = '',
-      void Function(String)? onDebugLog}) async* {
+  Stream<SsdpResponse> discover({
+    Duration timeout = const Duration(seconds: 3),
+    String searchTarget = '',
+    void Function(String)? onDebugLog,
+  }) async* {
     // No responses during tests
     return;
   }
 
   @override
-  Future<SsdpResponse?> probe(String host, {List<int> ports = const [80], Duration timeout = const Duration(seconds: 2)}) async {
+  Future<SsdpResponse?> probe(
+    String host, {
+    List<int> ports = const [80],
+    Duration timeout = const Duration(seconds: 2),
+  }) async {
     return null;
   }
 }
 
 void main() {
-  late DeviceProvider deviceProvider;
+  DeviceProvider? deviceProvider;
   setUpAll(() {
     SharedPreferences.setMockInitialValues({});
   });
 
   tearDown(() {
-    deviceProvider.dispose();
+    deviceProvider?.dispose();
   });
 
   testWidgets('App loads and shows title', (WidgetTester tester) async {
@@ -44,20 +49,21 @@ void main() {
           providers: [
             ChangeNotifierProvider<DeviceProvider>(
               create: (_) {
-                deviceProvider = DeviceProvider(
-                  discoveryService: DeviceDiscoveryService(ssdpClient: _TestSsdpClient(), httpClient: http.Client()),
+                final dp = DeviceProvider(
+                  discoveryService: DeviceDiscoveryService(
+                    ssdpClient: _TestSsdpClient(),
+                    httpClient: http.Client(),
+                  ),
                 );
-                return deviceProvider;
+                deviceProvider = dp;
+                return dp;
               },
             ),
             ChangeNotifierProvider<SettingsProvider>(
               create: (_) => SettingsProvider(),
             ),
           ],
-          child: const MaterialApp(
-            title: 'Bit Switch',
-            home: HomeScreen(),
-          ),
+          child: const MaterialApp(title: 'Bit Switch', home: HomeScreen()),
         ),
       );
       await tester.pumpAndSettle();
@@ -67,26 +73,30 @@ void main() {
     expect(find.text('B I T   S W I T C H'), findsOneWidget);
   });
 
-  testWidgets('App shows scan button when no devices', (WidgetTester tester) async {
+  testWidgets('App shows scan button when no devices', (
+    WidgetTester tester,
+  ) async {
     await tester.runAsync(() async {
       await tester.pumpWidget(
         MultiProvider(
           providers: [
             ChangeNotifierProvider<DeviceProvider>(
               create: (_) {
-                deviceProvider = DeviceProvider(
-                  discoveryService: DeviceDiscoveryService(ssdpClient: _TestSsdpClient(), httpClient: http.Client()),
+                final dp = DeviceProvider(
+                  discoveryService: DeviceDiscoveryService(
+                    ssdpClient: _TestSsdpClient(),
+                    httpClient: http.Client(),
+                  ),
                 );
-                return deviceProvider;
+                deviceProvider = dp;
+                return dp;
               },
             ),
             ChangeNotifierProvider<SettingsProvider>(
               create: (_) => SettingsProvider(),
             ),
           ],
-          child: const MaterialApp(
-            home: HomeScreen(),
-          ),
+          child: const MaterialApp(home: HomeScreen()),
         ),
       );
       await tester.pumpAndSettle();

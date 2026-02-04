@@ -360,8 +360,9 @@ void main() {
         args,
       ) async {
         if (action == 'ConnectHomeNetwork') return {};
-        if (action == 'GetNetworkStatus')
+        if (action == 'GetNetworkStatus') {
           return {'NetworkStatus': '0'}; // Still connecting
+        }
         return {};
       });
 

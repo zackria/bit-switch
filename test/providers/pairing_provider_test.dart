@@ -155,7 +155,7 @@ class _FakeWifiService extends WifiDetectionService {
 
   @override
   Future<String?> getCurrentSsid({bool requestPermission = true}) async {
-    if (_getSsid != null) return _getSsid!();
+    if (_getSsid != null) return _getSsid();
     return null;
   }
 
@@ -197,7 +197,7 @@ class _FakeControlService extends DeviceControlService {
 
   _FakeControlService({
     this.networks = const [],
-    this.wifiStatus = WifiSetupStatus.connected,
+    this.wifiStatus = WifiSetupStatus.connecting,
   });
 
   @override

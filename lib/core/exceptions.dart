@@ -9,7 +9,8 @@ class WemoException implements Exception {
   WemoException(this.message, [this.cause]);
 
   @override
-  String toString() => 'WemoException: $message${cause != null ? ' ($cause)' : ''}';
+  String toString() =>
+      'WemoException: $message${cause != null ? ' ($cause)' : ''}';
 }
 
 /// Exception for network-related errors
@@ -34,7 +35,8 @@ class NetworkException extends WemoException {
   @override
   String toString() {
     final buffer = StringBuffer('NetworkException: $message');
-    if (host != null) buffer.write(' [host: $host${port != null ? ':$port' : ''}]');
+    if (host != null)
+      buffer.write(' [host: $host${port != null ? ':$port' : ''}]');
     if (attemptCount != null) buffer.write(' [attempts: $attemptCount]');
     if (cause != null) buffer.write(' ($cause)');
     return buffer.toString();
@@ -50,17 +52,18 @@ class DiscoveryException extends WemoException {
   final String? failedLocation;
 
   DiscoveryException(
-    String message, [
-    dynamic cause,
+    super.message, [
+    super.cause,
     this.devicesFoundBeforeError,
     this.failedLocation,
-  ]) : super(message, cause);
+  ]);
 
   @override
   String toString() {
     final buffer = StringBuffer('DiscoveryException: $message');
     if (failedLocation != null) buffer.write(' [location: $failedLocation]');
-    if (devicesFoundBeforeError != null) buffer.write(' [found: $devicesFoundBeforeError]');
+    if (devicesFoundBeforeError != null)
+      buffer.write(' [found: $devicesFoundBeforeError]');
     if (cause != null) buffer.write(' ($cause)');
     return buffer.toString();
   }
@@ -140,7 +143,8 @@ class DeviceException extends WemoException {
     final buffer = StringBuffer('DeviceException: ');
     if (deviceName != null) buffer.write('[$deviceName] ');
     buffer.write(message);
-    if (host != null) buffer.write(' [host: $host${port != null ? ':$port' : ''}]');
+    if (host != null)
+      buffer.write(' [host: $host${port != null ? ':$port' : ''}]');
     if (operation != null) buffer.write(' [op: $operation]');
     if (cause != null) buffer.write(' ($cause)');
     return buffer.toString();

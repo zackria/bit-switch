@@ -391,19 +391,17 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
       // Check if we can scan
       final canScan = await WiFiScan.instance.canStartScan();
       if (canScan != CanStartScan.yes) {
-        // Request location permission if needed (required for WiFi scanning on Android)
-        if (Platform.isAndroid) {
-          final locationStatus = await Permission.location.request();
-          if (!locationStatus.isGranted) {
-            if (mounted) {
-              setState(() {
-                _networks = [];
-                _isScanning = false;
-                _error = 'Location permission required to scan WiFi networks.';
-              });
-            }
-            return;
+        // Request location permission if needed (required for WiFi scanning)
+        final permissionGranted = await _requestWifiScanPermission();
+        if (!permissionGranted) {
+          if (mounted) {
+            setState(() {
+              _networks = [];
+              _isScanning = false;
+              _error = 'Permission required to scan WiFi networks.';
+            });
           }
+          return;
         }
       }
 
@@ -455,6 +453,56 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
           _error = 'Could not scan networks. Enter network name manually.';
         });
       }
+    }
+  }
+
+  /// Request WiFi scan permission (location or nearbyWifiDevices)
+  /// Returns true if permission is granted, false otherwise
+  /// 
+  /// Note: Uses Permission.locationWhenInUse for both iOS and Android
+  /// to be consistent with WifiDetectionService. This maps to
+  /// ACCESS_FINE_LOCATION on Android which is required for WiFi scanning.
+  Future<bool> _requestWifiScanPermission() async {
+    try {
+      if (Platform.isIOS) {
+        // iOS requires location permission for WiFi scanning
+        final status = await Permission.locationWhenInUse.status;
+        if (status.isPermanentlyDenied) {
+          return false;
+        }
+        if (status.isGranted) {
+          return true;
+        }
+        final result = await Permission.locationWhenInUse.request();
+        return result.isGranted;
+      } else if (Platform.isAndroid) {
+        // Android 13+ can use NEARBY_WIFI_DEVICES, older needs location
+        final nearbyStatus = await Permission.nearbyWifiDevices.status;
+        if (nearbyStatus.isGranted) {
+          return true;
+        }
+        if (!nearbyStatus.isPermanentlyDenied) {
+          final nearbyResult = await Permission.nearbyWifiDevices.request();
+          if (nearbyResult.isGranted) {
+            return true;
+          }
+        }
+
+        // Fall back to location permission for older Android
+        final locationStatus = await Permission.locationWhenInUse.status;
+        if (locationStatus.isPermanentlyDenied) {
+          return false;
+        }
+        if (locationStatus.isGranted) {
+          return true;
+        }
+        final locationResult = await Permission.locationWhenInUse.request();
+        return locationResult.isGranted;
+      }
+      // Desktop platforms don't need permission
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

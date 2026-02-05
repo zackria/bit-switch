@@ -77,12 +77,22 @@ void main() {
 
       test('cleans SSID by removing quotes', () async {
         // The service should remove quotes from SSID
-        // Can't easily test the actual cleaning without mocking NetworkInfo,
-        // but we can verify the method exists and works
+        // We can't easily mock NetworkInfo in this test without adding a mocking
+        // framework, but the implementation in getCurrentSsid() handles this:
+        // final cleanedSsid = ssid.replaceAll('"', '');
+        // This test verifies the method works without throwing
         final ssid = await service.getCurrentSsid();
         if (ssid != null) {
           expect(ssid.contains('"'), false);
         }
+      });
+
+      test('returns null for unknown ssid', () async {
+        // NetworkInfo can return '<unknown ssid>' which should be treated as null
+        // The implementation checks: if (ssid != null && ssid != '<unknown ssid>')
+        final ssid = await service.getCurrentSsid();
+        // Should never return '<unknown ssid>' - either null or a valid SSID
+        expect(ssid != '<unknown ssid>', true);
       });
     });
 

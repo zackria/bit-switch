@@ -458,6 +458,10 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
   /// Request WiFi scan permission (location or nearbyWifiDevices)
   /// Returns true if permission is granted, false otherwise
+  /// 
+  /// Note: Uses Permission.locationWhenInUse for both iOS and Android
+  /// to be consistent with WifiDetectionService. This maps to
+  /// ACCESS_FINE_LOCATION on Android which is required for WiFi scanning.
   Future<bool> _requestWifiScanPermission() async {
     try {
       if (Platform.isIOS) {

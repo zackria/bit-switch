@@ -7,51 +7,70 @@ import '../core/exceptions.dart';
 import '../models/wemo_device.dart';
 
 /// Service for discovering Wemo devices on the local network
+///
+/// Handles SSDP discovery and HTTP-based device information retrieval.
+/// Implements retry logic with exponential backoff for reliability.
 class DeviceDiscoveryService {
   final SsdpClient _ssdpClient;
   final http.Client _httpClient;
+
+  /// Maximum number of retries for HTTP requests
+  static const _maxRetries = 3;
+
+  /// Base delay for exponential backoff (doubles with each retry)
+  static const _baseRetryDelay = Duration(milliseconds: 300);
 
   DeviceDiscoveryService({SsdpClient? ssdpClient, http.Client? httpClient})
     : _ssdpClient = ssdpClient ?? SsdpClient(),
       _httpClient = httpClient ?? http.Client();
 
   /// Discover all Wemo devices on the local network
+  ///
+  /// Returns a stream of unique [WemoDevice] instances as they are discovered.
+  /// Devices are deduplicated by their unique device ID (UDN).
   Stream<WemoDevice> discoverDevices({
     Duration timeout = WemoConstants.ssdpTimeout,
     void Function(String)? onDebugLog,
   }) async* {
-    onDebugLog?.call('SSDP discover starting...');
+    // Track yielded devices by ID to prevent duplicates
+    final seenDeviceIds = <String>{};
+
+    void log(String msg) => onDebugLog?.call(msg);
+
+    log('Starting SSDP discovery...');
     try {
       await for (final response in _ssdpClient.discover(
         timeout: timeout,
         onDebugLog: onDebugLog,
       )) {
         try {
-          onDebugLog?.call('SSDP response: ${response.location}');
-          final device = await _fetchDeviceInfo(response);
-          if (device != null) {
-            onDebugLog?.call('Parsed device: ${device.name}');
-            yield device;
-          } else {
-            onDebugLog?.call(
-              'Failed to parse device from ${response.location}',
-            );
+          log('Processing: ${response.host}:${response.port}');
+          final device = await _fetchDeviceInfo(response, log);
+
+          if (device == null) {
+            log('  → Could not parse device info');
+            continue;
           }
+
+          // Deduplicate by device ID (UDN)
+          if (seenDeviceIds.contains(device.id)) {
+            log('  → Duplicate device: ${device.name}');
+            continue;
+          }
+
+          seenDeviceIds.add(device.id);
+          log('  → Found: ${device.name} (${device.type.name})');
+          yield device;
         } catch (e) {
-          onDebugLog?.call('Error fetching device info: $e');
-          // Continue discovering even if one device fails
-          // Error details available in the exception if needed
+          // Log but continue - don't let one device failure stop discovery
+          log('  → Error: $e');
         }
       }
-      onDebugLog?.call('SSDP discover stream ended');
+      log('Discovery complete: ${seenDeviceIds.length} devices found');
     } on DiscoveryException {
-      // DiscoveryException from SSDP client - rethrow as-is
-      onDebugLog?.call('Discovery exception occurred');
       rethrow;
     } catch (e) {
-      // Any other error - wrap in DiscoveryException
-      onDebugLog?.call('Unexpected error during discovery: $e');
-      throw DiscoveryException('Device discovery failed', e);
+      throw DiscoveryException('Device discovery failed', cause: e);
     }
   }
 
@@ -66,36 +85,51 @@ class DeviceDiscoveryService {
     return devices;
   }
 
-  /// Fetch device information from setup.xml with retry logic
-  Future<WemoDevice?> _fetchDeviceInfo(SsdpResponse ssdpResponse) async {
-    int retries = 0;
+  /// Fetch device information from setup.xml with exponential backoff retry
+  Future<WemoDevice?> _fetchDeviceInfo(
+    SsdpResponse ssdpResponse,
+    void Function(String) log,
+  ) async {
     Exception? lastException;
 
-    while (retries < 3) {
+    for (int attempt = 1; attempt <= _maxRetries; attempt++) {
       try {
         final response = await _httpClient
             .get(Uri.parse(ssdpResponse.location))
             .timeout(WemoConstants.requestTimeout);
 
         if (response.statusCode != 200) {
-          throw NetworkException('HTTP ${response.statusCode}');
+          throw NetworkException(
+            'HTTP ${response.statusCode}',
+            host: ssdpResponse.host,
+            port: ssdpResponse.port,
+          );
         }
 
         return _parseSetupXml(response.body, ssdpResponse);
+      } on TimeoutException {
+        lastException = NetworkException(
+          'Request timeout',
+          host: ssdpResponse.host,
+          port: ssdpResponse.port,
+        );
       } catch (e) {
         lastException = e is Exception ? e : Exception(e.toString());
-        retries++;
+      }
 
-        if (retries < 3) {
-          // Wait before retrying (exponential backoff: 200ms, 400ms)
-          await Future.delayed(Duration(milliseconds: 200 * retries));
-        }
+      if (attempt < _maxRetries) {
+        final delay = _baseRetryDelay * (1 << (attempt - 1)); // 300ms, 600ms
+        log(
+          '  → Retry $attempt/${_maxRetries - 1} in ${delay.inMilliseconds}ms',
+        );
+        await Future.delayed(delay);
       }
     }
 
     throw DiscoveryException(
-      'Failed to fetch device info from ${ssdpResponse.location} after $retries attempts',
-      lastException,
+      'Failed to fetch device info from ${ssdpResponse.host}:${ssdpResponse.port}',
+      cause: lastException,
+      failedLocation: ssdpResponse.location,
     );
   }
 
@@ -159,7 +193,7 @@ class DeviceDiscoveryService {
         udn: udn,
       );
     } catch (e) {
-      throw DiscoveryException('Failed to parse setup.xml', e);
+      throw DiscoveryException('Failed to parse setup.xml', cause: e);
     }
   }
 
@@ -209,6 +243,9 @@ class DeviceDiscoveryService {
   }
 
   /// Probe a specific host for a Wemo device
+  ///
+  /// Attempts to connect to the host on the specified ports and fetch device info.
+  /// Returns null if no device is found or the connection fails.
   Future<WemoDevice?> probeHost(
     String host, {
     List<int> ports = WemoConstants.devicePorts,
@@ -217,7 +254,11 @@ class DeviceDiscoveryService {
     if (ssdpResponse == null) {
       return null;
     }
-    return _fetchDeviceInfo(ssdpResponse);
+    try {
+      return await _fetchDeviceInfo(ssdpResponse, (_) {});
+    } on DiscoveryException {
+      return null;
+    }
   }
 
   void dispose() {

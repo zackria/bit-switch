@@ -12,7 +12,8 @@
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter pub get:*)",
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter analyze:*)",
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter test:*)",
-      "Bash(dart analyze:*)"
+      "Bash(dart analyze:*)",
+      "Bash(fvm flutter analyze:*)"
     ]
   }
 }

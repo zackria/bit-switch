@@ -290,6 +290,33 @@ void main() {
       expect(response.port, 49153);
       expect(response.locationUri.path, '/setup.xml');
     });
+
+    test('hostPortKey should return unique identifier for deduplication', () {
+      final response1 = SsdpResponse(
+        location: 'http://192.168.1.50:49153/setup.xml',
+        usn: 'uuid:abc',
+        server: 'Belkin',
+        address: InternetAddress('192.168.1.50'),
+      );
+      final response2 = SsdpResponse(
+        location: 'http://192.168.1.50:49154/setup.xml',
+        usn: 'uuid:def',
+        server: 'Belkin',
+        address: InternetAddress('192.168.1.50'),
+      );
+      final response3 = SsdpResponse(
+        location: 'http://192.168.1.51:49153/setup.xml',
+        usn: 'uuid:ghi',
+        server: 'Belkin',
+        address: InternetAddress('192.168.1.51'),
+      );
+
+      expect(response1.hostPortKey, '192.168.1.50:49153');
+      expect(response2.hostPortKey, '192.168.1.50:49154');
+      expect(response3.hostPortKey, '192.168.1.51:49153');
+      expect(response1.hostPortKey, isNot(equals(response2.hostPortKey)));
+      expect(response1.hostPortKey, isNot(equals(response3.hostPortKey)));
+    });
   });
 }
 

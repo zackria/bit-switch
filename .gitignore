@@ -10,3 +10,4 @@ App Store/bitSwitchIcon_v1.af~lock~
 package-lock.json
 pubspec.lock
 pubspec.lock
+.claude/settings.local.json

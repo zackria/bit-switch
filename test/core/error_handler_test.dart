@@ -115,10 +115,7 @@ void main() {
       });
 
       test('should handle unauthorized in fault string', () {
-        final e = SoapException(
-          'Fault',
-          faultString: 'Action not authorized',
-        );
+        final e = SoapException('Fault', faultString: 'Action not authorized');
         final msg = ErrorHandler.getUserFriendlyMessage(e);
         expect(msg, contains('not authorized'));
       });
@@ -198,7 +195,10 @@ void main() {
       });
 
       test('should prepend device name when available', () {
-        final e = DeviceException('Connection failed', deviceName: 'Kitchen Plug');
+        final e = DeviceException(
+          'Connection failed',
+          deviceName: 'Kitchen Plug',
+        );
         final msg = ErrorHandler.getUserFriendlyMessage(e);
         expect(msg, 'Kitchen Plug: Connection failed');
       });
@@ -233,13 +233,21 @@ void main() {
       });
 
       test('should handle timeout with devices found', () {
-        final e = DiscoveryException('Discovery timed out', null, 2);
+        final e = DiscoveryException(
+          'Discovery timed out',
+          cause: null,
+          devicesFoundBeforeError: 2,
+        );
         final msg = ErrorHandler.getUserFriendlyMessage(e);
         expect(msg, contains('2 device(s) found'));
       });
 
       test('should handle timeout with no devices found', () {
-        final e = DiscoveryException('Discovery timed out', null, 0);
+        final e = DiscoveryException(
+          'Discovery timed out',
+          cause: null,
+          devicesFoundBeforeError: 0,
+        );
         final msg = ErrorHandler.getUserFriendlyMessage(e);
         expect(msg, contains('No devices found'));
       });

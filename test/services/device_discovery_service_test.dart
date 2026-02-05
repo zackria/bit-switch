@@ -314,5 +314,38 @@ void main() {
       final devices = await service.discoverDevices().toList();
       expect(devices, isEmpty);
     });
+
+    test('should deduplicate devices by ID (UDN)', () async {
+      // Simulate same device responding from multiple SSDP responses
+      final mockSsdpClient = MockSsdpClient(
+        discoverHandler: () async* {
+          yield SsdpResponse(
+            location: 'http://192.168.1.100:49153/setup.xml',
+            usn: 'uuid:Socket-1_0-221517K0101769',
+            server: 'Belkin',
+            address: InternetAddress('192.168.1.100'),
+          );
+          yield SsdpResponse(
+            location: 'http://192.168.1.100:49154/setup.xml',
+            usn: 'uuid:Socket-1_0-221517K0101769',
+            server: 'Belkin',
+            address: InternetAddress('192.168.1.100'),
+          );
+        },
+      );
+
+      final mockHttpClient = MockClient(
+        (request) async => http.Response(xmlBody, 200),
+      );
+
+      final service = DeviceDiscoveryService(
+        ssdpClient: mockSsdpClient,
+        httpClient: mockHttpClient,
+      );
+
+      final devices = await service.discoverDevices().toList();
+      expect(devices.length, 1);
+      expect(devices.first.name, 'Test Switch');
+    });
   });
 }

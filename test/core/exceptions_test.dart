@@ -67,7 +67,11 @@ void main() {
     });
 
     test('should include devices found before error', () {
-      final e = DiscoveryException('Timeout', null, 3);
+      final e = DiscoveryException(
+        'Timeout',
+        cause: null,
+        devicesFoundBeforeError: 3,
+      );
       expect(e.devicesFoundBeforeError, 3);
       expect(e.toString(), contains('[found: 3]'));
     });
@@ -75,9 +79,9 @@ void main() {
     test('should include failed location when provided', () {
       final e = DiscoveryException(
         'HTTP error',
-        null,
-        null,
-        'http://192.168.1.100:49153/setup.xml',
+        cause: null,
+        devicesFoundBeforeError: null,
+        failedLocation: 'http://192.168.1.100:49153/setup.xml',
       );
       expect(e.failedLocation, 'http://192.168.1.100:49153/setup.xml');
       expect(e.toString(), contains('[location:'));
@@ -188,7 +192,10 @@ void main() {
 
   group('TimeoutException', () {
     test('should include duration if provided', () {
-      final e = TimeoutException('Timed out', duration: const Duration(seconds: 5));
+      final e = TimeoutException(
+        'Timed out',
+        duration: const Duration(seconds: 5),
+      );
       expect(e.toString(), 'TimeoutException: Timed out after 5s');
     });
 
@@ -209,10 +216,7 @@ void main() {
     });
 
     test('should include cause when provided', () {
-      final e = TimeoutException(
-        'Operation failed',
-        cause: 'Socket timeout',
-      );
+      final e = TimeoutException('Operation failed', cause: 'Socket timeout');
       expect(e.toString(), contains('(Socket timeout)'));
     });
   });

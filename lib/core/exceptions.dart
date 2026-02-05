@@ -52,11 +52,11 @@ class DiscoveryException extends WemoException {
   final String? failedLocation;
 
   DiscoveryException(
-    super.message, [
-    super.cause,
+    String message, {
+    dynamic cause,
     this.devicesFoundBeforeError,
     this.failedLocation,
-  ]);
+  }) : super(message, cause);
 
   @override
   String toString() {

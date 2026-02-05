@@ -326,6 +326,10 @@ class DeviceProvider extends ChangeNotifier {
   }
 
   /// Start discovering devices
+  ///
+  /// Performs SSDP multicast discovery with automatic retry on transient
+  /// failures. On iOS, falls back to subnet scanning if SSDP fails.
+  ///
   /// [timeout] - Duration to wait for device discovery (default 10 seconds)
   Future<void> discoverDevices({
     Duration timeout = const Duration(seconds: 10),
@@ -340,7 +344,8 @@ class DeviceProvider extends ChangeNotifier {
     try {
       // Add an overall timeout that's slightly longer than the discovery timeout
       // This ensures the UI never spins forever even if something hangs
-      final overallTimeout = timeout + const Duration(seconds: 5);
+      // Account for potential retries in SSDP client (3 attempts max)
+      final overallTimeout = timeout + const Duration(seconds: 10);
 
       await _discoverWithTimeout(timeout).timeout(
         overallTimeout,
@@ -350,16 +355,7 @@ class DeviceProvider extends ChangeNotifier {
           // Don't set error since no devices found is a valid state
         },
       );
-      _log('SSDP discovery completed. Found ${_devices.length} devices');
-
-      // iOS fallback: If SSDP found nothing and we're on iOS, try subnet scanning
-      // This works around iOS's UDP multicast restrictions on physical devices
-      if (_devices.isEmpty && Platform.isIOS) {
-        _log('No devices via SSDP on iOS - trying subnet scan...');
-        _isDiscovering = true;
-        notifyListeners();
-        await scanSubnet();
-      }
+      _log('Discovery completed. Found ${_devices.length} devices');
     } on DiscoveryException catch (e) {
       // Network/permission related error - show user-friendly message
       _log('DiscoveryException: ${e.message}');
@@ -378,61 +374,100 @@ class DeviceProvider extends ChangeNotifier {
   }
 
   /// Internal discovery method that can be wrapped with timeout
+  ///
+  /// Runs SSDP discovery first, then falls back to subnet scan on iOS
+  /// if no devices are found. The subnet scan runs AFTER SSDP completes,
+  /// not in parallel, to avoid race conditions and resource contention.
   Future<void> _discoverWithTimeout(Duration timeout) async {
-    _log('Calling discovery service...');
+    _log('Starting SSDP discovery...');
+
     try {
-      final discoveryStream = _discoveryService.discoverDevices(
-        timeout: timeout,
-        onDebugLog: _debugMode ? _log : null,
-      );
+      // Phase 1: SSDP multicast discovery
+      await _runSsdpDiscovery(timeout);
 
-      final subnetStream = _devices.isEmpty && Platform.isIOS
-          ? _scanSubnetInternal()
-          : Stream.empty();
-
-      final combinedStream = Rx.merge([discoveryStream, subnetStream]).handleError((
-        error,
-        stackTrace,
-      ) {
-        // Transform stream errors into exceptions we can catch
-        _log('Stream error during discovery: $error');
-        if (error is DiscoveryException) {
-          throw error;
-        } else if (error is SocketException) {
-          throw DiscoveryException(
-            'Network error during discovery. Please check:\n• WiFi connection\n• Local Network permission in Settings',
-            error,
-          );
-        } else {
-          throw DiscoveryException('Unexpected error during discovery', error);
-        }
-      });
-
-      await for (final device in combinedStream) {
-        _log('Found device: ${device.name} at ${device.host}:${device.port}');
-        _devices[device.id] = device;
-        notifyListeners();
-
-        // Fetch initial state for the device (don't await - do in background)
-        unawaited(_refreshDeviceState(device));
+      // Phase 2: iOS subnet scan fallback (only if SSDP found nothing)
+      if (_devices.isEmpty && Platform.isIOS) {
+        _log('No devices via SSDP on iOS - trying subnet scan...');
+        await _runSubnetScanFallback();
       }
     } on DiscoveryException catch (e) {
-      // Rethrow DiscoveryException so it can be caught by outer handler
       _log('Discovery exception: ${e.message}');
+
+      // On iOS, if SSDP fails due to network issues, try subnet scan as fallback
+      if (Platform.isIOS && _devices.isEmpty) {
+        _log('SSDP failed on iOS, attempting subnet scan fallback...');
+        try {
+          await _runSubnetScanFallback();
+          // If subnet scan found devices, don't rethrow the SSDP exception
+          if (_devices.isNotEmpty) {
+            return;
+          }
+        } catch (subnetError) {
+          _log('Subnet scan also failed: $subnetError');
+        }
+      }
+
       rethrow;
     } on SocketException catch (e) {
-      // Socket errors not already wrapped - convert to DiscoveryException
       _log('Socket exception during discovery: $e');
       throw DiscoveryException(
-        'Network error during discovery. Please check:\n• WiFi connection\n• Local Network permission in Settings',
-        e,
+        'Network error during discovery. Please check:\n'
+        '• WiFi connection\n'
+        '• Local Network permission in Settings',
+        cause: e,
       );
     } catch (e, stack) {
-      // Other unexpected errors - convert to DiscoveryException
       _log('Unexpected discovery error: $e');
       _log('Stack trace: $stack');
-      throw DiscoveryException('Unexpected error during discovery', e);
+      throw DiscoveryException('Unexpected error during discovery', cause: e);
     }
+  }
+
+  /// Run SSDP multicast discovery
+  Future<void> _runSsdpDiscovery(Duration timeout) async {
+    final discoveryStream = _discoveryService.discoverDevices(
+      timeout: timeout,
+      onDebugLog: _debugMode ? _log : null,
+    ).handleError((error, stackTrace) {
+      _log('Stream error during discovery: $error');
+      if (error is DiscoveryException) {
+        throw error;
+      } else if (error is SocketException) {
+        throw DiscoveryException(
+          'Network error during discovery. Please check:\n'
+          '• WiFi connection\n'
+          '• Local Network permission in Settings',
+          cause: error,
+        );
+      } else {
+        throw DiscoveryException(
+          'Unexpected error during discovery',
+          cause: error,
+        );
+      }
+    });
+
+    await for (final device in discoveryStream) {
+      _log('Found device: ${device.name} at ${device.host}:${device.port}');
+      _devices[device.id] = device;
+      notifyListeners();
+
+      // Fetch initial state for the device (don't await - do in background)
+      unawaited(_refreshDeviceState(device));
+    }
+
+    _log('SSDP discovery phase complete: ${_devices.length} devices');
+  }
+
+  /// Run subnet scan as fallback (primarily for iOS)
+  Future<void> _runSubnetScanFallback() async {
+    await for (final device in _scanSubnetInternal()) {
+      _log('Subnet scan found: ${device.name} at ${device.host}');
+      _devices[device.id] = device;
+      notifyListeners();
+      unawaited(_refreshDeviceState(device));
+    }
+    _log('Subnet scan complete: ${_devices.length} devices total');
   }
 
   /// Refresh the state of a specific device

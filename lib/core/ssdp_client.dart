@@ -24,12 +24,23 @@ class SsdpResponse {
   String get host => locationUri.host;
   int get port => locationUri.port;
 
+  /// Unique key for deduplication by host:port
+  String get hostPortKey => '$host:$port';
+
   @override
   String toString() => 'SsdpResponse(location: $location, usn: $usn)';
 }
 
 /// SSDP client for discovering Wemo devices on the local network
+///
+/// Implements robust discovery with automatic retry on transient failures.
 class SsdpClient {
+  /// Maximum number of discovery attempts before giving up
+  static const _maxDiscoveryAttempts = 3;
+
+  /// Delay between discovery retry attempts
+  static const _retryDelay = Duration(milliseconds: 500);
+
   /// Build an M-SEARCH request for Wemo device discovery
   static List<int> buildMSearchRequest({
     String searchTarget = WemoConstants.ssdpSearchTarget,
@@ -106,13 +117,75 @@ MX: $mx\r
 
   /// Discover Wemo devices on the local network
   /// Returns a stream of discovered devices
+  ///
+  /// The discovery process:
+  /// 1. Binds a UDP socket for receiving responses
+  /// 2. Sets up response listener BEFORE sending requests (avoids race conditions)
+  /// 3. Sends multiple M-SEARCH requests with staggered timing for reliability
+  /// 4. Waits for the full timeout period after all requests are sent
+  /// 5. Yields unique responses, deduplicated by both location URL and host:port
+  ///
+  /// Implements automatic retry on transient network failures.
   Stream<SsdpResponse> discover({
     Duration timeout = WemoConstants.ssdpTimeout,
     String searchTarget = WemoConstants.ssdpSearchTarget,
     void Function(String)? onDebugLog,
   }) async* {
-    RawDatagramSocket? socket;
+    void log(String msg) => onDebugLog?.call(msg);
+
+    // Track seen responses across all attempts
     final seenLocations = <String>{};
+    final seenHostPorts = <String>{};
+    DiscoveryException? lastException;
+
+    for (int attempt = 1; attempt <= _maxDiscoveryAttempts; attempt++) {
+      if (attempt > 1) {
+        log('Retry attempt $attempt/$_maxDiscoveryAttempts...');
+        await Future.delayed(_retryDelay);
+      }
+
+      try {
+        await for (final response in _discoverAttempt(
+          timeout: timeout,
+          searchTarget: searchTarget,
+          onDebugLog: onDebugLog,
+          seenLocations: seenLocations,
+          seenHostPorts: seenHostPorts,
+        )) {
+          yield response;
+        }
+        // Success - exit retry loop
+        return;
+      } on DiscoveryException catch (e) {
+        lastException = e;
+        log('Discovery attempt $attempt failed: ${e.message}');
+
+        // Don't retry on permission errors - they won't resolve
+        if (e.message.contains('permission') ||
+            e.message.contains('Permission')) {
+          rethrow;
+        }
+
+        if (attempt == _maxDiscoveryAttempts) {
+          rethrow;
+        }
+      }
+    }
+
+    if (lastException != null) {
+      throw lastException;
+    }
+  }
+
+  /// Single discovery attempt (internal method)
+  Stream<SsdpResponse> _discoverAttempt({
+    required Duration timeout,
+    required String searchTarget,
+    required void Function(String)? onDebugLog,
+    required Set<String> seenLocations,
+    required Set<String> seenHostPorts,
+  }) async* {
+    RawDatagramSocket? socket;
     final controller = StreamController<SsdpResponse>();
     Timer? timer;
 
@@ -120,42 +193,41 @@ MX: $mx\r
 
     try {
       log('Binding UDP socket...');
-      // Add timeout for socket bind - can hang on iOS without proper permissions
-      socket =
-          await RawDatagramSocket.bind(
-            InternetAddress.anyIPv4,
-            0,
-            reuseAddress: true,
-          ).timeout(
-            const Duration(seconds: 5),
-            onTimeout: () {
-              log('Socket bind TIMEOUT');
-              throw DiscoveryException(
-                'Network initialization timed out. Please check:\n• WiFi connection\n• Local Network permission in Settings',
-                null,
-              );
-            },
+      socket = await RawDatagramSocket.bind(
+        InternetAddress.anyIPv4,
+        0,
+        reuseAddress: true,
+      ).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          log('Socket bind TIMEOUT');
+          throw DiscoveryException(
+            'Network initialization timed out. Please check:\n'
+            '• WiFi connection\n'
+            '• Local Network permission in Settings',
+            cause: null,
           );
+        },
+      );
 
       log('Socket bound to port ${socket.port}');
-
-      // Enable broadcast
       socket.broadcastEnabled = true;
       log('Broadcast enabled');
 
-      // Send M-SEARCH request
       final request = buildMSearchRequest(searchTarget: searchTarget, mx: 5);
       final multicastAddress = InternetAddress(
         WemoConstants.ssdpMulticastAddress,
       );
 
       log(
-        'Sending M-SEARCH to ${WemoConstants.ssdpMulticastAddress}:${WemoConstants.ssdpPort}',
+        'Sending M-SEARCH to ${WemoConstants.ssdpMulticastAddress}:'
+        '${WemoConstants.ssdpPort}',
       );
 
-      // Set up response listener BEFORE sending requests to catch early responses
+      // Set up response listener BEFORE sending requests
       log('Listening for responses (${timeout.inSeconds}s timeout)...');
       int responseCount = 0;
+      int validCount = 0;
 
       socket.listen(
         (event) {
@@ -163,33 +235,41 @@ MX: $mx\r
 
           if (event == RawSocketEvent.read) {
             final datagram = socket?.receive();
-            if (datagram != null) {
-              responseCount++;
-              log(
-                'Received packet #$responseCount from ${datagram.address.address}',
-              );
-              final response = parseResponse(datagram.data, datagram.address);
-              if (response != null &&
-                  !seenLocations.contains(response.location)) {
-                log('Valid Wemo response: ${response.location}');
-                seenLocations.add(response.location);
-                controller.add(response);
-              } else if (response == null) {
-                log('Non-Wemo response (filtered out)');
-              } else {
-                log('Duplicate response (filtered out)');
-              }
+            if (datagram == null) return;
+
+            responseCount++;
+            log('Packet #$responseCount from ${datagram.address.address}');
+
+            final response = parseResponse(datagram.data, datagram.address);
+            if (response == null) {
+              log('  → Non-Wemo response (filtered)');
+              return;
             }
+
+            // Deduplicate by both location URL and host:port
+            final hostPortKey = response.hostPortKey;
+            if (seenLocations.contains(response.location) ||
+                seenHostPorts.contains(hostPortKey)) {
+              log('  → Duplicate (${response.host}:${response.port})');
+              return;
+            }
+
+            validCount++;
+            seenLocations.add(response.location);
+            seenHostPorts.add(hostPortKey);
+            log('  → Valid #$validCount: ${response.location}');
+            controller.add(response);
           }
         },
         onError: (error, stackTrace) {
-          // Handle socket errors (e.g., errno 65 on iOS without Local Network permission)
-          log('Socket error during discovery: $error');
+          log('Socket error: $error');
           if (!controller.isClosed) {
             controller.addError(
               DiscoveryException(
-                'Network error. Please check:\n• WiFi connection\n• Local Network permission in Settings',
-                error,
+                'Network error. Please check:\n'
+                '• WiFi connection\n'
+                '• Local Network permission in Settings',
+                cause: error,
               ),
               stackTrace,
             );
@@ -200,74 +280,48 @@ MX: $mx\r
         cancelOnError: false,
       );
 
-      // Wrap send in try-catch - on iOS this fails without local network permission
-      int totalBytesSent = 0;
-      try {
-        // Send multiple M-SEARCH requests to increase discovery chances
-        // Send more requests with better timing to catch all devices
-        for (int i = 0; i < 5; i++) {
-          final bytesSent = socket.send(
-            request,
-            multicastAddress,
-            WemoConstants.ssdpPort,
-          );
-          totalBytesSent += bytesSent;
-          log('M-SEARCH #${i + 1}: sent $bytesSent bytes');
-          // Stagger requests to avoid network congestion
-          if (i < 4) {
-            await Future.delayed(Duration(milliseconds: i < 2 ? 300 : 800));
-          }
-        }
+      // Send M-SEARCH requests with robust retry
+      final bytesSent = await _sendDiscoveryRequests(
+        socket: socket,
+        request: request,
+        multicastAddress: multicastAddress,
+        log: log,
+      );
 
-        // Also try sending to broadcast address as fallback
-        try {
-          final broadcastAddr = InternetAddress('255.255.255.255');
-          final broadcastBytes = socket.send(
-            request,
-            broadcastAddr,
-            WemoConstants.ssdpPort,
-          );
-          log('Broadcast fallback: sent $broadcastBytes bytes');
-        } catch (e) {
-          log('Broadcast fallback failed (OK): $e');
-        }
-      } catch (e) {
-        // On iOS, this can fail with "No route to host" (errno 65) if local network
-        // permission is not granted, or if not connected to WiFi.
-        log('SEND FAILED: $e');
+      if (bytesSent == 0) {
+        log('ERROR: 0 bytes sent after all attempts');
         socket.close();
         throw DiscoveryException(
-          'Cannot access local network. Please ensure:\n• You are connected to WiFi\n• Local Network access is enabled in Settings',
-          e,
+          'Failed to send discovery request. Network may be unavailable.',
+          cause: null,
         );
       }
 
-      if (totalBytesSent == 0) {
-        log('ERROR: 0 bytes sent');
-        socket.close();
-        throw DiscoveryException('Failed to send discovery request', null);
-      }
+      log('Total bytes sent: $bytesSent');
 
-      // Set up timeout to close the stream
-      // Add a 2-second buffer after timeout to catch late responses
-      timer = Timer(timeout + const Duration(seconds: 2), () {
-        log('Discovery timeout reached (with buffer)');
+      // Start timeout AFTER all requests are sent
+      timer = Timer(timeout, () {
+        log('Discovery timeout reached');
         controller.close();
       });
 
-      // Yield responses from the controller
       await for (final response in controller.stream) {
         yield response;
       }
-      log('Total packets received: $responseCount');
+      log(
+        'Discovery complete: $validCount devices from $responseCount packets',
+      );
     } on DiscoveryException {
       rethrow;
     } on SocketException catch (e) {
       log('SocketException: $e');
-      throw DiscoveryException('Network error during device discovery', e);
+      throw DiscoveryException(
+        'Network error during device discovery',
+        cause: e,
+      );
     } catch (e) {
       log('Exception: $e');
-      throw DiscoveryException('Device discovery failed: $e', e);
+      throw DiscoveryException('Device discovery failed: $e', cause: e);
     } finally {
       timer?.cancel();
       socket?.close();
@@ -275,6 +329,97 @@ MX: $mx\r
         await controller.close();
       }
     }
+  }
+
+  /// Send discovery requests with retry on individual send failures
+  Future<int> _sendDiscoveryRequests({
+    required RawDatagramSocket socket,
+    required List<int> request,
+    required InternetAddress multicastAddress,
+    required void Function(String) log,
+  }) async {
+    int totalBytesSent = 0;
+    int consecutiveFailures = 0;
+    const maxConsecutiveFailures = 3;
+
+    // Send requests with staggered timing
+    // Timing: 0ms, 500ms, 500ms, 1000ms, 1000ms, 1000ms (~4 seconds total)
+    const requestCount = 6;
+    const delays = [0, 500, 500, 1000, 1000, 1000];
+
+    for (int i = 0; i < requestCount; i++) {
+      if (i > 0) {
+        await Future.delayed(Duration(milliseconds: delays[i]));
+      }
+
+      try {
+        final bytesSent = socket.send(
+          request,
+          multicastAddress,
+          WemoConstants.ssdpPort,
+        );
+
+        if (bytesSent > 0) {
+          totalBytesSent += bytesSent;
+          consecutiveFailures = 0;
+          log('M-SEARCH #${i + 1}: $bytesSent bytes');
+        } else {
+          consecutiveFailures++;
+          log('M-SEARCH #${i + 1}: 0 bytes (attempt failed)');
+
+          // If first request fails with 0 bytes, wait and retry once
+          if (i == 0 && consecutiveFailures == 1) {
+            log('First send returned 0, retrying after delay...');
+            await Future.delayed(const Duration(milliseconds: 100));
+            final retryBytes = socket.send(
+              request,
+              multicastAddress,
+              WemoConstants.ssdpPort,
+            );
+            if (retryBytes > 0) {
+              totalBytesSent += retryBytes;
+              consecutiveFailures = 0;
+              log('Retry successful: $retryBytes bytes');
+            }
+          }
+        }
+
+        if (consecutiveFailures >= maxConsecutiveFailures) {
+          log('Too many consecutive send failures, aborting');
+          break;
+        }
+      } catch (e) {
+        log('Send error on request #${i + 1}: $e');
+        consecutiveFailures++;
+
+        if (consecutiveFailures >= maxConsecutiveFailures) {
+          throw DiscoveryException(
+            'Cannot access local network. Please ensure:\n'
+            '• You are connected to WiFi\n'
+            '• Local Network access is enabled in Settings',
+            cause: e,
+          );
+        }
+      }
+    }
+
+    // Send to broadcast address as fallback
+    try {
+      final broadcastAddr = InternetAddress('255.255.255.255');
+      final broadcastBytes = socket.send(
+        request,
+        broadcastAddr,
+        WemoConstants.ssdpPort,
+      );
+      if (broadcastBytes > 0) {
+        totalBytesSent += broadcastBytes;
+        log('Broadcast fallback: $broadcastBytes bytes');
+      }
+    } catch (e) {
+      log('Broadcast fallback failed (OK): $e');
+    }
+
+    return totalBytesSent;
   }
 
   /// Discover all Wemo devices and return as a list

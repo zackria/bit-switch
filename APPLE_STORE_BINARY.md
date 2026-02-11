@@ -76,9 +76,16 @@ Verify the following settings under Runner > Signing & Capabilities:
 
 ```xml
 <key>NSLocationWhenInUseUsageDescription</key>
-<string>Location permission is required to access WiFi network information.</string>
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Location permission is required to access WiFi network information.</string>
+	<string>Bit Switch uses your location to discover and display the details of your Wi-Fi network. This is used to identify the specific network your smart switches and devices are connected to.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Bit Switch uses your location to discover and display the details of your Wi-Fi network. This is used to identify the specific network your smart switches and devices are connected to.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Bit Switch uses your local network to discover and control smart switches and devices. For example, it allows you to toggle your Wemo switches and monitor their status when connected to your home Wi-Fi.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ssdp._udp</string>
+		<string>_upnp._tcp</string>
+	</array>
 ```
 
 Ensure these are enabled in both the Apple Developer portal App ID and the Xcode project.

@@ -491,7 +491,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'This app finds devices connected to the same Wi-Fi network.',
+                'Location information is used to find your Wi-Fi details. Local network access allows you to control your smart switches and devices.',
                 style: textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),

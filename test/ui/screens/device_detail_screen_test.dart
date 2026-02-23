@@ -33,6 +33,7 @@ class MockSoapClient extends SoapClient {
     required String serviceType,
     Map<String, String>? arguments,
     Duration? requestTimeout,
+    int? maxRetriesOverride,
   }) {
     return handler(host, port, serviceName, action, serviceType, arguments);
   }
@@ -51,6 +52,37 @@ class MockDiscoveryService extends DeviceDiscoveryService {
     for (final device in devicesToDiscover) {
       yield device;
     }
+  }
+}
+
+class MockWifiSetupControlService extends DeviceControlService {
+  final WifiSetupStatus status;
+  final Object? setupError;
+
+  MockWifiSetupControlService({required this.status, this.setupError});
+
+  @override
+  Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async {
+    return [
+      WifiNetwork(
+        ssid: 'Net1',
+        channel: 1,
+        signalStrength: 70,
+        authMode: 'WPA2',
+        encryption: 'AES',
+      ),
+    ];
+  }
+
+  @override
+  Future<WifiSetupStatus> setupWifi(
+    WemoDevice device, {
+    required String ssid,
+    required String password,
+    Duration timeout = const Duration(seconds: 30),
+  }) async {
+    if (setupError != null) throw setupError!;
+    return status;
   }
 }
 
@@ -240,6 +272,196 @@ void main() {
         await tester.pumpWidget(createScreen(provider));
         await tester.pumpAndSettle();
         expect(find.textContaining('Device is unreachable'), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows optional device metadata in info sheet', (tester) async {
+      await tester.runAsync(() async {
+        final richDevice = testDevice.copyWith(
+          manufacturer: 'Belkin',
+          model: 'F7C027',
+          serialNumber: 'SER12345',
+          firmwareVersion: '2.00.11408',
+          macAddress: 'AA:BB:CC:DD:EE:FF',
+        );
+
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(
+          createScreen(deviceProvider, overrideDevice: richDevice),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.info_outline));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Manufacturer'), findsOneWidget);
+        expect(find.text('Belkin'), findsOneWidget);
+        expect(find.text('Model'), findsOneWidget);
+        expect(find.text('F7C027'), findsOneWidget);
+        expect(find.text('Serial'), findsOneWidget);
+        expect(find.text('SER12345'), findsOneWidget);
+        expect(find.text('Firmware'), findsOneWidget);
+        expect(find.text('2.00.11408'), findsOneWidget);
+        expect(find.text('MAC'), findsOneWidget);
+        expect(find.text('AA:BB:CC:DD:EE:FF'), findsOneWidget);
+      });
+    });
+
+    testWidgets('reset dialog validates at least one option selected', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Please select what to reset'), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows remote reset snackbar when device returns resetRemote', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              if (a == 'GetBinaryState') return {'BinaryState': '1'};
+              if (a == 'ReSetup') return {'Reset': 'remote'};
+              return {};
+            }),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+
+        await provider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Reset WiFi Settings'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Yes, Reset'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Device will reset remotely'), findsOneWidget);
+      });
+    });
+
+    testWidgets('wifi setup shows password-short status message', (tester) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: MockWifiSetupControlService(
+            status: WifiSetupStatus.passwordShort,
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Network Name (SSID)'),
+          'Net1',
+        );
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Password'),
+          '12345678',
+        );
+        await tester.tap(find.text('Connect'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Password is too short'), findsOneWidget);
+      });
+    });
+
+    testWidgets('wifi setup shows handshake status message', (tester) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: MockWifiSetupControlService(
+            status: WifiSetupStatus.handshake,
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Network Name (SSID)'),
+          'Net1',
+        );
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Password'),
+          '12345678',
+        );
+        await tester.tap(find.text('Connect'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text('Authentication failed - check password'),
+          findsOneWidget,
+        );
+      });
+    });
+
+    testWidgets('wifi setup shows user-friendly error on exception', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: MockWifiSetupControlService(
+            status: WifiSetupStatus.failed,
+            setupError: NetworkException('Connection closed by peer'),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Network Name (SSID)'),
+          'Net1',
+        );
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Password'),
+          '12345678',
+        );
+        await tester.tap(find.text('Connect'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.textContaining('Unable to reach the device'),
+          findsOneWidget,
+        );
       });
     });
   });

@@ -110,8 +110,27 @@ class PairingProvider extends ChangeNotifier {
 
     // Update current SSID
     final currentSsid = await _wifiService.getCurrentSsid();
+    if (kDebugMode) debugPrint('[Pairing] confirmConnectedToDeviceAp: currentSsid=$currentSsid homeNetworkSsid=${_state.homeNetworkSsid}');
+
+    _state = _state.copyWith(currentSsid: currentSsid);
+
+    // Guard: if we can confirm the phone is still on the home network, bail out
+    // early with a clear message rather than silently discovering the wrong device.
+    final homeNet = _state.homeNetworkSsid;
+    if (homeNet != null && currentSsid == homeNet) {
+      if (kDebugMode) debugPrint('[Pairing] Still on home network "$homeNet" — aborting discovery');
+      _state = _state.copyWith(
+        isLoading: false,
+        clearLoadingMessage: true,
+        errorMessage:
+            'Your phone is still connected to "$homeNet". '
+            'Please open WiFi settings, connect to the WeMo device network, then try again.',
+      );
+      notifyListeners();
+      return;
+    }
+
     _state = _state.copyWith(
-      currentSsid: currentSsid,
       step: PairingStep.discoverDevice,
       isLoading: true,
       loadingMessage: 'Looking for device...',
@@ -124,24 +143,25 @@ class PairingProvider extends ChangeNotifier {
 
   /// Discover device on the Wemo AP network
   Future<void> _discoverDeviceOnAp() async {
+    if (kDebugMode) {
+      debugPrint('[Pairing] _discoverDeviceOnAp: probing ${WemoConstants.wemoApDefaultIp} ports ${WemoConstants.devicePorts}');
+    }
     try {
-      // First try the default Wemo AP IP
-      WemoDevice? device = await _discoveryService.probeHost(
+      // Probe the well-known WeMo AP IP only.
+      // Do NOT fall back to SSDP here — SSDP would find already-paired devices
+      // on the home network when the phone hasn't actually switched to the
+      // WeMo AP, leading to GetApList being sent to the wrong device.
+      final device = await _discoveryService.probeHost(
         WemoConstants.wemoApDefaultIp,
         ports: WemoConstants.devicePorts,
       );
 
-      if (device == null) {
-        // Fallback: try SSDP discovery (might work on some devices)
-        await for (final d in _discoveryService.discoverDevices(
-          timeout: WemoConstants.pairingDiscoveryTimeout,
-        )) {
-          device = d;
-          break; // Take the first device found
-        }
+      if (kDebugMode) {
+        debugPrint('[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at ${WemoConstants.wemoApDefaultIp}"}');
       }
 
       if (device != null) {
+        if (kDebugMode) debugPrint('[Pairing] Device found: ${device.name} at ${device.host}:${device.port}');
         _state = _state.copyWith(
           device: device,
           step: PairingStep.selectNetwork,
@@ -153,14 +173,19 @@ class PairingProvider extends ChangeNotifier {
         // Fetch available networks from the device
         await _fetchAvailableNetworks();
       } else {
+        if (kDebugMode) debugPrint('[Pairing] No device found at ${WemoConstants.wemoApDefaultIp}');
         _state = _state.copyWith(
           isLoading: false,
           clearLoadingMessage: true,
-          errorMessage: 'Could not find device. Make sure you\'re connected to the WeMo WiFi network.',
+          errorMessage:
+              'Could not find the WeMo device at ${WemoConstants.wemoApDefaultIp}. '
+              'Make sure your phone is connected to the WeMo WiFi network, then try again. '
+              'You can also enter the device IP manually.',
         );
         notifyListeners();
       }
-    } catch (e) {
+    } catch (e, st) {
+      if (kDebugMode) debugPrint('[Pairing] _discoverDeviceOnAp error: ${e.runtimeType}: $e\n$st');
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
@@ -229,14 +254,35 @@ class PairingProvider extends ChangeNotifier {
   Future<void> _fetchAvailableNetworks() async {
     if (_state.device == null) return;
 
+    final device = _state.device!;
+    if (kDebugMode) debugPrint('[Pairing] _fetchAvailableNetworks: device=${device.name} host=${device.host}:${device.port}');
+
     _state = _state.copyWith(
       isLoading: true,
       loadingMessage: 'Scanning for networks...',
     );
     notifyListeners();
 
+    // Give the Wemo device a moment to become ready after discovery before
+    // requesting the AP list. GetApList itself uses a long timeout (15 s per
+    // attempt) so the device has ample time to complete its WiFi scan.
+    await Future.delayed(const Duration(seconds: 2));
+
     try {
-      final networks = await _controlService.getAvailableNetworks(_state.device!);
+      if (kDebugMode) debugPrint('[Pairing] Calling getAvailableNetworks (attempt 1)...');
+      List<WifiNetwork> networks =
+          await _controlService.getAvailableNetworks(device);
+      if (kDebugMode) debugPrint('[Pairing] getAvailableNetworks attempt 1 returned ${networks.length} networks');
+
+      // If the first call returned an empty list the device may still be
+      // populating results. Wait briefly and try once more.
+      if (networks.isEmpty) {
+        if (kDebugMode) debugPrint('[Pairing] Empty list — waiting 3 s then retrying...');
+        await Future.delayed(const Duration(seconds: 3));
+        if (kDebugMode) debugPrint('[Pairing] Calling getAvailableNetworks (attempt 2)...');
+        networks = await _controlService.getAvailableNetworks(device);
+        if (kDebugMode) debugPrint('[Pairing] getAvailableNetworks attempt 2 returned ${networks.length} networks');
+      }
 
       // Sort by signal strength (highest first)
       networks.sort((a, b) => b.signalStrength.compareTo(a.signalStrength));
@@ -247,7 +293,8 @@ class PairingProvider extends ChangeNotifier {
         clearLoadingMessage: true,
       );
       notifyListeners();
-    } catch (e) {
+    } catch (e, st) {
+      if (kDebugMode) debugPrint('[Pairing] getAvailableNetworks FAILED: ${e.runtimeType}: $e\n$st');
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,

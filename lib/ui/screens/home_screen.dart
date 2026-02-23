@@ -107,8 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
             nearbyStatus.isGranted ||
             (locationStatus.isGranted && serviceStatus.isEnabled);
       } else if (Platform.isIOS) {
-        // Check current permission status without forcing a request
-        final status = await Permission.locationWhenInUse.status;
+        // Request location permission proactively so the dialog appears on first
+        // launch, before the Local Network dialog from SSDP discovery. On
+        // subsequent launches the OS returns the current status immediately
+        // without re-showing the dialog.
+        final status = await Permission.locationWhenInUse.request();
         hasPermission = status.isGranted;
       } else {
         // Non-mobile platforms (tests, desktop) - allow fetching wifi name

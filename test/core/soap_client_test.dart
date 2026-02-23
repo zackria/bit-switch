@@ -280,5 +280,39 @@ void main() {
       client.timeout = const Duration(seconds: 10);
       expect(client.timeout, const Duration(seconds: 10));
     });
+
+    test('buildSoapEnvelope escapes all XML special characters', () {
+      final client = SoapClient();
+      final xml = client.buildSoapEnvelope(
+        action: 'Test',
+        serviceType: 'urn:test',
+        arguments: {'v': 'a&b<c>d"e\'f'},
+      );
+      expect(xml, contains('a&amp;b&lt;c&gt;d&quot;e&apos;f'));
+    });
+
+    test('maxRetriesOverride = 1 makes exactly one HTTP attempt', () async {
+      int attempts = 0;
+      final client = SoapClient.forTesting(
+        mockHandler: (url, headers, body) async {
+          attempts++;
+          throw Exception('fail');
+        },
+        maxRetries: 3,
+      );
+
+      await expectLater(
+        client.call(
+          host: '192.168.1.100',
+          port: 49153,
+          serviceName: 'basicevent1',
+          action: 'GetBinaryState',
+          serviceType: 'urn:Belkin:service:basicevent:1',
+          maxRetriesOverride: 1,
+        ),
+        throwsA(isA<NetworkException>()),
+      );
+      expect(attempts, 1);
+    });
   });
 }

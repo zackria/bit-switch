@@ -306,6 +306,52 @@ void main() {
       final provider = DeviceProvider();
       expect(provider.controlService, isNotNull);
     });
+
+    test('debug mode runs diagnostics and clearDebugLog works', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(),
+        discoveryService: MockDiscoveryService(const []),
+      );
+
+      provider.setDebugMode(true);
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      expect(provider.debugMode, true);
+      expect(provider.debugLog, isNotEmpty);
+
+      provider.clearDebugLog();
+      expect(provider.debugLog, isEmpty);
+
+      provider.setDebugMode(false);
+      expect(provider.debugMode, false);
+      expect(provider.debugLog, isEmpty);
+    });
+
+    test('probeDeviceByIp logs failed tcp connection', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(),
+        discoveryService: MockDiscoveryService(const []),
+      );
+      provider.setDebugMode(true);
+
+      await provider.probeDeviceByIp('127.0.0.1', port: 9);
+
+      expect(
+        provider.debugLog.any((line) => line.contains('TCP connection FAILED')),
+        isTrue,
+      );
+    });
+
+    test('discoverDevices maps unexpected errors via ErrorHandler', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(),
+        discoveryService: GenericFailDiscoveryService(),
+      );
+
+      await provider.discoverDevices(timeout: Duration.zero);
+      expect(provider.error, isNotNull);
+      expect(provider.error, isNot(equals('Network Error')));
+    });
   });
 }
 
@@ -333,5 +379,17 @@ class MockInsightControlService extends MockControlService {
       isReachable: true,
       lastUpdated: DateTime.now(),
     );
+  }
+}
+
+class GenericFailDiscoveryService extends DeviceDiscoveryService {
+  GenericFailDiscoveryService() : super(ssdpClient: SsdpClient());
+
+  @override
+  Stream<WemoDevice> discoverDevices({
+    Duration timeout = const Duration(seconds: 10),
+    void Function(String)? onDebugLog,
+  }) async* {
+    throw Exception('unexpected boom');
   }
 }

@@ -9,21 +9,46 @@ import '../../services/wifi_detection_service.dart';
 import 'device_pairing_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final WifiDetectionService? wifiService;
+  final bool? isMobilePlatform;
+  final bool? isIOSPlatform;
+  final Future<void> Function()? openAppSettings;
+
+  const SettingsScreen({
+    super.key,
+    this.wifiService,
+    this.isMobilePlatform,
+    this.isIOSPlatform,
+    this.openAppSettings,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final WifiDetectionService _wifiService = WifiDetectionService();
+  late final WifiDetectionService _wifiService;
   String? _currentSsid;
   bool _hasLocationPermission = false;
   bool _isCheckingPermissions = false;
 
+  bool get _isIOS => widget.isIOSPlatform ?? Platform.isIOS;
+  bool get _isMobile =>
+      widget.isMobilePlatform ?? (Platform.isIOS || Platform.isAndroid);
+
+  Future<void> _openAppSettings() async {
+    final callback = widget.openAppSettings;
+    if (callback != null) {
+      await callback();
+      return;
+    }
+    AppSettings.openAppSettings(type: AppSettingsType.settings);
+  }
+
   @override
   void initState() {
     super.initState();
+    _wifiService = widget.wifiService ?? WifiDetectionService();
     _checkPermissionsAndWifi();
   }
 
@@ -184,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              AppSettings.openAppSettings(type: AppSettingsType.settings);
+              _openAppSettings();
             },
             child: const Text('Open Settings'),
           ),
@@ -232,7 +257,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              AppSettings.openAppSettings(type: AppSettingsType.settings);
+              _openAppSettings();
             },
             child: const Text('Open Settings'),
           ),
@@ -250,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return ListView(
             children: [
               // Network information and permissions
-              if (Platform.isIOS || Platform.isAndroid) ...[
+              if (_isMobile) ...[
                 _buildSectionHeader(context, 'Network'),
                 _buildWifiInfoTile(context),
                 _buildPermissionStatusTile(context),
@@ -258,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
 
               // Device pairing (iOS and Android only)
-              if (Platform.isIOS || Platform.isAndroid) ...[
+              if (_isMobile) ...[
                 _buildSectionHeader(context, 'Device Setup'),
                 ListTile(
                   leading: const Icon(Icons.add_circle_outline),
@@ -371,7 +396,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       subtitle = _currentSsid!;
     } else if (_hasLocationPermission) {
       // Has location permission but still no SSID - likely missing Local Network permission
-      subtitle = Platform.isIOS
+      subtitle = _isIOS
           ? 'Enable Local Network in Settings'
           : 'Not connected to WiFi';
     } else {
@@ -419,7 +444,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       subtitle: Text(
         fullyGranted
             ? 'All permissions granted'
-            : partiallyGranted && Platform.isIOS
+            : partiallyGranted && _isIOS
             ? 'Local Network permission needed'
             : 'Location permission needed',
       ),
@@ -443,7 +468,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: const Icon(Icons.lock_open, size: 18),
               label: const Text('Grant'),
             )
-          else if (partiallyGranted && Platform.isIOS)
+          else if (partiallyGranted && _isIOS)
             OutlinedButton.icon(
               onPressed: () => _showLocalNetworkPermissionDialog(),
               icon: const Icon(Icons.settings, size: 18),

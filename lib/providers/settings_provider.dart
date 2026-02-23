@@ -30,12 +30,17 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> ensureLoaded() => _loadFuture;
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    _autoRefreshEnabled = prefs.getBool(_autoRefreshEnabledKey) ?? false;
-    _autoRefreshIntervalSeconds = prefs.getInt(_autoRefreshIntervalKey) ?? 30;
-    _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 15;
-    _requestTimeoutSeconds = prefs.getInt(_requestTimeoutKey) ?? 3;
-    _showDebugOption = prefs.getBool(_showDebugOptionKey) ?? false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _autoRefreshEnabled = prefs.getBool(_autoRefreshEnabledKey) ?? false;
+      _autoRefreshIntervalSeconds = prefs.getInt(_autoRefreshIntervalKey) ?? 30;
+      _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 15;
+      _requestTimeoutSeconds = prefs.getInt(_requestTimeoutKey) ?? 3;
+      _showDebugOption = prefs.getBool(_showDebugOptionKey) ?? false;
+    } catch (e) {
+      if (kDebugMode) debugPrint('[SettingsProvider] Failed to load: $e');
+      // Fall through with defaults
+    }
     _isLoaded = true;
     notifyListeners();
   }
@@ -44,39 +49,52 @@ class SettingsProvider extends ChangeNotifier {
     if (_autoRefreshEnabled == value) return;
     _autoRefreshEnabled = value;
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_autoRefreshEnabledKey, value);
+    await _saveBool(_autoRefreshEnabledKey, value);
   }
 
   Future<void> setAutoRefreshIntervalSeconds(int seconds) async {
     if (_autoRefreshIntervalSeconds == seconds) return;
     _autoRefreshIntervalSeconds = seconds;
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_autoRefreshIntervalKey, seconds);
+    await _saveInt(_autoRefreshIntervalKey, seconds);
   }
 
   Future<void> setDiscoveryTimeoutSeconds(int seconds) async {
     if (_discoveryTimeoutSeconds == seconds) return;
     _discoveryTimeoutSeconds = seconds;
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_discoveryTimeoutKey, seconds);
+    await _saveInt(_discoveryTimeoutKey, seconds);
   }
 
   Future<void> setRequestTimeoutSeconds(int seconds) async {
     if (_requestTimeoutSeconds == seconds) return;
     _requestTimeoutSeconds = seconds;
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_requestTimeoutKey, seconds);
+    await _saveInt(_requestTimeoutKey, seconds);
   }
 
   Future<void> setShowDebugOption(bool value) async {
     if (_showDebugOption == value) return;
     _showDebugOption = value;
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_showDebugOptionKey, value);
+    await _saveBool(_showDebugOptionKey, value);
+  }
+
+  Future<void> _saveBool(String key, bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(key, value);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[SettingsProvider] Failed to save $key: $e');
+    }
+  }
+
+  Future<void> _saveInt(String key, int value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(key, value);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[SettingsProvider] Failed to save $key: $e');
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bit_switch/core/ssdp_client.dart';
 import 'package:bit_switch/core/constants.dart';
@@ -254,6 +255,95 @@ void main() {
 
       await server.close();
     });
+
+    test('discover emits device for direct UDP response and deduplicates', () async {
+      final client = SsdpClient();
+      final logs = <String>[];
+      final portCompleter = Completer<int>();
+
+      final stream = client.discover(
+        timeout: const Duration(milliseconds: 600),
+        onDebugLog: (msg) {
+          logs.add(msg);
+          if (!portCompleter.isCompleted && msg.startsWith('Socket bound to port ')) {
+            final port = int.tryParse(msg.replaceFirst('Socket bound to port ', ''));
+            if (port != null) {
+              portCompleter.complete(port);
+            }
+          }
+        },
+      );
+
+      final collected = <SsdpResponse>[];
+      final sub = stream.listen(collected.add);
+
+      final targetPort = await portCompleter.future.timeout(
+        const Duration(seconds: 2),
+      );
+
+      final sender = await RawDatagramSocket.bind(InternetAddress.loopbackIPv4, 0);
+      final response1 = _buildResponse(
+        location: 'http://127.0.0.1:49153/setup.xml',
+        usn: 'uuid:Socket-1_0-AAAA',
+      );
+      final response2 = _buildResponse(
+        // Different URL but same host:port, should be deduplicated.
+        location: 'http://127.0.0.1:49153/alt.xml',
+        usn: 'uuid:Socket-1_0-BBBB',
+      );
+
+      sender.send(response1.codeUnits, InternetAddress.loopbackIPv4, targetPort);
+      sender.send(response2.codeUnits, InternetAddress.loopbackIPv4, targetPort);
+
+      await Future.delayed(const Duration(milliseconds: 900));
+      await sub.cancel();
+      sender.close();
+
+      expect(collected.length, 1);
+      expect(collected.first.host, '127.0.0.1');
+      expect(collected.first.port, 49153);
+      expect(
+        logs.any((m) => m.contains('Duplicate (127.0.0.1:49153)')),
+        isTrue,
+      );
+    });
+
+    test('discover filters invalid/non-Wemo UDP responses', () async {
+      final client = SsdpClient();
+      final logs = <String>[];
+      final portCompleter = Completer<int>();
+
+      final stream = client.discover(
+        timeout: const Duration(milliseconds: 450),
+        onDebugLog: (msg) {
+          logs.add(msg);
+          if (!portCompleter.isCompleted && msg.startsWith('Socket bound to port ')) {
+            final port = int.tryParse(msg.replaceFirst('Socket bound to port ', ''));
+            if (port != null) {
+              portCompleter.complete(port);
+            }
+          }
+        },
+      );
+
+      final collected = <SsdpResponse>[];
+      final sub = stream.listen(collected.add);
+
+      final targetPort = await portCompleter.future.timeout(
+        const Duration(seconds: 2),
+      );
+
+      final sender = await RawDatagramSocket.bind(InternetAddress.loopbackIPv4, 0);
+      const invalid = 'HTTP/1.1 200 OK\r\nLOCATION: http://127.0.0.1:49153/setup.xml\r\nUSN: uuid:Other-1_0\r\nSERVER: Unknown\r\n\r\n';
+      sender.send(invalid.codeUnits, InternetAddress.loopbackIPv4, targetPort);
+
+      await Future.delayed(const Duration(milliseconds: 700));
+      await sub.cancel();
+      sender.close();
+
+      expect(collected, isEmpty);
+      expect(logs.any((m) => m.contains('Non-Wemo response (filtered)')), isTrue);
+    });
   });
 
   group('WemoConstants', () {
@@ -318,6 +408,15 @@ void main() {
       expect(response1.hostPortKey, isNot(equals(response3.hostPortKey)));
     });
   });
+}
+
+String _buildResponse({required String location, required String usn}) {
+  return 'HTTP/1.1 200 OK\r\n'
+      'LOCATION: $location\r\n'
+      'SERVER: Linux/2.6.21, UPnP/1.0, Belkin/1.0\r\n'
+      'ST: urn:Belkin:service:basicevent:1\r\n'
+      'USN: $usn::urn:Belkin:service:basicevent:1\r\n'
+      '\r\n';
 }
 
 // A test SSDP client that yields no responses to avoid network/timer usage.

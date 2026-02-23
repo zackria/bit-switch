@@ -90,6 +90,28 @@ Verify the following settings under Runner > Signing & Capabilities:
 
 Ensure these are enabled in both the Apple Developer portal App ID and the Xcode project.
 
+## Update file /bit-switch/ios/Podfile (Important for Permissions)
+
+When the `ios` folder is regenerated, the `permission_handler` package requires a specific macro to be enabled to actually request Location Services. Otherwise, it will fail silently.
+
+Open `ios/Podfile` and locate the `post_install` block at the bottom. **Replace it entirely** with the following to enable the `PERMISSION_LOCATION=1` macro:
+
+```ruby
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+        'PERMISSION_LOCATION=1',
+      ]
+    end
+  end
+end
+```
+
+Then run `cd ios && pod install && cd ..` to apply the update.
+
 5. Install CocoaPods dependencies
 
 ```bash

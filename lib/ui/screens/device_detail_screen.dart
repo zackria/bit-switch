@@ -110,9 +110,9 @@ class DeviceDetailScreen extends StatelessWidget {
       children: [
         Text(
           'Advanced',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(color: Colors.grey[600]),
         ),
         const SizedBox(height: 12),
         Row(
@@ -130,9 +130,7 @@ class DeviceDetailScreen extends StatelessWidget {
                 onPressed: () => _showResetDialog(context),
                 icon: const Icon(Icons.restart_alt),
                 label: const Text('Reset'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.orange,
-                ),
+                style: OutlinedButton.styleFrom(foregroundColor: Colors.orange),
               ),
             ),
           ],
@@ -161,9 +159,9 @@ class DeviceDetailScreen extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           device.type.displayName,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
         ),
       ],
     );
@@ -271,14 +269,17 @@ class DeviceDetailScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _toggleDevice(BuildContext context, DeviceProvider provider) async {
+  Future<void> _toggleDevice(
+    BuildContext context,
+    DeviceProvider provider,
+  ) async {
     try {
       await provider.toggle(device.id);
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to toggle: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to toggle: $e')));
     }
   }
 
@@ -342,10 +343,7 @@ class _WifiSetupScreen extends StatefulWidget {
   final WemoDevice device;
   final DeviceControlService controlService;
 
-  const _WifiSetupScreen({
-    required this.device,
-    required this.controlService,
-  });
+  const _WifiSetupScreen({required this.device, required this.controlService});
 
   @override
   State<_WifiSetupScreen> createState() => _WifiSetupScreenState();
@@ -362,6 +360,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
   String? _error;
   WifiSetupStatus? _status;
   bool _obscurePassword = true;
+  bool _iosScanUnavailable = false;
 
   @override
   void initState() {
@@ -385,9 +384,42 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
     });
 
     try {
-      // Use phone's WiFi scanner instead of device SOAP call
+      if (Platform.isIOS) {
+        // iOS does not support wifi_scan (Apple prohibits Wi-Fi scanning).
+        // Try the Wemo device's own network scanner via SOAP.
+        // This may fail if the device is not in setup/AP mode.
+        try {
+          final deviceNetworks = await _controlService.getAvailableNetworks(
+            widget.device,
+          );
+          deviceNetworks.sort(
+            (a, b) => b.signalStrength.compareTo(a.signalStrength),
+          );
+
+          if (mounted) {
+            setState(() {
+              _networks = deviceNetworks;
+              _isScanning = false;
+            });
+          }
+          return;
+        } catch (_) {
+          // Device scan failed (device may not be in setup mode).
+          // Show informational message for manual entry.
+          if (mounted) {
+            setState(() {
+              _networks = [];
+              _isScanning = false;
+              _iosScanUnavailable = true;
+            });
+          }
+          return;
+        }
+      }
+
+      // On Android, use phone's WiFi scanner instead of device SOAP call
       // This works reliably when device is already on the home network
-      
+
       // Check if we can scan
       final canScan = await WiFiScan.instance.canStartScan();
       if (canScan != CanStartScan.yes) {
@@ -413,24 +445,27 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
       // Get results
       final accessPoints = await WiFiScan.instance.getScannedResults();
-      
+
       // Convert to our WifiNetwork model
       final networks = accessPoints
           .where((ap) => ap.ssid.isNotEmpty) // Filter out hidden networks
-          .map((ap) => WifiNetwork(
-                ssid: ap.ssid,
-                channel: _frequencyToChannel(ap.frequency),
-                signalStrength: _levelToPercent(ap.level),
-                authMode: _getAuthMode(ap.capabilities),
-                encryption: _getEncryption(ap.capabilities),
-              ))
+          .map(
+            (ap) => WifiNetwork(
+              ssid: ap.ssid,
+              channel: _frequencyToChannel(ap.frequency),
+              signalStrength: _levelToPercent(ap.level),
+              authMode: _getAuthMode(ap.capabilities),
+              encryption: _getEncryption(ap.capabilities),
+            ),
+          )
           .toList();
 
       // Remove duplicates (same SSID can appear multiple times)
       final uniqueNetworks = <String, WifiNetwork>{};
       for (final network in networks) {
         if (!uniqueNetworks.containsKey(network.ssid) ||
-            uniqueNetworks[network.ssid]!.signalStrength < network.signalStrength) {
+            uniqueNetworks[network.ssid]!.signalStrength <
+                network.signalStrength) {
           uniqueNetworks[network.ssid] = network;
         }
       }
@@ -458,7 +493,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
   /// Request WiFi scan permission (location or nearbyWifiDevices)
   /// Returns true if permission is granted, false otherwise
-  /// 
+  ///
   /// Note: Uses Permission.locationWhenInUse for both iOS and Android
   /// to be consistent with WifiDetectionService. This maps to
   /// ACCESS_FINE_LOCATION on Android which is required for WiFi scanning.
@@ -640,6 +675,39 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
+
+            // iOS limitation banner — always visible on iOS
+            if (Theme.of(context).platform == TargetPlatform.iOS)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Card(
+                  color: Colors.blue.shade50,
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.blue.shade700,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. You need to enter the network SSID manually.',
+                            style: TextStyle(
+                              color: Colors.blue.shade800,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
             if (_isScanning)
               const Center(
                 child: Padding(
@@ -649,17 +717,32 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
               )
             else if (_networks == null || _networks!.isEmpty)
               Card(
+                color: _iosScanUnavailable ? Colors.blue.shade50 : null,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Icon(Icons.wifi_find, size: 48, color: Colors.grey[400]),
+                      Icon(
+                        _iosScanUnavailable
+                            ? Icons.info_outline
+                            : Icons.wifi_find,
+                        size: 48,
+                        color: _iosScanUnavailable
+                            ? Colors.blue.shade400
+                            : Colors.grey[400],
+                      ),
                       const SizedBox(height: 8),
                       Text(
-                        _networks == null
+                        _iosScanUnavailable
+                            ? 'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. Please enter your network name manually below.'
+                            : _networks == null
                             ? 'Tap refresh to scan for networks'
                             : 'Enter your network name below',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(
+                          color: _iosScanUnavailable
+                              ? Colors.blue.shade800
+                              : Colors.grey[600],
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -675,7 +758,8 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: _networks!.length,
-                    separatorBuilder: (context, index) => const Divider(height: 1),
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final network = _networks![index];
                       return ListTile(
@@ -686,10 +770,16 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                           color: _getSignalColor(network.signalStrength),
                           size: 20,
                         ),
-                        title: Text(network.ssid, style: const TextStyle(fontSize: 14)),
+                        title: Text(
+                          network.ssid,
+                          style: const TextStyle(fontSize: 14),
+                        ),
                         subtitle: Text(
                           '${network.authMode} • Ch ${network.channel}',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 11,
+                          ),
                         ),
                         trailing: network.authMode != 'OPEN'
                             ? const Icon(Icons.lock, size: 14)
@@ -863,10 +953,7 @@ class _ResetDialog extends StatefulWidget {
   final WemoDevice device;
   final DeviceControlService controlService;
 
-  const _ResetDialog({
-    required this.device,
-    required this.controlService,
-  });
+  const _ResetDialog({required this.device, required this.controlService});
 
   @override
   State<_ResetDialog> createState() => _ResetDialogState();
@@ -928,15 +1015,17 @@ class _ResetDialogState extends State<_ResetDialog> {
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
-            Text(
-              'This will:',
-              style: TextStyle(color: Colors.grey[700]),
-            ),
+            Text('This will:', style: TextStyle(color: Colors.grey[700])),
             const SizedBox(height: 8),
-            ...warnings.map((w) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(w, style: TextStyle(color: Colors.red.shade700, fontSize: 13)),
-            )),
+            ...warnings.map(
+              (w) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  w,
+                  style: TextStyle(color: Colors.red.shade700, fontSize: 13),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -947,12 +1036,19 @@ class _ResetDialogState extends State<_ResetDialog> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, size: 18, color: Colors.orange.shade700),
+                  Icon(
+                    Icons.info_outline,
+                    size: 18,
+                    color: Colors.orange.shade700,
+                  ),
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
                       'This action cannot be undone.',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -1209,9 +1305,7 @@ class _InfoRow extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/device_provider.dart';
@@ -5,6 +7,23 @@ import 'providers/settings_provider.dart';
 import 'ui/screens/home_screen.dart';
 
 void main() {
+  // Catch errors in the Flutter framework (widget build errors, etc.)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    if (kDebugMode) {
+      debugPrint('[FlutterError] ${details.exceptionAsString()}');
+    }
+  };
+
+  // Catch unhandled async errors (platform-level)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (kDebugMode) {
+      debugPrint('[UnhandledError] $error');
+      debugPrint('$stack');
+    }
+    return true; // Prevent app crash
+  };
+
   runApp(const WemoControlApp());
 }
 
@@ -51,15 +70,11 @@ class WemoControlApp extends StatelessWidget {
       ),
       cardTheme: CardThemeData(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       switchTheme: SwitchThemeData(
@@ -103,15 +118,11 @@ class WemoControlApp extends StatelessWidget {
       cardTheme: CardThemeData(
         elevation: 4,
         color: const Color(0xFF2D2D2D),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       switchTheme: SwitchThemeData(

@@ -330,6 +330,9 @@ class DeviceControlService {
   }
 
   /// Get list of available WiFi networks from device scan
+  ///
+  /// GetApList causes the Wemo device to physically scan nearby WiFi networks,
+  /// which can take 10–15 seconds. A long per-call timeout is intentional.
   Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async {
     try {
       final response = await _soapClient.call(
@@ -338,6 +341,8 @@ class DeviceControlService {
         serviceName: 'WiFiSetup1',
         action: 'GetApList',
         serviceType: WemoConstants.wifiSetupService,
+        requestTimeout: const Duration(seconds: 15),
+        maxRetriesOverride: 2,
       );
 
       final apList = response['ApList'] ?? '';

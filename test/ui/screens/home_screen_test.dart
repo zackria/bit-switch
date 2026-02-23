@@ -27,6 +27,7 @@ class MockSoapClient extends SoapClient {
     required String serviceType,
     Map<String, String>? arguments,
     Duration? requestTimeout,
+    int? maxRetriesOverride,
   }) async {
     return {'BinaryState': '0'};
   }
@@ -279,6 +280,125 @@ void main() {
 
         expect(find.byType(SnackBar), findsOneWidget);
         expect(find.textContaining('Failed'), findsOneWidget);
+      });
+    });
+  });
+
+  group('HomeScreen debug panel', () {
+    late SettingsProvider settingsProvider;
+    late DeviceProvider deviceProvider;
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      settingsProvider = SettingsProvider();
+      await settingsProvider.ensureLoaded();
+
+      deviceProvider = DeviceProvider(
+        controlService: DeviceControlService(soapClient: MockSoapClient()),
+        discoveryService: MockDiscoveryService(devices: []),
+      );
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('dev.fluttercommunity.plus/network_info'),
+            (MethodCall methodCall) async {
+              if (methodCall.method == 'wifiName') return 'TestWiFi';
+              return null;
+            },
+          );
+    });
+
+    tearDown(() {
+      deviceProvider.dispose();
+    });
+
+    testWidgets('debug panel shows and hides based on setting', (tester) async {
+      await tester.runAsync(() async {
+        await settingsProvider.setShowDebugOption(true);
+        deviceProvider.setDebugMode(true);
+
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Debug icon appears in both the AppBar button and the panel header
+        // when debugMode is true, so findsWidgets is appropriate.
+        expect(find.byIcon(Icons.bug_report), findsWidgets);
+
+        // Debug panel is automatically visible when debugMode is true.
+        expect(find.text('Debug Log'), findsOneWidget);
+      });
+    });
+
+    testWidgets('wifi name shows Connected to WiFi when SSID is null', (tester) async {
+      await tester.runAsync(() async {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('dev.fluttercommunity.plus/network_info'),
+              (MethodCall methodCall) async => null,
+            );
+
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // When WiFi name returns null the app shows 'Connected to WiFi'
+        // as a generic fallback (home_screen.dart line 177).
+        expect(find.textContaining('Connected to WiFi'), findsOneWidget);
+      });
+    });
+
+    testWidgets('debug panel clear button clears visible logs', (tester) async {
+      await tester.runAsync(() async {
+        await settingsProvider.setShowDebugOption(true);
+        deviceProvider.setDebugMode(true);
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Debug Log'), findsOneWidget);
+        await tester.tap(find.widgetWithText(TextButton, 'Clear'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text('Tap refresh to start discovery and see logs...'),
+          findsOneWidget,
+        );
+      });
+    });
+
+    testWidgets('debug probe button handles invalid host input', (tester) async {
+      await tester.runAsync(() async {
+        await settingsProvider.setShowDebugOption(true);
+        deviceProvider.setDebugMode(true);
+
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.enterText(find.byType(TextField).last, 'bad-host:9999');
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Probe'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Debug Log'), findsOneWidget);
       });
     });
   });

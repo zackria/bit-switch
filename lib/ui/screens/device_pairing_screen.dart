@@ -69,9 +69,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 ),
                 const Divider(),
                 // Step content
-                Expanded(
-                  child: _buildStepContent(context, provider),
-                ),
+                Expanded(child: _buildStepContent(context, provider)),
               ],
             );
           },
@@ -278,7 +276,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 color: theme.colorScheme.primaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.wifi, size: 64, color: theme.colorScheme.primary),
+              child: Icon(
+                Icons.wifi,
+                size: 64,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -305,10 +307,9 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 children: [
                   Icon(
                     state.isOnWemoAp ? Icons.check_circle : Icons.wifi_find,
-                    color:
-                        state.isOnWemoAp
-                            ? Colors.green
-                            : theme.colorScheme.primary,
+                    color: state.isOnWemoAp
+                        ? Colors.green
+                        : theme.colorScheme.primary,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -463,10 +464,9 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed:
-                    _manualIpController.text.isNotEmpty
-                        ? () => provider.tryManualIp(_manualIpController.text)
-                        : null,
+                onPressed: _manualIpController.text.isNotEmpty
+                    ? () => provider.tryManualIp(_manualIpController.text)
+                    : null,
                 icon: const Icon(Icons.connect_without_contact),
                 label: const Text('Connect to IP'),
               ),
@@ -530,18 +530,49 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.refresh),
-                onPressed:
-                    state.isLoading ? null : () => provider.refreshNetworks(),
+                onPressed: state.isLoading
+                    ? null
+                    : () => provider.refreshNetworks(),
                 tooltip: 'Refresh networks',
               ),
             ],
           ),
         ),
 
+        // iOS limitation banner
+        if (Theme.of(context).platform == TargetPlatform.iOS)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Card(
+              color: Colors.blue.shade50,
+              margin: EdgeInsets.zero,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: Colors.blue.shade700,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. You may need to enter the network SSID manually.',
+                        style: TextStyle(
+                          color: Colors.blue.shade800,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
         if (state.isLoading && state.availableNetworks.isEmpty)
-          const Expanded(
-            child: Center(child: CircularProgressIndicator()),
-          )
+          const Expanded(child: Center(child: CircularProgressIndicator()))
         else if (state.availableNetworks.isEmpty)
           Expanded(
             child: Center(
@@ -555,6 +586,20 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                   ),
                   const SizedBox(height: 16),
                   const Text('No networks found'),
+                  if (state.errorMessage != null) ...[
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        state.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: theme.colorScheme.error,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () => provider.refreshNetworks(),
@@ -568,7 +613,8 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: state.availableNetworks.length + 1, // +1 for manual entry
+              itemCount:
+                  state.availableNetworks.length + 1, // +1 for manual entry
               itemBuilder: (context, index) {
                 if (index == state.availableNetworks.length) {
                   // Manual SSID entry option
@@ -629,10 +675,9 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
-                    onPressed:
-                        (state.password?.isNotEmpty ?? false)
-                            ? () => provider.configureNetwork()
-                            : null,
+                    onPressed: (state.password?.isNotEmpty ?? false)
+                        ? () => provider.configureNetwork()
+                        : null,
                     icon: const Icon(Icons.arrow_forward),
                     label: const Text('Connect'),
                   ),
@@ -685,13 +730,12 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 ),
                 const SizedBox(width: 8),
                 FilledButton(
-                  onPressed:
-                      _manualSsidController.text.isNotEmpty
-                          ? () {
-                            provider.selectNetwork(_manualSsidController.text);
-                            setState(() => _showManualSsid = false);
-                          }
-                          : null,
+                  onPressed: _manualSsidController.text.isNotEmpty
+                      ? () {
+                          provider.selectNetwork(_manualSsidController.text);
+                          setState(() => _showManualSsid = false);
+                        }
+                      : null,
                   child: const Text('Use This Network'),
                 ),
               ],
@@ -752,7 +796,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 color: theme.colorScheme.primaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.home, size: 64, color: theme.colorScheme.primary),
+              child: Icon(
+                Icons.home,
+                size: 64,
+                color: theme.colorScheme.primary,
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -779,11 +827,12 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
               child: Row(
                 children: [
                   Icon(
-                    state.isOnHomeNetwork ? Icons.check_circle : Icons.wifi_find,
-                    color:
-                        state.isOnHomeNetwork
-                            ? Colors.green
-                            : theme.colorScheme.primary,
+                    state.isOnHomeNetwork
+                        ? Icons.check_circle
+                        : Icons.wifi_find,
+                    color: state.isOnHomeNetwork
+                        ? Colors.green
+                        : theme.colorScheme.primary,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -955,7 +1004,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
               color: theme.colorScheme.error,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.error_outline, size: 64, color: Colors.white),
+            child: const Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 32),
 

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bit_switch/services/wifi_detection_service.dart';
 
@@ -152,5 +153,250 @@ void main() {
         expect(stream, isA<Stream<String?>>());
       });
     });
+
+    group('platform-specific permission branches', () {
+      test('iOS permission flow: permanently denied returns null', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.permanentlyDenied,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final result = await service.requestLocationPermission();
+        expect(result, isNull);
+      });
+
+      test('iOS permission flow: granted status short-circuits true', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.granted,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final result = await service.requestLocationPermission();
+        expect(result, isTrue);
+      });
+
+      test('iOS permission flow: request denied returns false', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.denied,
+            locationRequestResult: PermissionStatus.denied,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final result = await service.requestLocationPermission();
+        expect(result, isFalse);
+      });
+
+      test('Android permission flow: nearby granted returns true', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            nearbyRequestResult: PermissionStatus.granted,
+          ),
+          isIOSOverride: false,
+          isAndroidOverride: true,
+        );
+
+        final result = await service.requestLocationPermission();
+        expect(result, isTrue);
+      });
+
+      test('Android permission flow: nearby permanently denied returns null', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            nearbyRequestResult: PermissionStatus.permanentlyDenied,
+          ),
+          isIOSOverride: false,
+          isAndroidOverride: true,
+        );
+
+        final result = await service.requestLocationPermission();
+        expect(result, isNull);
+      });
+
+      test('Android permission flow: fallback to location request', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            nearbyRequestResult: PermissionStatus.denied,
+            locationRequestResult: PermissionStatus.granted,
+          ),
+          isIOSOverride: false,
+          isAndroidOverride: true,
+        );
+
+        final result = await service.requestLocationPermission();
+        expect(result, isTrue);
+      });
+
+      test('hasLocationPermission Android uses nearby status first', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            nearbyStatus: PermissionStatus.granted,
+          ),
+          isIOSOverride: false,
+          isAndroidOverride: true,
+        );
+
+        expect(await service.hasLocationPermission(), isTrue);
+      });
+
+      test('hasLocationPermission Android uses location + service enabled', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            nearbyStatus: PermissionStatus.denied,
+            locationStatus: PermissionStatus.granted,
+            serviceStatus: ServiceStatus.enabled,
+          ),
+          isIOSOverride: false,
+          isAndroidOverride: true,
+        );
+
+        expect(await service.hasLocationPermission(), isTrue);
+      });
+
+      test('hasLocationPermission Android returns false when service disabled', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            nearbyStatus: PermissionStatus.denied,
+            locationStatus: PermissionStatus.granted,
+            serviceStatus: ServiceStatus.disabled,
+          ),
+          isIOSOverride: false,
+          isAndroidOverride: true,
+        );
+
+        expect(await service.hasLocationPermission(), isFalse);
+      });
+
+      test('hasLocationPermission iOS returns granted state', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.granted,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        expect(await service.hasLocationPermission(), isTrue);
+      });
+    });
+
+    group('getCurrentSsid branches', () {
+      test('returns cleaned SSID when quotes are present', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(ssid: '"MyWifi"'),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.granted,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final ssid = await service.getCurrentSsid(requestPermission: false);
+        expect(ssid, 'MyWifi');
+      });
+
+      test('returns null for unknown SSID marker', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(ssid: '<unknown ssid>'),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.granted,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final ssid = await service.getCurrentSsid(requestPermission: false);
+        expect(ssid, isNull);
+      });
+
+      test('returns null when permission is not granted', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(ssid: 'MyWifi'),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.denied,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final ssid = await service.getCurrentSsid(requestPermission: false);
+        expect(ssid, isNull);
+      });
+
+      test('returns null when permission request returns null', () async {
+        final service = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(ssid: 'MyWifi'),
+          permissionDelegate: _FakePermissionDelegate(
+            locationStatus: PermissionStatus.denied,
+            locationRequestResult: PermissionStatus.permanentlyDenied,
+          ),
+          isIOSOverride: true,
+          isAndroidOverride: false,
+        );
+
+        final ssid = await service.getCurrentSsid(requestPermission: true);
+        expect(ssid, isNull);
+      });
+    });
   });
+}
+
+class _FakeWifiInfoDelegate extends WifiInfoDelegate {
+  final String? ssid;
+
+  _FakeWifiInfoDelegate({this.ssid});
+
+  @override
+  Future<String?> getWifiName() async => ssid;
+}
+
+class _FakePermissionDelegate extends WifiPermissionDelegate {
+  final PermissionStatus locationStatus;
+  final PermissionStatus locationRequestResult;
+  final PermissionStatus nearbyStatus;
+  final PermissionStatus nearbyRequestResult;
+  final ServiceStatus serviceStatus;
+
+  _FakePermissionDelegate({
+    this.locationStatus = PermissionStatus.denied,
+    this.locationRequestResult = PermissionStatus.denied,
+    this.nearbyStatus = PermissionStatus.denied,
+    this.nearbyRequestResult = PermissionStatus.denied,
+    this.serviceStatus = ServiceStatus.enabled,
+  });
+
+  @override
+  Future<PermissionStatus> getLocationWhenInUseStatus() async => locationStatus;
+
+  @override
+  Future<PermissionStatus> requestLocationWhenInUse() async =>
+      locationRequestResult;
+
+  @override
+  Future<PermissionStatus> getNearbyWifiDevicesStatus() async => nearbyStatus;
+
+  @override
+  Future<PermissionStatus> requestNearbyWifiDevices() async =>
+      nearbyRequestResult;
+
+  @override
+  Future<ServiceStatus> getLocationServiceStatus() async => serviceStatus;
 }

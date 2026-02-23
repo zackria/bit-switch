@@ -5,6 +5,37 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../core/constants.dart';
 
+abstract class WifiInfoDelegate {
+  Future<String?> getWifiName();
+}
+
+class NetworkInfoDelegate implements WifiInfoDelegate {
+  final NetworkInfo _networkInfo;
+
+  NetworkInfoDelegate([NetworkInfo? networkInfo])
+    : _networkInfo = networkInfo ?? NetworkInfo();
+
+  @override
+  Future<String?> getWifiName() => _networkInfo.getWifiName();
+}
+
+class WifiPermissionDelegate {
+  Future<PermissionStatus> getLocationWhenInUseStatus() =>
+      Permission.locationWhenInUse.status;
+
+  Future<PermissionStatus> requestLocationWhenInUse() =>
+      Permission.locationWhenInUse.request();
+
+  Future<PermissionStatus> getNearbyWifiDevicesStatus() =>
+      Permission.nearbyWifiDevices.status;
+
+  Future<PermissionStatus> requestNearbyWifiDevices() =>
+      Permission.nearbyWifiDevices.request();
+
+  Future<ServiceStatus> getLocationServiceStatus() =>
+      Permission.location.serviceStatus;
+}
+
 /// Service for detecting the current WiFi network and opening WiFi settings
 ///
 /// Handles platform-specific permission requirements for accessing WiFi SSID:
@@ -12,12 +43,27 @@ import '../core/constants.dart';
 /// - Android <13: Location permission required
 /// - Android 13+: NEARBY_WIFI_DEVICES or Location permission
 class WifiDetectionService {
-  final NetworkInfo _networkInfo;
+  final WifiInfoDelegate _wifiInfoDelegate;
+  final WifiPermissionDelegate _permissionDelegate;
+  final bool? _isIOSOverride;
+  final bool? _isAndroidOverride;
   bool _permissionRequested = false;
   bool _hasPermission = false;
 
-  WifiDetectionService({NetworkInfo? networkInfo})
-    : _networkInfo = networkInfo ?? NetworkInfo();
+  WifiDetectionService({
+    WifiInfoDelegate? wifiInfoDelegate,
+    NetworkInfo? networkInfo,
+    WifiPermissionDelegate? permissionDelegate,
+    bool? isIOSOverride,
+    bool? isAndroidOverride,
+  }) : _wifiInfoDelegate =
+           wifiInfoDelegate ?? NetworkInfoDelegate(networkInfo),
+       _permissionDelegate = permissionDelegate ?? WifiPermissionDelegate(),
+       _isIOSOverride = isIOSOverride,
+       _isAndroidOverride = isAndroidOverride;
+
+  bool get _isIOS => _isIOSOverride ?? Platform.isIOS;
+  bool get _isAndroid => _isAndroidOverride ?? Platform.isAndroid;
 
   /// Log message only in debug mode
   void _log(String message) {
@@ -36,8 +82,9 @@ class WifiDetectionService {
     }
 
     try {
-      if (Platform.isIOS) {
-        final currentStatus = await Permission.locationWhenInUse.status;
+      if (_isIOS) {
+        final currentStatus =
+            await _permissionDelegate.getLocationWhenInUseStatus();
         _log('iOS location status: $currentStatus');
 
         if (currentStatus.isPermanentlyDenied) {
@@ -52,7 +99,7 @@ class WifiDetectionService {
         }
 
         _log('Requesting iOS location permission...');
-        final status = await Permission.locationWhenInUse.request();
+        final status = await _permissionDelegate.requestLocationWhenInUse();
         _log('iOS location permission result: $status');
         _permissionRequested = true;
         _hasPermission = status.isGranted;
@@ -62,9 +109,9 @@ class WifiDetectionService {
         }
 
         return _hasPermission;
-      } else if (Platform.isAndroid) {
+      } else if (_isAndroid) {
         _log('Requesting Android permissions...');
-        final nearbyStatus = await Permission.nearbyWifiDevices.request();
+        final nearbyStatus = await _permissionDelegate.requestNearbyWifiDevices();
         _log('NEARBY_WIFI_DEVICES result: $nearbyStatus');
 
         if (nearbyStatus.isGranted) {
@@ -77,7 +124,7 @@ class WifiDetectionService {
           return null;
         }
 
-        final locationStatus = await Permission.locationWhenInUse.request();
+        final locationStatus = await _permissionDelegate.requestLocationWhenInUse();
         _log('Android location result: $locationStatus');
         _permissionRequested = true;
         _hasPermission = locationStatus.isGranted;
@@ -102,19 +149,20 @@ class WifiDetectionService {
   /// Check if we have location permission without requesting it
   Future<bool> hasLocationPermission() async {
     try {
-      if (Platform.isIOS) {
-        final status = await Permission.locationWhenInUse.status;
+      if (_isIOS) {
+        final status = await _permissionDelegate.getLocationWhenInUseStatus();
         _log('iOS permission status: ${status.isGranted}');
         return status.isGranted;
-      } else if (Platform.isAndroid) {
-        final nearbyStatus = await Permission.nearbyWifiDevices.status;
+      } else if (_isAndroid) {
+        final nearbyStatus = await _permissionDelegate.getNearbyWifiDevicesStatus();
         if (nearbyStatus.isGranted) {
           _log('Android NEARBY_WIFI_DEVICES granted');
           return true;
         }
 
-        final locationStatus = await Permission.locationWhenInUse.status;
-        final serviceStatus = await Permission.location.serviceStatus;
+        final locationStatus =
+            await _permissionDelegate.getLocationWhenInUseStatus();
+        final serviceStatus = await _permissionDelegate.getLocationServiceStatus();
         _log('Android location: $locationStatus, service: $serviceStatus');
         return locationStatus.isGranted && serviceStatus.isEnabled;
       }
@@ -133,7 +181,7 @@ class WifiDetectionService {
     try {
       _log('getCurrentSsid called (requestPermission: $requestPermission)');
 
-      if (Platform.isIOS || Platform.isAndroid) {
+      if (_isIOS || _isAndroid) {
         if (requestPermission && !_hasPermission) {
           _log('Requesting permission (cached: $_hasPermission)');
           final granted = await requestLocationPermission();
@@ -151,7 +199,7 @@ class WifiDetectionService {
       }
 
       _log('Calling NetworkInfo.getWifiName()...');
-      final ssid = await _networkInfo.getWifiName();
+      final ssid = await _wifiInfoDelegate.getWifiName();
       _log('getWifiName() returned: $ssid');
 
       if (ssid != null && ssid != '<unknown ssid>') {

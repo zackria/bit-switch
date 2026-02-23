@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:xml/xml.dart';
 import 'constants.dart';
 import 'exceptions.dart';
@@ -84,6 +85,9 @@ class SoapClient {
   }
 
   /// Send a SOAP request to a Wemo device with retry logic
+  ///
+  /// [requestTimeout] overrides the instance-level timeout for this call only.
+  /// [maxRetriesOverride] overrides the instance-level maxRetries for this call only.
   Future<Map<String, String>> call({
     required String host,
     required int port,
@@ -92,6 +96,7 @@ class SoapClient {
     required String serviceType,
     Map<String, String>? arguments,
     Duration? requestTimeout,
+    int? maxRetriesOverride,
   }) async {
     final url = Uri.parse('http://$host:$port${WemoConstants.controlPath}/$serviceName');
     final envelope = buildSoapEnvelope(
@@ -101,9 +106,14 @@ class SoapClient {
     );
 
     final effectiveTimeout = requestTimeout ?? timeout;
+    final effectiveRetries = maxRetriesOverride ?? maxRetries;
     Exception? lastException;
 
-    for (int attempt = 0; attempt < maxRetries; attempt++) {
+    if (kDebugMode) {
+      debugPrint('[SoapClient] $action → $url (timeout=${effectiveTimeout.inSeconds}s, retries=$effectiveRetries)');
+    }
+
+    for (int attempt = 0; attempt < effectiveRetries; attempt++) {
       try {
         final result = await _performRequest(
           url: url,
@@ -112,24 +122,32 @@ class SoapClient {
           serviceType: serviceType,
           timeout: effectiveTimeout,
         );
+        if (kDebugMode) debugPrint('[SoapClient] $action success on attempt ${attempt + 1}');
         return result;
-      } on SoapException {
+      } on SoapException catch (e) {
         // Don't retry SOAP faults - these are application-level errors
+        if (kDebugMode) debugPrint('[SoapClient] $action SOAP fault (no retry): ${e.runtimeType}: $e');
         rethrow;
       } catch (e) {
         lastException = e is Exception ? e : Exception(e.toString());
+        if (kDebugMode) {
+          debugPrint('[SoapClient] $action attempt ${attempt + 1}/$effectiveRetries failed: ${e.runtimeType}: $e');
+        }
         // Wait before retrying, but not on the last attempt
-        if (attempt < maxRetries - 1) {
+        if (attempt < effectiveRetries - 1) {
           await Future.delayed(retryDelay);
         }
       }
     }
 
+    if (kDebugMode) {
+      debugPrint('[SoapClient] $action exhausted all $effectiveRetries retries. Last error: $lastException');
+    }
     throw NetworkException(
-      'Failed to call $action after $maxRetries attempts',
+      'Failed to call $action after $effectiveRetries attempts',
       host: host,
       port: port,
-      attemptCount: maxRetries,
+      attemptCount: effectiveRetries,
       cause: lastException,
     );
   }

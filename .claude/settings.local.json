@@ -13,7 +13,14 @@
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter analyze:*)",
       "Bash(/Users/zackdawood/Documents/flutter/flutter/bin/flutter test:*)",
       "Bash(dart analyze:*)",
-      "Bash(fvm flutter analyze:*)"
+      "Bash(fvm flutter analyze:*)",
+      "Bash(tail:*)",
+      "Bash(export PATH=\"$PATH:$HOME/flutter/bin:/usr/local/bin\" && flutter analyze lib/core/soap_client.dart lib/providers/pairing_provider.dart 2>&1)",
+      "Bash(source:*)",
+      "Bash(export PATH=\"$PATH:/Users/zackdawood/flutter/bin:/usr/local/bin\" && which flutter && flutter test test/ui/screens/device_pairing_screen_test.dart --no-pub 2>&1)",
+      "Bash(grep:*)",
+      "Bash(ls /Users/zackdawood/.zsh_sessions/ 2>/dev/null | head -3 && cat /Users/zackdawood/.zsh_sessions/*.history 2>/dev/null | grep \"flutter test\" | head -5 || echo \"no history\")",
+      "Bash(echo not found:*)"
     ]
   }
 }

@@ -332,11 +332,18 @@ void main() {
         await tester.pumpAndSettle();
       });
 
+      // Scroll down to bring the tile into the viewport
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+
       // Tap the "Show Debug Mode" tile, which triggers SwitchListTile.onChanged.
       // The tile text tap is more reliable than find.byType(Switch) because it
       // hits the ListTile onTap handler directly.
-      await tester.tap(find.text('Show Debug Mode'));
-      await tester.pump(); // runs onChanged up to first await; _showDebugOption = false
+      final debugTile = find.text('Show Debug Mode');
+      await tester.ensureVisible(debugTile);
+      await tester.tap(debugTile);
+      await tester
+          .pump(); // runs onChanged up to first await; _showDebugOption = false
 
       // The onChanged handler awaits setShowDebugOption (which calls
       // SharedPreferences.getInstance() internally). Allow those async
@@ -425,14 +432,19 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Permission granted! WiFi name: HomeNet'), findsOneWidget);
+      expect(
+        find.textContaining('Permission granted! WiFi name: HomeNet'),
+        findsOneWidget,
+      );
       expect(wifiService.requestPermissionCalls, 1);
       expect(wifiService.getCurrentSsidCalls, greaterThan(0));
 
       deviceProvider.dispose();
     });
 
-    testWidgets('permanently denied flow opens settings callback', (tester) async {
+    testWidgets('permanently denied flow opens settings callback', (
+      tester,
+    ) async {
       final settingsProvider = SettingsProvider();
       final deviceProvider = DeviceProvider(
         controlService: DeviceControlService(soapClient: MockSoapClient()),
@@ -518,7 +530,60 @@ void main() {
       deviceProvider.dispose();
     });
 
-    testWidgets('local network missing flow shows fix dialog and open settings', (
+    testWidgets(
+      'local network missing flow shows fix dialog and open settings',
+      (tester) async {
+        final settingsProvider = SettingsProvider();
+        final deviceProvider = DeviceProvider(
+          controlService: DeviceControlService(soapClient: MockSoapClient()),
+          discoveryService: DeviceDiscoveryService(
+            ssdpClient: MockSsdpClient(),
+          ),
+        );
+        final wifiService = TestWifiDetectionService(
+          hasPermissionResult: true,
+          currentSsidResult: null,
+        );
+        var openSettingsCalls = 0;
+        await settingsProvider.ensureLoaded();
+
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: MaterialApp(
+              home: SettingsScreen(
+                wifiService: wifiService,
+                isMobilePlatform: true,
+                isIOSPlatform: true,
+                openAppSettings: () async {
+                  openSettingsCalls++;
+                },
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Enable Local Network in Settings'), findsOneWidget);
+        expect(find.text('Local Network permission needed'), findsOneWidget);
+        expect(find.widgetWithText(OutlinedButton, 'Fix'), findsOneWidget);
+
+        await tester.tap(find.text('Current Network'));
+        await tester.pumpAndSettle();
+        expect(find.text('Additional Permission Needed'), findsOneWidget);
+
+        await tester.tap(find.text('Open Settings'));
+        await tester.pumpAndSettle();
+        expect(openSettingsCalls, 1);
+
+        deviceProvider.dispose();
+      },
+    );
+
+    testWidgets('permission info dialog opens from status tile tap', (
       tester,
     ) async {
       final settingsProvider = SettingsProvider();
@@ -526,57 +591,7 @@ void main() {
         controlService: DeviceControlService(soapClient: MockSoapClient()),
         discoveryService: DeviceDiscoveryService(ssdpClient: MockSsdpClient()),
       );
-      final wifiService = TestWifiDetectionService(
-        hasPermissionResult: true,
-        currentSsidResult: null,
-      );
-      var openSettingsCalls = 0;
-      await settingsProvider.ensureLoaded();
-
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(value: settingsProvider),
-            ChangeNotifierProvider.value(value: deviceProvider),
-          ],
-          child: MaterialApp(
-            home: SettingsScreen(
-              wifiService: wifiService,
-              isMobilePlatform: true,
-              isIOSPlatform: true,
-              openAppSettings: () async {
-                openSettingsCalls++;
-              },
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Enable Local Network in Settings'), findsOneWidget);
-      expect(find.text('Local Network permission needed'), findsOneWidget);
-      expect(find.widgetWithText(OutlinedButton, 'Fix'), findsOneWidget);
-
-      await tester.tap(find.text('Current Network'));
-      await tester.pumpAndSettle();
-      expect(find.text('Additional Permission Needed'), findsOneWidget);
-
-      await tester.tap(find.text('Open Settings'));
-      await tester.pumpAndSettle();
-      expect(openSettingsCalls, 1);
-
-      deviceProvider.dispose();
-    });
-
-    testWidgets('permission info dialog opens from status tile tap', (tester) async {
-      final settingsProvider = SettingsProvider();
-      final deviceProvider = DeviceProvider(
-        controlService: DeviceControlService(soapClient: MockSoapClient()),
-        discoveryService: DeviceDiscoveryService(ssdpClient: MockSsdpClient()),
-      );
-      final wifiService = TestWifiDetectionService(
-        hasPermissionResult: false,
-      );
+      final wifiService = TestWifiDetectionService(hasPermissionResult: false);
       await settingsProvider.ensureLoaded();
 
       await tester.pumpWidget(
@@ -643,7 +658,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.textContaining('Location granted, but Local Network permission also needed'),
+        find.textContaining(
+          'Location granted, but Local Network permission also needed',
+        ),
         findsOneWidget,
       );
       deviceProvider.dispose();

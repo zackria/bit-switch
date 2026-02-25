@@ -260,9 +260,11 @@ void main() {
       final client = SsdpClient();
       final logs = <String>[];
       final portCompleter = Completer<int>();
+      const testST = 'urn:bit-switch:test:1';
 
       final stream = client.discover(
         timeout: const Duration(milliseconds: 600),
+        searchTarget: testST,
         onDebugLog: (msg) {
           logs.add(msg);
           if (!portCompleter.isCompleted && msg.startsWith('Socket bound to port ')) {
@@ -285,23 +287,31 @@ void main() {
       final response1 = _buildResponse(
         location: 'http://127.0.0.1:49153/setup.xml',
         usn: 'uuid:Socket-1_0-AAAA',
+        st: testST,
       );
       final response2 = _buildResponse(
         // Different URL but same host:port, should be deduplicated.
         location: 'http://127.0.0.1:49153/alt.xml',
         usn: 'uuid:Socket-1_0-BBBB',
+        st: testST,
       );
 
       sender.send(response1.codeUnits, InternetAddress.loopbackIPv4, targetPort);
       sender.send(response2.codeUnits, InternetAddress.loopbackIPv4, targetPort);
 
-      await Future.delayed(const Duration(milliseconds: 900));
+      // Wait enough for the yield to happen. With non-blocking fix, this is fast.
+      await Future.delayed(const Duration(milliseconds: 200));
       await sub.cancel();
       sender.close();
 
-      expect(collected.length, 1);
-      expect(collected.first.host, '127.0.0.1');
-      expect(collected.first.port, 49153);
+      // We might still see real devices if they respond to broadcast, 
+      // so we filter for our specific test device if needed, 
+      // but with custom ST they shouldn't respond to M-SEARCH.
+      final testResults = collected.where((r) => r.host == '127.0.0.1').toList();
+
+      expect(testResults.length, 1);
+      expect(testResults.first.host, '127.0.0.1');
+      expect(testResults.first.port, 49153);
       expect(
         logs.any((m) => m.contains('Duplicate (127.0.0.1:49153)')),
         isTrue,
@@ -312,9 +322,11 @@ void main() {
       final client = SsdpClient();
       final logs = <String>[];
       final portCompleter = Completer<int>();
+      const testST = 'urn:bit-switch:test:2';
 
       final stream = client.discover(
         timeout: const Duration(milliseconds: 450),
+        searchTarget: testST,
         onDebugLog: (msg) {
           logs.add(msg);
           if (!portCompleter.isCompleted && msg.startsWith('Socket bound to port ')) {
@@ -341,7 +353,10 @@ void main() {
       await sub.cancel();
       sender.close();
 
-      expect(collected, isEmpty);
+      // Filter for our mock device on loopback
+      final testResults = collected.where((r) => r.host == '127.0.0.1').toList();
+
+      expect(testResults, isEmpty);
       expect(logs.any((m) => m.contains('Non-Wemo response (filtered)')), isTrue);
     });
   });
@@ -410,11 +425,15 @@ void main() {
   });
 }
 
-String _buildResponse({required String location, required String usn}) {
+String _buildResponse({
+  required String location,
+  required String usn,
+  String st = 'urn:Belkin:service:basicevent:1',
+}) {
   return 'HTTP/1.1 200 OK\r\n'
       'LOCATION: $location\r\n'
       'SERVER: Linux/2.6.21, UPnP/1.0, Belkin/1.0\r\n'
-      'ST: urn:Belkin:service:basicevent:1\r\n'
+      'ST: $st\r\n'
       'USN: $usn::urn:Belkin:service:basicevent:1\r\n'
       '\r\n';
 }

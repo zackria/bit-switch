@@ -288,30 +288,32 @@ class DeviceDetailScreen extends StatelessWidget {
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Device Information',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            _InfoRow(label: 'Name', value: device.name),
-            _InfoRow(label: 'Type', value: device.type.displayName),
-            _InfoRow(label: 'Host', value: '${device.host}:${device.port}'),
-            if (device.manufacturer != null)
-              _InfoRow(label: 'Manufacturer', value: device.manufacturer!),
-            if (device.model != null)
-              _InfoRow(label: 'Model', value: device.model!),
-            if (device.serialNumber != null)
-              _InfoRow(label: 'Serial', value: device.serialNumber!),
-            if (device.firmwareVersion != null)
-              _InfoRow(label: 'Firmware', value: device.firmwareVersion!),
-            if (device.macAddress != null)
-              _InfoRow(label: 'MAC', value: device.macAddress!),
-            const SizedBox(height: 24),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Device Information',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              _InfoRow(label: 'Name', value: device.name),
+              _InfoRow(label: 'Type', value: device.type.displayName),
+              _InfoRow(label: 'Host', value: '${device.host}:${device.port}'),
+              if (device.manufacturer != null)
+                _InfoRow(label: 'Manufacturer', value: device.manufacturer!),
+              if (device.model != null)
+                _InfoRow(label: 'Model', value: device.model!),
+              if (device.serialNumber != null)
+                _InfoRow(label: 'Serial', value: device.serialNumber!),
+              if (device.firmwareVersion != null)
+                _InfoRow(label: 'Firmware', value: device.firmwareVersion!),
+              if (device.macAddress != null)
+                _InfoRow(label: 'MAC', value: device.macAddress!),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

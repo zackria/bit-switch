@@ -280,34 +280,52 @@ MX: $mx\r
         cancelOnError: false,
       );
 
-      // Send M-SEARCH requests with robust retry
-      final bytesSent = await _sendDiscoveryRequests(
+      // Start sending discovery requests in the background to allow immediate yielding
+      final doneSending = Completer<void>();
+      _sendDiscoveryRequests(
         socket: socket,
         request: request,
         multicastAddress: multicastAddress,
         log: log,
-      );
-
-      if (bytesSent == 0) {
-        log('ERROR: 0 bytes sent after all attempts');
-        socket.close();
-        throw DiscoveryException(
-          'Failed to send discovery request. Network may be unavailable.',
-          cause: null,
-        );
-      }
-
-      log('Total bytes sent: $bytesSent');
-
-      // Start timeout AFTER all requests are sent
-      timer = Timer(timeout, () {
-        log('Discovery timeout reached');
-        controller.close();
+      ).then((bytesSent) {
+        if (bytesSent == 0 && validCount == 0) {
+          log('ERROR: 0 bytes sent after all attempts');
+          // If we haven't found anything and sending failed completely, report error
+          if (!controller.isClosed) {
+            controller.addError(
+              DiscoveryException(
+                'Failed to send discovery request. Network may be unavailable.',
+                cause: null,
+              ),
+            );
+            controller.close();
+          }
+        } else {
+          log('Total bytes sent: $bytesSent');
+          // Start timeout AFTER all requests are sent
+          timer = Timer(timeout, () {
+            log('Discovery timeout reached');
+            if (!controller.isClosed) {
+              controller.close();
+            }
+          });
+        }
+        doneSending.complete();
+      }).catchError((e) {
+        if (!controller.isClosed) {
+          controller.addError(e);
+          controller.close();
+        }
+        doneSending.complete();
       });
 
+      // Process and yield discovered devices as they come in
       await for (final response in controller.stream) {
         yield response;
       }
+
+      // Ensure sending is complete before finishing the attempt
+      await doneSending.future;
       log(
         'Discovery complete: $validCount devices from $responseCount packets',
       );

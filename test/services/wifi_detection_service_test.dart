@@ -11,7 +11,10 @@ void main() {
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
-      service = WifiDetectionService();
+      service = WifiDetectionService(
+        wifiInfoDelegate: _FakeWifiInfoDelegate(ssid: 'TestSSID'),
+        permissionDelegate: _FakePermissionDelegate(),
+      );
     });
 
     group('requestLocationPermission', () {

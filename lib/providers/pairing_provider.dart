@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:app_settings/app_settings.dart';
 import '../core/constants.dart';
 import '../models/pairing_state.dart';
@@ -7,12 +8,14 @@ import '../models/wemo_device.dart';
 import '../services/device_control_service.dart';
 import '../services/device_discovery_service.dart';
 import '../services/wifi_detection_service.dart';
+import '../l10n/app_localizations.dart';
 
 /// Provider for managing the device pairing wizard state
 class PairingProvider extends ChangeNotifier {
   final DeviceControlService _controlService;
   final DeviceDiscoveryService _discoveryService;
   final WifiDetectionService _wifiService;
+  final AppLocalizations _l10n;
 
   PairingState _state = PairingState.initial();
   StreamSubscription<String?>? _ssidSubscription;
@@ -22,9 +25,11 @@ class PairingProvider extends ChangeNotifier {
     DeviceControlService? controlService,
     DeviceDiscoveryService? discoveryService,
     WifiDetectionService? wifiService,
+    AppLocalizations? localizations,
   }) : _controlService = controlService ?? DeviceControlService(),
        _discoveryService = discoveryService ?? DeviceDiscoveryService(),
-       _wifiService = wifiService ?? WifiDetectionService();
+       _wifiService = wifiService ?? WifiDetectionService(),
+       _l10n = localizations ?? lookupAppLocalizations(const Locale('en'));
 
   /// Current pairing state
   PairingState get state => _state;
@@ -97,9 +102,7 @@ class PairingProvider extends ChangeNotifier {
       await AppSettings.openAppSettings(type: AppSettingsType.wifi);
     } catch (e) {
       // Fallback - just inform user to do it manually
-      _state = _state.copyWith(
-        errorMessage: 'Could not open WiFi settings. Please open them manually.',
-      );
+      _state = _state.copyWith(errorMessage: _l10n.pairingErrorOpenWifi);
       notifyListeners();
     }
   }
@@ -110,7 +113,10 @@ class PairingProvider extends ChangeNotifier {
 
     // Update current SSID
     final currentSsid = await _wifiService.getCurrentSsid();
-    if (kDebugMode) debugPrint('[Pairing] confirmConnectedToDeviceAp: currentSsid=$currentSsid homeNetworkSsid=${_state.homeNetworkSsid}');
+    if (kDebugMode)
+      debugPrint(
+        '[Pairing] confirmConnectedToDeviceAp: currentSsid=$currentSsid homeNetworkSsid=${_state.homeNetworkSsid}',
+      );
 
     _state = _state.copyWith(currentSsid: currentSsid);
 
@@ -118,13 +124,14 @@ class PairingProvider extends ChangeNotifier {
     // early with a clear message rather than silently discovering the wrong device.
     final homeNet = _state.homeNetworkSsid;
     if (homeNet != null && currentSsid == homeNet) {
-      if (kDebugMode) debugPrint('[Pairing] Still on home network "$homeNet" — aborting discovery');
+      if (kDebugMode)
+        debugPrint(
+          '[Pairing] Still on home network "$homeNet" — aborting discovery',
+        );
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
-        errorMessage:
-            'Your phone is still connected to "$homeNet". '
-            'Please open WiFi settings, connect to the WeMo device network, then try again.',
+        errorMessage: _l10n.pairingErrorStillOnHome(homeNet),
       );
       notifyListeners();
       return;
@@ -133,7 +140,7 @@ class PairingProvider extends ChangeNotifier {
     _state = _state.copyWith(
       step: PairingStep.discoverDevice,
       isLoading: true,
-      loadingMessage: 'Looking for device...',
+      loadingMessage: _l10n.pairingLoadingLooking,
     );
     notifyListeners();
 
@@ -144,7 +151,9 @@ class PairingProvider extends ChangeNotifier {
   /// Discover device on the Wemo AP network
   Future<void> _discoverDeviceOnAp() async {
     if (kDebugMode) {
-      debugPrint('[Pairing] _discoverDeviceOnAp: probing ${WemoConstants.wemoApDefaultIp} ports ${WemoConstants.devicePorts}');
+      debugPrint(
+        '[Pairing] _discoverDeviceOnAp: probing ${WemoConstants.wemoApDefaultIp} ports ${WemoConstants.devicePorts}',
+      );
     }
     try {
       // Probe the well-known WeMo AP IP only.
@@ -157,11 +166,16 @@ class PairingProvider extends ChangeNotifier {
       );
 
       if (kDebugMode) {
-        debugPrint('[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at ${WemoConstants.wemoApDefaultIp}"}');
+        debugPrint(
+          '[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at ${WemoConstants.wemoApDefaultIp}"}',
+        );
       }
 
       if (device != null) {
-        if (kDebugMode) debugPrint('[Pairing] Device found: ${device.name} at ${device.host}:${device.port}');
+        if (kDebugMode)
+          debugPrint(
+            '[Pairing] Device found: ${device.name} at ${device.host}:${device.port}',
+          );
         _state = _state.copyWith(
           device: device,
           step: PairingStep.selectNetwork,
@@ -173,23 +187,28 @@ class PairingProvider extends ChangeNotifier {
         // Fetch available networks from the device
         await _fetchAvailableNetworks();
       } else {
-        if (kDebugMode) debugPrint('[Pairing] No device found at ${WemoConstants.wemoApDefaultIp}');
+        if (kDebugMode)
+          debugPrint(
+            '[Pairing] No device found at ${WemoConstants.wemoApDefaultIp}',
+          );
         _state = _state.copyWith(
           isLoading: false,
           clearLoadingMessage: true,
-          errorMessage:
-              'Could not find the WeMo device at ${WemoConstants.wemoApDefaultIp}. '
-              'Make sure your phone is connected to the WeMo WiFi network, then try again. '
-              'You can also enter the device IP manually.',
+          errorMessage: _l10n.pairingErrorDeviceAtDefaultIp(
+            WemoConstants.wemoApDefaultIp,
+          ),
         );
         notifyListeners();
       }
     } catch (e, st) {
-      if (kDebugMode) debugPrint('[Pairing] _discoverDeviceOnAp error: ${e.runtimeType}: $e\n$st');
+      if (kDebugMode)
+        debugPrint(
+          '[Pairing] _discoverDeviceOnAp error: ${e.runtimeType}: $e\n$st',
+        );
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
-        errorMessage: 'Error discovering device: $e',
+        errorMessage: _l10n.pairingErrorDiscovering(e.toString()),
       );
       notifyListeners();
     }
@@ -199,7 +218,7 @@ class PairingProvider extends ChangeNotifier {
   Future<void> retryDiscovery() async {
     _state = _state.copyWith(
       isLoading: true,
-      loadingMessage: 'Looking for device...',
+      loadingMessage: _l10n.pairingLoadingLooking,
       clearErrorMessage: true,
     );
     notifyListeners();
@@ -211,7 +230,7 @@ class PairingProvider extends ChangeNotifier {
   Future<void> tryManualIp(String ip) async {
     _state = _state.copyWith(
       isLoading: true,
-      loadingMessage: 'Connecting to $ip...',
+      loadingMessage: _l10n.pairingLoadingConnectingIp(ip),
       clearErrorMessage: true,
     );
     notifyListeners();
@@ -236,7 +255,7 @@ class PairingProvider extends ChangeNotifier {
         _state = _state.copyWith(
           isLoading: false,
           clearLoadingMessage: true,
-          errorMessage: 'No device found at $ip',
+          errorMessage: _l10n.pairingErrorNoDeviceAtIp(ip),
         );
         notifyListeners();
       }
@@ -244,7 +263,7 @@ class PairingProvider extends ChangeNotifier {
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
-        errorMessage: 'Error connecting to $ip: $e',
+        errorMessage: _l10n.pairingErrorConnectingIp(ip, e.toString()),
       );
       notifyListeners();
     }
@@ -255,11 +274,14 @@ class PairingProvider extends ChangeNotifier {
     if (_state.device == null) return;
 
     final device = _state.device!;
-    if (kDebugMode) debugPrint('[Pairing] _fetchAvailableNetworks: device=${device.name} host=${device.host}:${device.port}');
+    if (kDebugMode)
+      debugPrint(
+        '[Pairing] _fetchAvailableNetworks: device=${device.name} host=${device.host}:${device.port}',
+      );
 
     _state = _state.copyWith(
       isLoading: true,
-      loadingMessage: 'Scanning for networks...',
+      loadingMessage: _l10n.pairingLoadingScanning,
     );
     notifyListeners();
 
@@ -269,19 +291,29 @@ class PairingProvider extends ChangeNotifier {
     await Future.delayed(const Duration(seconds: 2));
 
     try {
-      if (kDebugMode) debugPrint('[Pairing] Calling getAvailableNetworks (attempt 1)...');
-      List<WifiNetwork> networks =
-          await _controlService.getAvailableNetworks(device);
-      if (kDebugMode) debugPrint('[Pairing] getAvailableNetworks attempt 1 returned ${networks.length} networks');
+      if (kDebugMode)
+        debugPrint('[Pairing] Calling getAvailableNetworks (attempt 1)...');
+      List<WifiNetwork> networks = await _controlService.getAvailableNetworks(
+        device,
+      );
+      if (kDebugMode)
+        debugPrint(
+          '[Pairing] getAvailableNetworks attempt 1 returned ${networks.length} networks',
+        );
 
       // If the first call returned an empty list the device may still be
       // populating results. Wait briefly and try once more.
       if (networks.isEmpty) {
-        if (kDebugMode) debugPrint('[Pairing] Empty list — waiting 3 s then retrying...');
+        if (kDebugMode)
+          debugPrint('[Pairing] Empty list — waiting 3 s then retrying...');
         await Future.delayed(const Duration(seconds: 3));
-        if (kDebugMode) debugPrint('[Pairing] Calling getAvailableNetworks (attempt 2)...');
+        if (kDebugMode)
+          debugPrint('[Pairing] Calling getAvailableNetworks (attempt 2)...');
         networks = await _controlService.getAvailableNetworks(device);
-        if (kDebugMode) debugPrint('[Pairing] getAvailableNetworks attempt 2 returned ${networks.length} networks');
+        if (kDebugMode)
+          debugPrint(
+            '[Pairing] getAvailableNetworks attempt 2 returned ${networks.length} networks',
+          );
       }
 
       // Sort by signal strength (highest first)
@@ -294,11 +326,14 @@ class PairingProvider extends ChangeNotifier {
       );
       notifyListeners();
     } catch (e, st) {
-      if (kDebugMode) debugPrint('[Pairing] getAvailableNetworks FAILED: ${e.runtimeType}: $e\n$st');
+      if (kDebugMode)
+        debugPrint(
+          '[Pairing] getAvailableNetworks FAILED: ${e.runtimeType}: $e\n$st',
+        );
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
-        errorMessage: 'Could not scan networks: $e',
+        errorMessage: _l10n.pairingErrorScanning(e.toString()),
       );
       notifyListeners();
     }
@@ -327,7 +362,7 @@ class PairingProvider extends ChangeNotifier {
         _state.selectedSsid == null ||
         _state.password == null) {
       _state = _state.copyWith(
-        errorMessage: 'Please select a network and enter the password.',
+        errorMessage: _l10n.pairingErrorSelectAndPassword,
       );
       notifyListeners();
       return;
@@ -336,7 +371,7 @@ class PairingProvider extends ChangeNotifier {
     _state = _state.copyWith(
       step: PairingStep.configuring,
       isLoading: true,
-      loadingMessage: 'Sending network credentials...',
+      loadingMessage: _l10n.pairingLoadingSendingCredentials,
       clearErrorMessage: true,
     );
     notifyListeners();
@@ -379,7 +414,7 @@ class PairingProvider extends ChangeNotifier {
       }
 
       _state = _state.copyWith(
-        loadingMessage: 'Waiting for device to connect...',
+        loadingMessage: _l10n.pairingLoadingWaitingConnection,
       );
       notifyListeners();
 
@@ -390,7 +425,7 @@ class PairingProvider extends ChangeNotifier {
         step: PairingStep.selectNetwork,
         isLoading: false,
         clearLoadingMessage: true,
-        errorMessage: 'Failed to configure network: $e',
+        errorMessage: _l10n.pairingErrorConfigure(e.toString()),
       );
       notifyListeners();
     }
@@ -424,7 +459,7 @@ class PairingProvider extends ChangeNotifier {
               step: PairingStep.selectNetwork,
               isLoading: false,
               clearLoadingMessage: true,
-              errorMessage: 'Password too short. Please check and try again.',
+              errorMessage: _l10n.pairingErrorPasswordShort,
             );
             notifyListeners();
             return;
@@ -434,7 +469,7 @@ class PairingProvider extends ChangeNotifier {
               step: PairingStep.selectNetwork,
               isLoading: false,
               clearLoadingMessage: true,
-              errorMessage: 'Failed to connect. Please check the password.',
+              errorMessage: _l10n.pairingErrorPasswordIncorrect,
             );
             notifyListeners();
             return;
@@ -456,7 +491,7 @@ class PairingProvider extends ChangeNotifier {
       step: PairingStep.selectNetwork,
       isLoading: false,
       clearLoadingMessage: true,
-      errorMessage: 'Connection timed out. Please try again.',
+      errorMessage: _l10n.pairingErrorConnectionTimeout,
     );
     notifyListeners();
   }
@@ -468,7 +503,7 @@ class PairingProvider extends ChangeNotifier {
     _state = _state.copyWith(
       step: PairingStep.finalize,
       isLoading: true,
-      loadingMessage: 'Finalizing setup...',
+      loadingMessage: _l10n.pairingFinalizingSetup,
     );
     notifyListeners();
 
@@ -541,7 +576,7 @@ class PairingProvider extends ChangeNotifier {
         step: PairingStep.error,
         isLoading: false,
         clearLoadingMessage: true,
-        errorMessage: 'Error finalizing setup: $e',
+        errorMessage: _l10n.pairingErrorFinalizing(e.toString()),
       );
       notifyListeners();
     }
@@ -553,9 +588,9 @@ class PairingProvider extends ChangeNotifier {
     _ssidSubscription = _wifiService
         .watchSsidChanges(interval: WemoConstants.ssidPollInterval)
         .listen((ssid) {
-      _state = _state.copyWith(currentSsid: ssid);
-      notifyListeners();
-    });
+          _state = _state.copyWith(currentSsid: ssid);
+          notifyListeners();
+        });
   }
 
   /// Stop watching for SSID changes

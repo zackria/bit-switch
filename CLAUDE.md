@@ -250,6 +250,8 @@ Wemo devices use:
 
 **Android 13+:** NEARBY_WIFI_DEVICES or Location permission
 
+**macOS (Apple Silicon):** Ships as the iPad app via "Designed for iPad" — no separate macOS target. `Platform.isIOS` remains true, so iOS code paths apply; SSID lookup returns null (UI falls back to a generic label). Enable in App Store Connect > Pricing and Availability > "iPhone and iPad Apps on Apple Silicon Macs". See APPLE_STORE_BINARY.md for details.
+
 ## Testing
 
 Tests are organized to mirror the source structure. Uses mock SSDP client to avoid network/timer issues in tests.

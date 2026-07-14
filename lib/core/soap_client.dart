@@ -238,7 +238,10 @@ class SoapClient {
       final envelope = document.rootElement;
 
       // Check for SOAP Fault
-      final faultElements = envelope.findAllElements('Fault', namespace: WemoConstants.soapEnvelopeNs);
+      final faultElements = envelope.findAllElements(
+        'Fault',
+        namespaceUri: WemoConstants.soapEnvelopeNs,
+      );
       if (faultElements.isNotEmpty) {
         final fault = faultElements.first;
         final faultCode = fault.findElements('faultcode').firstOrNull?.innerText;
@@ -264,7 +267,12 @@ class SoapClient {
       final responseElements = envelope.findAllElements('${action}Response');
       if (responseElements.isEmpty) {
         // Try without namespace prefix
-        final bodyElement = envelope.findAllElements('Body', namespace: WemoConstants.soapEnvelopeNs).first;
+        final bodyElement = envelope
+            .findAllElements(
+              'Body',
+              namespaceUri: WemoConstants.soapEnvelopeNs,
+            )
+            .first;
         final responseElement = bodyElement.children
             .whereType<XmlElement>()
             .where((e) => e.localName == '${action}Response')

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/device_control_service.dart';
+import '../../l10n/l10n.dart';
 
 /// List tile widget for displaying a WiFi network in the selection list
 class NetworkListTile extends StatelessWidget {
@@ -27,24 +28,23 @@ class NetworkListTile extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        _getSecurityLabel(),
+        _getSecurityLabel(context),
         style: theme.textTheme.bodySmall,
       ),
-      trailing:
-          isSelected
-              ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
-              : null,
+      trailing: isSelected
+          ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
+          : null,
       selected: isSelected,
       onTap: onTap,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side:
-            isSelected
-                ? BorderSide(color: theme.colorScheme.primary, width: 2)
-                : BorderSide.none,
+        side: isSelected
+            ? BorderSide(color: theme.colorScheme.primary, width: 2)
+            : BorderSide.none,
       ),
-      tileColor:
-          isSelected ? theme.colorScheme.primaryContainer.withAlpha(50) : null,
+      tileColor: isSelected
+          ? theme.colorScheme.primaryContainer.withAlpha(50)
+          : null,
     );
   }
 
@@ -94,12 +94,12 @@ class NetworkListTile extends StatelessWidget {
     );
   }
 
-  String _getSecurityLabel() {
+  String _getSecurityLabel(BuildContext context) {
     final auth = network.authMode.toUpperCase();
     final encrypt = network.encryption.toUpperCase();
 
     if (auth == 'OPEN' || auth == 'NONE') {
-      return 'Open network';
+      return context.l10n.widgetOpenNetwork;
     }
 
     // Format common security types nicely
@@ -115,7 +115,7 @@ class NetworkListTile extends StatelessWidget {
     }
 
     if (auth.contains('WEP')) {
-      return 'WEP (insecure)';
+      return context.l10n.widgetWepInsecure;
     }
 
     return '$auth / $encrypt';

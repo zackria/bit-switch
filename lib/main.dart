@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'l10n/app_localizations.dart';
+import 'l10n/l10n.dart';
 import 'providers/device_provider.dart';
 import 'providers/settings_provider.dart';
 import 'ui/screens/home_screen.dart';
@@ -38,8 +40,14 @@ class WemoControlApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: MaterialApp(
-        title: 'Bit Switch',
+        onGenerateTitle: (context) => context.l10n.appTitle,
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) {
+          updateCurrentLocale(Localizations.localeOf(context));
+          return child ?? const SizedBox.shrink();
+        },
         theme: _buildLightTheme(),
         darkTheme: _buildDarkTheme(),
         themeMode: ThemeMode.system,

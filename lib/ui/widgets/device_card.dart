@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/wemo_device.dart';
 import '../../models/device_state.dart';
+import '../../l10n/l10n.dart';
 
 class DeviceCard extends StatelessWidget {
   final WemoDevice device;
@@ -25,7 +26,9 @@ class DeviceCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: isOn ? 4 : 1,
-      shadowColor: isOn ? theme.colorScheme.primary.withValues(alpha: 0.3) : null,
+      shadowColor: isOn
+          ? theme.colorScheme.primary.withValues(alpha: 0.3)
+          : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -76,14 +79,14 @@ class DeviceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          _getStatusText(isOn, isReachable),
+                          _getStatusText(context, isOn, isReachable),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.grey[600],
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          device.type.displayName,
+                          localizedDeviceType(context.l10n, device.type),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.grey[400],
                           ),
@@ -91,21 +94,21 @@ class DeviceCard extends StatelessWidget {
                       ],
                     ),
                     // Show brightness if it's a dimmer
-                    if (device.type.supportsBrightness && state.brightness != null) ...[
+                    if (device.type.supportsBrightness &&
+                        state.brightness != null) ...[
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
                         value: state.brightness! / 100,
                         backgroundColor: Colors.grey[200],
                         valueColor: AlwaysStoppedAnimation(
-                          isOn
-                              ? theme.colorScheme.primary
-                              : Colors.grey[400],
+                          isOn ? theme.colorScheme.primary : Colors.grey[400],
                         ),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ],
                     // Show power for Insight devices
-                    if (device.type == WemoDeviceType.insight && state is InsightState) ...[
+                    if (device.type == WemoDeviceType.insight &&
+                        state is InsightState) ...[
                       const SizedBox(height: 4),
                       Text(
                         '${(state as InsightState).currentPowerWatts?.toStringAsFixed(1) ?? '0'} W',
@@ -123,18 +126,15 @@ class DeviceCard extends StatelessWidget {
               if (device.type.supportsOnOff)
                 Switch.adaptive(
                   value: isOn,
-                  onChanged: isReachable
-                      ? (_) => onToggle?.call()
-                      : null,
-                  activeTrackColor: theme.colorScheme.primary.withValues(alpha: 0.5),
+                  onChanged: isReachable ? (_) => onToggle?.call() : null,
+                  activeTrackColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.5,
+                  ),
                   activeThumbColor: theme.colorScheme.primary,
                 ),
 
               // Arrow indicator
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400]),
             ],
           ),
         ),
@@ -171,7 +171,11 @@ class DeviceCard extends StatelessWidget {
     }
   }
 
-  Color _getIconBackgroundColor(BuildContext context, bool isOn, bool isReachable) {
+  Color _getIconBackgroundColor(
+    BuildContext context,
+    bool isOn,
+    bool isReachable,
+  ) {
     if (!isReachable) return Colors.grey[200]!;
     if (isOn) return Theme.of(context).colorScheme.primaryContainer;
     return Colors.grey[100]!;
@@ -189,9 +193,9 @@ class DeviceCard extends StatelessWidget {
     return Colors.grey;
   }
 
-  String _getStatusText(bool isOn, bool isReachable) {
-    if (!isReachable) return 'Offline';
-    if (isOn) return 'On';
-    return 'Off';
+  String _getStatusText(BuildContext context, bool isOn, bool isReachable) {
+    if (!isReachable) return context.l10n.commonOffline;
+    if (isOn) return context.l10n.commonOn;
+    return context.l10n.commonOff;
   }
 }

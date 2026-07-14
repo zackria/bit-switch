@@ -12,6 +12,7 @@ import '../../models/wemo_device.dart';
 import '../widgets/device_list_item.dart'; // Import DeviceListItem
 import 'device_detail_screen.dart';
 import 'settings_screen.dart';
+import '../../l10n/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -206,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   provider.setDebugMode(!provider.debugMode);
                 },
-                tooltip: 'Toggle debug mode',
+                tooltip: context.l10n.homeToggleDebug,
               );
             },
           ),
@@ -229,14 +230,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         provider.clearDevices();
                         provider.discoverDevices();
                       },
-                tooltip: 'Refresh devices',
+                tooltip: context.l10n.homeRefreshDevices,
               );
             },
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => _navigateToSettings(context),
-            tooltip: 'Settings',
+            tooltip: context.l10n.homeSettings,
           ),
         ],
       ),
@@ -268,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SnackBar(
                       content: Text(provider.error!),
                       action: SnackBarAction(
-                        label: 'Dismiss',
+                        label: context.l10n.homeDismiss,
                         onPressed: () => provider.clearError(),
                       ),
                     ),
@@ -321,8 +322,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 16),
                                 Text(
                                   provider.isDiscovering
-                                      ? 'Discovering devices...'
-                                      : 'No devices found',
+                                      ? context.l10n.homeDiscovering
+                                      : context.l10n.homeNoDevices,
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(color: Colors.grey),
                                 ),
@@ -331,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ElevatedButton.icon(
                                     onPressed: () => provider.discoverDevices(),
                                     icon: const Icon(Icons.search),
-                                    label: const Text('Scan for devices'),
+                                    label: Text(context.l10n.homeScanDevices),
                                   ),
                                 ],
                               ],
@@ -376,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    'Looking for more devices...',
+                                    context.l10n.homeLookingForMore,
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: Theme.of(
@@ -418,8 +419,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         Text(
           isDiscovering
-              ? '$deviceCount device${deviceCount == 1 ? '' : 's'} found, scanning...'
-              : '$deviceCount device${deviceCount == 1 ? '' : 's'} found',
+              ? context.l10n.homeDevicesFoundScanning(deviceCount)
+              : context.l10n.homeDevicesFound(deviceCount),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -442,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Auto',
+                  context.l10n.homeAuto,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -454,7 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
         TextButton.icon(
           onPressed: isDiscovering ? null : _refreshDevices,
           icon: const Icon(Icons.refresh, size: 16),
-          label: const Text('Refresh'),
+          label: Text(context.l10n.commonRefresh),
           style: TextButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             visualDensity: VisualDensity.compact,
@@ -467,7 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildWifiInfo(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final name = _wifiName ?? 'Unknown Wi-Fi';
+    final name = _wifiName == 'Connected to WiFi'
+        ? context.l10n.homeConnectedWifi
+        : (_wifiName ?? context.l10n.commonUnknownWifi);
 
     final content = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,14 +490,14 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Wi-Fi: $name',
+                context.l10n.homeWifiName(name),
                 style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Location information is used to find your Wi-Fi details. Local network access allows you to control your smart switches and devices.',
+                context.l10n.homePermissionExplanation,
                 style: textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -536,9 +539,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const Icon(Icons.bug_report, color: Colors.amber, size: 18),
               const SizedBox(width: 8),
-              const Text(
-                'Debug Log',
-                style: TextStyle(
+              Text(
+                context.l10n.homeDebugLog,
+                style: const TextStyle(
                   color: Colors.amber,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -552,9 +555,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'Clear',
-                  style: TextStyle(color: Colors.amber, fontSize: 12),
+                child: Text(
+                  context.l10n.homeClear,
+                  style: const TextStyle(color: Colors.amber, fontSize: 12),
                 ),
               ),
             ],
@@ -569,10 +572,10 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: logs.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
-                      'Tap refresh to start discovery and see logs...',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      context.l10n.homeDebugEmpty,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   )
                 : ListView.builder(
@@ -614,7 +617,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _probeIpController,
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                   decoration: InputDecoration(
-                    hintText: 'IP:Port (e.g. 192.168.1.100:49153)',
+                    hintText: context.l10n.homeProbeHint,
                     hintStyle: TextStyle(color: Colors.grey[600], fontSize: 12),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
@@ -656,7 +659,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   minimumSize: Size.zero,
                 ),
-                child: const Text('Probe', style: TextStyle(fontSize: 12)),
+                child: Text(
+                  context.l10n.homeProbe,
+                  style: const TextStyle(fontSize: 12),
+                ),
               ),
             ],
           ),
@@ -671,8 +677,8 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.radar, size: 16),
               label: Text(
                 provider.isDiscovering
-                    ? 'Scanning...'
-                    : 'Scan Entire Subnet (iOS Fix)',
+                    ? context.l10n.homeScanning
+                    : context.l10n.homeScanSubnet,
                 style: const TextStyle(fontSize: 12),
               ),
               style: ElevatedButton.styleFrom(
@@ -687,7 +693,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Platform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}',
+            context.l10n.homePlatform(
+              Platform.operatingSystem,
+              Platform.operatingSystemVersion,
+            ),
             style: const TextStyle(color: Colors.grey, fontSize: 10),
           ),
         ],

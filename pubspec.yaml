@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.7+9
 
 environment:
-  sdk: ^3.10.3
+  sdk: ^3.12.2
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,42 +30,47 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
 
   # HTTP client
-  http: ^1.2.0
+  http: ^1.6.0
 
   # XML parsing for SOAP
-  xml: ^6.5.0
+  xml: ^7.0.1
 
   # State management
-  provider: ^6.1.0
+  provider: ^6.1.5+1
 
   # UUID generation
-  uuid: ^4.3.0
+  uuid: ^4.5.3
 
   # Local storage
-  shared_preferences: ^2.2.0
+  shared_preferences: ^2.5.5
 
   # Network info
-  network_info_plus: ^7.0.0
+  network_info_plus: ^8.2.0
 
   # Permission handling
-  permission_handler: ^12.0.1
+  permission_handler: ^12.0.3
 
   # Crypto for AES encryption (WiFi setup)
   pointycastle: ^4.0.0
 
   # WiFi network scanning from phone
-  wifi_scan: ^0.4.1
-  crypto: ^3.0.0
+  wifi_scan: ^0.4.1+2
+  crypto: ^3.0.7
   rxdart: ^0.28.0
 
   # Open system settings
-  app_settings: ^5.1.1
+  app_settings: ^7.0.0
+
+  # Internationalization support
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -85,13 +90,6 @@ flutter_launcher_icons:
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "App Store/bitSwitchIcon_v1 Exports/bitSwitchIcon_v1-iOS-Default-1024x1024@1x.png"
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^6.0.0
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -101,6 +99,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Enable localization code generation
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:

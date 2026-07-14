@@ -51,7 +51,7 @@ A Flutter application for controlling Legacy Wemo smart home devices on iOS and 
 
 ### Prerequisites
 
-- Flutter SDK (3.10.0 or higher) [https://flutter.dev/](https://flutter.dev/)
+- Flutter SDK 3.44.6 or higher (stable channel) [https://flutter.dev/](https://flutter.dev/)
 - iOS 12.0+ / Android 5.0 (API 21)+
 - Wemo devices on the same local network
 

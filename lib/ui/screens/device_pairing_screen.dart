@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/pairing_state.dart';
-import '../../models/wemo_device.dart';
 import '../../providers/pairing_provider.dart';
 import '../widgets/pairing_step_indicator.dart';
 import '../widgets/network_list_tile.dart';
+import '../../l10n/l10n.dart';
 
 /// Screen for the device pairing wizard
 class DevicePairingScreen extends StatefulWidget {
@@ -49,7 +49,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Pair New Device'),
+          title: Text(context.l10n.pairingTitle),
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
@@ -130,7 +130,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
 
           // Title
           Text(
-            'Set Up Your Wemo Device',
+            context.l10n.pairingSetupTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -139,7 +139,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
 
           // Instructions
           Text(
-            'Before you begin, make sure your Wemo device is in setup mode:',
+            context.l10n.pairingBeforeBegin,
             style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 16),
@@ -147,20 +147,20 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           _buildInstructionItem(
             context,
             '1',
-            'Plug in your Wemo device',
-            'Connect it to power and wait for it to start up.',
+            context.l10n.pairingPlugInTitle,
+            context.l10n.pairingPlugInBody,
           ),
           _buildInstructionItem(
             context,
             '2',
-            'Look for the blinking LED',
-            'A blinking LED indicates the device is in setup mode.',
+            context.l10n.pairingBlinkingLedTitle,
+            context.l10n.pairingBlinkingLedBody,
           ),
           _buildInstructionItem(
             context,
             '3',
-            'Check for the WiFi network',
-            'The device will broadcast a network named "WeMo.XXXXX".',
+            context.l10n.pairingCheckWifiTitle,
+            context.l10n.pairingCheckWifiBody,
           ),
 
           const SizedBox(height: 16),
@@ -177,7 +177,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'If the LED is solid, hold the reset button for 5 seconds to enter setup mode.',
+                      context.l10n.pairingSolidLedHint,
                       style: TextStyle(
                         color: theme.colorScheme.onSecondaryContainer,
                       ),
@@ -196,7 +196,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             child: FilledButton.icon(
               onPressed: () => provider.startConnectToDevice(),
               icon: const Icon(Icons.arrow_forward),
-              label: const Text('Start Pairing'),
+              label: Text(context.l10n.pairingStart),
             ),
           ),
         ],
@@ -286,7 +286,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 32),
 
           Text(
-            'Connect to Device WiFi',
+            context.l10n.pairingConnectWifiTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -294,7 +294,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 16),
 
           Text(
-            'Open your phone\'s WiFi settings and connect to the network that starts with "WeMo."',
+            context.l10n.pairingConnectWifiBody,
             style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
@@ -317,18 +317,18 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Current Network',
+                          context.l10n.pairingCurrentNetwork,
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         Text(
-                          state.currentSsid ?? 'Not connected',
+                          state.currentSsid ?? context.l10n.commonNotConnected,
                           style: theme.textTheme.titleMedium,
                         ),
                         if (state.isOnWemoAp)
                           Text(
-                            'Connected to Wemo device!',
+                            context.l10n.pairingConnectedToDevice,
                             style: TextStyle(color: Colors.green[700]),
                           ),
                       ],
@@ -347,7 +347,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             child: OutlinedButton.icon(
               onPressed: () => provider.openWifiSettings(),
               icon: const Icon(Icons.settings),
-              label: const Text('Open WiFi Settings'),
+              label: Text(context.l10n.pairingOpenWifiSettings),
             ),
           ),
 
@@ -359,7 +359,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             child: FilledButton.icon(
               onPressed: () => provider.confirmConnectedToDeviceAp(),
               icon: const Icon(Icons.arrow_forward),
-              label: const Text('I\'ve Connected'),
+              label: Text(context.l10n.pairingConnectedButton),
             ),
           ),
 
@@ -388,14 +388,14 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (state.isLoading) ...[
-            const Center(
+            Center(
               child: Padding(
                 padding: EdgeInsets.all(48),
                 child: Column(
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 24),
-                    Text('Looking for your Wemo device...'),
+                    Text(context.l10n.pairingLookingForDevice),
                   ],
                 ),
               ),
@@ -435,7 +435,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
               child: FilledButton.icon(
                 onPressed: () => provider.retryDiscovery(),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
+                label: Text(context.l10n.commonTryAgain),
               ),
             ),
 
@@ -445,17 +445,17 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
 
             // Manual IP entry
             Text(
-              'Or enter the device IP manually:',
+              context.l10n.pairingManualIpPrompt,
               style: theme.textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
 
             TextField(
               controller: _manualIpController,
-              decoration: const InputDecoration(
-                labelText: 'Device IP Address',
+              decoration: InputDecoration(
+                labelText: context.l10n.pairingDeviceIp,
                 hintText: '10.22.22.1',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
@@ -468,7 +468,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                     ? () => provider.tryManualIp(_manualIpController.text)
                     : null,
                 icon: const Icon(Icons.connect_without_contact),
-                label: const Text('Connect to IP'),
+                label: Text(context.l10n.pairingConnectToIp),
               ),
             ),
           ],
@@ -505,7 +505,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                           style: theme.textTheme.titleMedium,
                         ),
                         Text(
-                          state.device!.type.displayName,
+                          localizedDeviceType(context.l10n, state.device!.type),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -525,7 +525,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Select your home WiFi network:',
+                context.l10n.pairingSelectHomeWifi,
                 style: theme.textTheme.titleSmall,
               ),
               IconButton(
@@ -533,7 +533,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 onPressed: state.isLoading
                     ? null
                     : () => provider.refreshNetworks(),
-                tooltip: 'Refresh networks',
+                tooltip: context.l10n.pairingRefreshNetworks,
               ),
             ],
           ),
@@ -558,7 +558,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. You may need to enter the network SSID manually.',
+                        context.l10n.pairingIosScanLimitation,
                         style: TextStyle(
                           color: Colors.blue.shade800,
                           fontSize: 12,
@@ -585,7 +585,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(height: 16),
-                  const Text('No networks found'),
+                  Text(context.l10n.pairingNoNetworks),
                   if (state.errorMessage != null) ...[
                     const SizedBox(height: 8),
                     Padding(
@@ -603,7 +603,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () => provider.refreshNetworks(),
-                    child: const Text('Scan Again'),
+                    child: Text(context.l10n.pairingScanAgain),
                   ),
                 ],
               ),
@@ -645,7 +645,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'WiFi Password',
+                    labelText: context.l10n.pairingWifiPassword,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -679,7 +679,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                         ? () => provider.configureNetwork()
                         : null,
                     icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Connect'),
+                    label: Text(context.l10n.pairingConnect),
                   ),
                 ),
               ],
@@ -699,7 +699,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
         child: TextButton.icon(
           onPressed: () => setState(() => _showManualSsid = true),
           icon: const Icon(Icons.add),
-          label: const Text('Enter network manually'),
+          label: Text(context.l10n.pairingEnterNetworkManually),
         ),
       );
     }
@@ -711,13 +711,16 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Enter network name:', style: theme.textTheme.titleSmall),
+            Text(
+              context.l10n.pairingEnterNetworkName,
+              style: theme.textTheme.titleSmall,
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _manualSsidController,
-              decoration: const InputDecoration(
-                labelText: 'Network Name (SSID)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.pairingNetworkName,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 8),
@@ -726,7 +729,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
               children: [
                 TextButton(
                   onPressed: () => setState(() => _showManualSsid = false),
-                  child: const Text('Cancel'),
+                  child: Text(context.l10n.commonCancel),
                 ),
                 const SizedBox(width: 8),
                 FilledButton(
@@ -736,7 +739,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                           setState(() => _showManualSsid = false);
                         }
                       : null,
-                  child: const Text('Use This Network'),
+                  child: Text(context.l10n.pairingUseNetwork),
                 ),
               ],
             ),
@@ -758,13 +761,13 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             const CircularProgressIndicator(),
             const SizedBox(height: 24),
             Text(
-              state.loadingMessage ?? 'Configuring device...',
+              state.loadingMessage ?? context.l10n.pairingConfiguringDevice,
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Please wait while the device connects to your network.',
+              context.l10n.pairingConfiguringWait,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -806,7 +809,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 32),
 
           Text(
-            'Reconnect to Your Network',
+            context.l10n.pairingReconnectTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -814,8 +817,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 16),
 
           Text(
-            'Your Wemo device is now connecting to "${state.selectedSsid}". '
-            'Please reconnect your phone to the same network.',
+            context.l10n.pairingReconnectBody(state.selectedSsid ?? ''),
             style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
@@ -840,18 +842,18 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Current Network',
+                          context.l10n.pairingCurrentNetwork,
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         Text(
-                          state.currentSsid ?? 'Not connected',
+                          state.currentSsid ?? context.l10n.commonNotConnected,
                           style: theme.textTheme.titleMedium,
                         ),
                         if (state.isOnHomeNetwork)
                           Text(
-                            'Back on home network!',
+                            context.l10n.pairingBackOnHome,
                             style: TextStyle(color: Colors.green[700]),
                           ),
                       ],
@@ -870,7 +872,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             child: OutlinedButton.icon(
               onPressed: () => provider.openWifiSettings(),
               icon: const Icon(Icons.settings),
-              label: const Text('Open WiFi Settings'),
+              label: Text(context.l10n.pairingOpenWifiSettings),
             ),
           ),
 
@@ -882,7 +884,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             child: FilledButton.icon(
               onPressed: () => provider.confirmReconnectedToHome(),
               icon: const Icon(Icons.arrow_forward),
-              label: const Text('I\'ve Reconnected'),
+              label: Text(context.l10n.pairingReconnectedButton),
             ),
           ),
         ],
@@ -891,7 +893,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
   }
 
   Widget _buildFinalizeStep(BuildContext context, PairingProvider provider) {
-    return const Center(
+    return Center(
       child: Padding(
         padding: EdgeInsets.all(48),
         child: Column(
@@ -899,7 +901,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 24),
-            Text('Finalizing setup...'),
+            Text(context.l10n.pairingFinalizingSetup),
           ],
         ),
       ),
@@ -926,7 +928,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 32),
 
           Text(
-            'Setup Complete!',
+            context.l10n.pairingSetupComplete,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -950,7 +952,9 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                             style: theme.textTheme.titleMedium,
                           ),
                           Text(
-                            'Connected to ${state.selectedSsid}',
+                            context.l10n.pairingConnectedToSsid(
+                              state.selectedSsid ?? '',
+                            ),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -967,7 +971,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           ],
 
           Text(
-            'Your device is now set up and will appear on the home screen.',
+            context.l10n.pairingDeviceReady,
             style: theme.textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
@@ -981,7 +985,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 Navigator.of(context).pop(state.device);
               },
               icon: const Icon(Icons.home),
-              label: const Text('Done'),
+              label: Text(context.l10n.commonDone),
             ),
           ),
         ],
@@ -1013,7 +1017,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 32),
 
           Text(
-            'Something Went Wrong',
+            context.l10n.pairingSomethingWrong,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -1040,7 +1044,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
               child: FilledButton.icon(
                 onPressed: () => provider.reset(),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Start Over'),
+                label: Text(context.l10n.pairingStartOver),
               ),
             ),
 
@@ -1054,7 +1058,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.close),
-              label: const Text('Cancel'),
+              label: Text(context.l10n.commonCancel),
             ),
           ),
         ],

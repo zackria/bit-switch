@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/pairing_state.dart';
+import '../../l10n/l10n.dart';
 
 /// Visual progress indicator for the pairing wizard
 class PairingStepIndicator extends StatelessWidget {
@@ -16,8 +17,8 @@ class PairingStepIndicator extends StatelessWidget {
     // For success/error, show all steps completed
     final displayStep =
         (currentStep == PairingStep.success || currentStep == PairingStep.error)
-            ? totalSteps
-            : currentStepNum;
+        ? totalSteps
+        : currentStepNum;
 
     return Column(
       children: [
@@ -46,10 +47,9 @@ class PairingStepIndicator extends StatelessWidget {
                   Container(
                     width: 24,
                     height: 2,
-                    color:
-                        isCompleted
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.outlineVariant,
+                    color: isCompleted
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.outlineVariant,
                   ),
               ],
             );
@@ -58,7 +58,7 @@ class PairingStepIndicator extends StatelessWidget {
         const SizedBox(height: 8),
         // Step title
         Text(
-          currentStep.title,
+          localizedPairingStep(context.l10n, currentStep),
           style: theme.textTheme.titleSmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -116,22 +116,18 @@ class _StepDot extends StatelessWidget {
     return Container(
       width: 28,
       height: 28,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
       child: Center(
-        child:
-            icon != null
-                ? Icon(icon, size: 16, color: foregroundColor)
-                : Text(
-                  '$stepNumber',
-                  style: TextStyle(
-                    color: foregroundColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: icon != null
+            ? Icon(icon, size: 16, color: foregroundColor)
+            : Text(
+                '$stepNumber',
+                style: TextStyle(
+                  color: foregroundColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
       ),
     );
   }

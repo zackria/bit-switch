@@ -8,6 +8,7 @@ import '../services/device_discovery_service.dart';
 import '../services/device_control_service.dart';
 import '../core/exceptions.dart';
 import '../core/error_handler.dart';
+import '../l10n/l10n.dart';
 
 /// Provider for managing Wemo devices
 class DeviceProvider extends ChangeNotifier {
@@ -211,7 +212,7 @@ class DeviceProvider extends ChangeNotifier {
       });
     } catch (e) {
       _log('Scan error: $e');
-      _error = 'Subnet scan failed: $e';
+      _error = currentAppLocalizations.errCheckWifiConnection;
     } finally {
       _isDiscovering = false;
       notifyListeners();
@@ -244,13 +245,13 @@ class DeviceProvider extends ChangeNotifier {
       }
     } catch (e) {
       _log('ERROR: Could not determine local IP: $e');
-      _error = 'Could not determine local network';
+      _error = currentAppLocalizations.errCheckWifiConnection;
       return;
     }
 
     if (localIp == null) {
       _log('ERROR: Could not determine local IP');
-      _error = 'Could not determine local network';
+      _error = currentAppLocalizations.errCheckWifiConnection;
       return;
     }
 
@@ -425,27 +426,26 @@ class DeviceProvider extends ChangeNotifier {
 
   /// Run SSDP multicast discovery
   Future<void> _runSsdpDiscovery(Duration timeout) async {
-    final discoveryStream = _discoveryService.discoverDevices(
-      timeout: timeout,
-      onDebugLog: _debugMode ? _log : null,
-    ).handleError((error, stackTrace) {
-      _log('Stream error during discovery: $error');
-      if (error is DiscoveryException) {
-        throw error;
-      } else if (error is SocketException) {
-        throw DiscoveryException(
-          'Network error during discovery. Please check:\n'
-          '• WiFi connection\n'
-          '• Local Network permission in Settings',
-          cause: error,
-        );
-      } else {
-        throw DiscoveryException(
-          'Unexpected error during discovery',
-          cause: error,
-        );
-      }
-    });
+    final discoveryStream = _discoveryService
+        .discoverDevices(timeout: timeout, onDebugLog: _debugMode ? _log : null)
+        .handleError((error, stackTrace) {
+          _log('Stream error during discovery: $error');
+          if (error is DiscoveryException) {
+            throw error;
+          } else if (error is SocketException) {
+            throw DiscoveryException(
+              'Network error during discovery. Please check:\n'
+              '• WiFi connection\n'
+              '• Local Network permission in Settings',
+              cause: error,
+            );
+          } else {
+            throw DiscoveryException(
+              'Unexpected error during discovery',
+              cause: error,
+            );
+          }
+        });
 
     await for (final device in discoveryStream) {
       _log('Found device: ${device.name} at ${device.host}:${device.port}');

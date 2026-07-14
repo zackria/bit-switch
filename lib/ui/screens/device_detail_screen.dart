@@ -12,6 +12,7 @@ import '../widgets/power_button.dart';
 import '../widgets/brightness_slider.dart';
 import '../widgets/insight_stats.dart';
 import '../../core/error_handler.dart';
+import '../../l10n/l10n.dart';
 
 class DeviceDetailScreen extends StatelessWidget {
   final WemoDevice device;
@@ -29,12 +30,12 @@ class DeviceDetailScreen extends StatelessWidget {
             onPressed: () {
               context.read<DeviceProvider>().refreshDeviceState(device.id);
             },
-            tooltip: 'Refresh state',
+            tooltip: context.l10n.detailRefreshState,
           ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () => _showDeviceInfo(context),
-            tooltip: 'Device info',
+            tooltip: context.l10n.detailDeviceInfo,
           ),
         ],
       ),
@@ -109,7 +110,7 @@ class DeviceDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Advanced',
+          context.l10n.detailAdvanced,
           style: Theme.of(
             context,
           ).textTheme.titleSmall?.copyWith(color: Colors.grey[600]),
@@ -121,7 +122,7 @@ class DeviceDetailScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _showWifiSetupDialog(context),
                 icon: const Icon(Icons.wifi),
-                label: const Text('WiFi Setup'),
+                label: Text(context.l10n.detailWifiSetup),
               ),
             ),
             const SizedBox(width: 12),
@@ -129,7 +130,7 @@ class DeviceDetailScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _showResetDialog(context),
                 icon: const Icon(Icons.restart_alt),
-                label: const Text('Reset'),
+                label: Text(context.l10n.detailReset),
                 style: OutlinedButton.styleFrom(foregroundColor: Colors.orange),
               ),
             ),
@@ -158,7 +159,7 @@ class DeviceDetailScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          device.type.displayName,
+          localizedDeviceType(context.l10n, device.type),
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
@@ -178,7 +179,7 @@ class DeviceDetailScreen extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Device is unreachable. Check network connection.',
+                context.l10n.detailUnreachable,
                 style: TextStyle(color: Colors.orange.shade900),
               ),
             ),
@@ -200,7 +201,7 @@ class DeviceDetailScreen extends StatelessWidget {
       children: [
         _ActionButton(
           icon: Icons.power_settings_new,
-          label: 'On',
+          label: context.l10n.commonOn,
           onPressed: state.isReachable
               ? () => provider.turnOn(device.id)
               : null,
@@ -209,7 +210,7 @@ class DeviceDetailScreen extends StatelessWidget {
         const SizedBox(width: 16),
         _ActionButton(
           icon: Icons.power_off,
-          label: 'Off',
+          label: context.l10n.commonOff,
           onPressed: state.isReachable
               ? () => provider.turnOff(device.id)
               : null,
@@ -277,9 +278,9 @@ class DeviceDetailScreen extends StatelessWidget {
       await provider.toggle(device.id);
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to toggle: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.detailFailedToggle(e.toString()))),
+      );
     }
   }
 
@@ -294,23 +295,41 @@ class DeviceDetailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Device Information',
+                context.l10n.detailDeviceInformation,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              _InfoRow(label: 'Name', value: device.name),
-              _InfoRow(label: 'Type', value: device.type.displayName),
-              _InfoRow(label: 'Host', value: '${device.host}:${device.port}'),
+              _InfoRow(label: context.l10n.commonName, value: device.name),
+              _InfoRow(
+                label: context.l10n.commonType,
+                value: localizedDeviceType(context.l10n, device.type),
+              ),
+              _InfoRow(
+                label: context.l10n.commonHost,
+                value: '${device.host}:${device.port}',
+              ),
               if (device.manufacturer != null)
-                _InfoRow(label: 'Manufacturer', value: device.manufacturer!),
+                _InfoRow(
+                  label: context.l10n.commonManufacturer,
+                  value: device.manufacturer!,
+                ),
               if (device.model != null)
-                _InfoRow(label: 'Model', value: device.model!),
+                _InfoRow(label: context.l10n.commonModel, value: device.model!),
               if (device.serialNumber != null)
-                _InfoRow(label: 'Serial', value: device.serialNumber!),
+                _InfoRow(
+                  label: context.l10n.commonSerial,
+                  value: device.serialNumber!,
+                ),
               if (device.firmwareVersion != null)
-                _InfoRow(label: 'Firmware', value: device.firmwareVersion!),
+                _InfoRow(
+                  label: context.l10n.commonFirmware,
+                  value: device.firmwareVersion!,
+                ),
               if (device.macAddress != null)
-                _InfoRow(label: 'MAC', value: device.macAddress!),
+                _InfoRow(
+                  label: context.l10n.commonMac,
+                  value: device.macAddress!,
+                ),
               const SizedBox(height: 24),
             ],
           ),
@@ -432,7 +451,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
             setState(() {
               _networks = [];
               _isScanning = false;
-              _error = 'Permission required to scan WiFi networks.';
+              _error = context.l10n.detailPermissionScan;
             });
           }
           return;
@@ -487,7 +506,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
         setState(() {
           _networks = [];
           _isScanning = false;
-          _error = 'Could not scan networks. Enter network name manually.';
+          _error = context.l10n.detailScanFailedManual;
         });
       }
     }
@@ -583,12 +602,12 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
     final password = _passwordController.text;
 
     if (ssid.isEmpty) {
-      setState(() => _error = 'Please enter or select a network name');
+      setState(() => _error = context.l10n.detailEnterNetworkNameError);
       return;
     }
 
     if (password.isEmpty) {
-      setState(() => _error = 'Please enter the network password');
+      setState(() => _error = context.l10n.detailEnterPasswordError);
       return;
     }
 
@@ -613,8 +632,8 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
         if (status == WifiSetupStatus.connected) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('WiFi configured successfully!'),
+            SnackBar(
+              content: Text(context.l10n.detailWifiSuccess),
               backgroundColor: Colors.green,
             ),
           );
@@ -624,7 +643,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = ErrorHandler.getUserFriendlyMessage(e);
+          _error = ErrorHandler.getUserFriendlyMessage(e, context: context);
           _isConnecting = false;
           _status = WifiSetupStatus.failed;
         });
@@ -636,12 +655,12 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WiFi Setup'),
+        title: Text(context.l10n.detailWifiSetup),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _isScanning ? null : _scanNetworks,
-            tooltip: 'Scan for networks',
+            tooltip: context.l10n.detailScanNetworks,
           ),
         ],
       ),
@@ -661,7 +680,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Configure the WiFi network for "${widget.device.name}"',
+                        context.l10n.detailConfigureWifiFor(widget.device.name),
                         style: TextStyle(color: Colors.blue.shade900),
                       ),
                     ),
@@ -673,7 +692,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
             // Available networks
             Text(
-              'Available Networks',
+              context.l10n.detailAvailableNetworks,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
@@ -697,7 +716,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. You need to enter the network SSID manually.',
+                            context.l10n.detailIosManualOnly,
                             style: TextStyle(
                               color: Colors.blue.shade800,
                               fontSize: 12,
@@ -736,10 +755,10 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _iosScanUnavailable
-                            ? 'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. Please enter your network name manually below.'
+                            ? context.l10n.detailIosManualOnly
                             : _networks == null
-                            ? 'Tap refresh to scan for networks'
-                            : 'Enter your network name below',
+                            ? context.l10n.detailTapRefreshScan
+                            : context.l10n.detailEnterNetworkBelow,
                         style: TextStyle(
                           color: _iosScanUnavailable
                               ? Colors.blue.shade800
@@ -777,7 +796,10 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                           style: const TextStyle(fontSize: 14),
                         ),
                         subtitle: Text(
-                          '${network.authMode} • Ch ${network.channel}',
+                          context.l10n.detailNetworkSecurityChannel(
+                            network.authMode,
+                            network.channel,
+                          ),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 11,
@@ -801,16 +823,16 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
             // Manual entry
             Text(
-              'Network Credentials',
+              context.l10n.detailNetworkCredentials,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _ssidController,
-              decoration: const InputDecoration(
-                labelText: 'Network Name (SSID)',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.wifi),
+              decoration: InputDecoration(
+                labelText: context.l10n.pairingNetworkName,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.wifi),
               ),
             ),
             const SizedBox(height: 12),
@@ -818,7 +840,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: context.l10n.commonPassword,
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
@@ -912,7 +934,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Connect'),
+                    : Text(context.l10n.pairingConnect),
               ),
             ),
           ],
@@ -938,15 +960,15 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
   String _getStatusMessage(WifiSetupStatus status) {
     switch (status) {
       case WifiSetupStatus.connecting:
-        return 'Connecting to network...';
+        return context.l10n.detailConnecting;
       case WifiSetupStatus.connected:
-        return 'Connected successfully!';
+        return context.l10n.detailConnected;
       case WifiSetupStatus.passwordShort:
-        return 'Password is too short';
+        return context.l10n.detailPasswordShort;
       case WifiSetupStatus.handshake:
-        return 'Authentication failed - check password';
+        return context.l10n.detailAuthenticationFailed;
       case WifiSetupStatus.failed:
-        return 'Connection failed';
+        return context.l10n.detailConnectionFailed;
     }
   }
 }
@@ -982,19 +1004,19 @@ class _ResetDialogState extends State<_ResetDialog> {
 
   Future<void> _performReset() async {
     if (!_resetData && !_resetWifi) {
-      setState(() => _error = 'Please select what to reset');
+      setState(() => _error = context.l10n.detailSelectReset);
       return;
     }
 
     // Build warning message based on selected options
     final warnings = <String>[];
     if (_resetData) {
-      warnings.add('• All schedules and automation rules will be deleted');
+      warnings.add(context.l10n.detailResetSchedulesWarning);
     }
     if (_resetWifi) {
-      warnings.add('• WiFi settings will be erased');
-      warnings.add('• You will need to set up the device again');
-      warnings.add('• The device may become temporarily unreachable');
+      warnings.add(context.l10n.detailResetWifiWarning);
+      warnings.add(context.l10n.detailSetupAgainWarning);
+      warnings.add(context.l10n.detailUnreachableWarning);
     }
 
     // Show confirmation dialog
@@ -1005,7 +1027,7 @@ class _ResetDialogState extends State<_ResetDialog> {
           children: [
             Icon(Icons.warning_amber_rounded, color: Colors.orange.shade700),
             const SizedBox(width: 8),
-            const Text('Confirm Reset'),
+            Text(context.l10n.detailConfirmReset),
           ],
         ),
         content: Column(
@@ -1013,11 +1035,14 @@ class _ResetDialogState extends State<_ResetDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Are you sure you want to reset "${widget.device.name}"?',
+              context.l10n.detailConfirmResetDevice(widget.device.name),
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
-            Text('This will:', style: TextStyle(color: Colors.grey[700])),
+            Text(
+              context.l10n.detailThisWill,
+              style: TextStyle(color: Colors.grey[700]),
+            ),
             const SizedBox(height: 8),
             ...warnings.map(
               (w) => Padding(
@@ -1044,10 +1069,10 @@ class _ResetDialogState extends State<_ResetDialog> {
                     color: Colors.orange.shade700,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'This action cannot be undone.',
-                      style: TextStyle(
+                      context.l10n.detailCannotUndo,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -1061,7 +1086,7 @@ class _ResetDialogState extends State<_ResetDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -1069,7 +1094,7 @@ class _ResetDialogState extends State<_ResetDialog> {
               backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Yes, Reset'),
+            child: Text(context.l10n.detailYesReset),
           ),
         ],
       ),
@@ -1094,29 +1119,29 @@ class _ResetDialogState extends State<_ResetDialog> {
       if (result == ResetResult.success) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Device reset successfully'),
+          SnackBar(
+            content: Text(context.l10n.detailResetSuccess),
             backgroundColor: Colors.green,
           ),
         );
       } else if (result == ResetResult.resetRemote) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Device will reset remotely'),
+          SnackBar(
+            content: Text(context.l10n.detailResetRemote),
             backgroundColor: Colors.orange,
           ),
         );
       } else {
         setState(() {
-          _error = 'Reset failed';
+          _error = context.l10n.detailResetFailed;
           _isResetting = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = ErrorHandler.getUserFriendlyMessage(e);
+          _error = ErrorHandler.getUserFriendlyMessage(e, context: context);
           _isResetting = false;
         });
       }
@@ -1127,21 +1152,17 @@ class _ResetDialogState extends State<_ResetDialog> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Factory Reset'),
-        content: const Text(
-          'This will erase ALL settings and restore the device to factory defaults. '
-          'You will need to set up the device again.\n\n'
-          'This action cannot be undone.',
-        ),
+        title: Text(context.l10n.detailFactoryReset),
+        content: Text(context.l10n.detailFactoryResetWarning),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Factory Reset'),
+            child: Text(context.l10n.detailFactoryReset),
           ),
         ],
       ),
@@ -1161,15 +1182,15 @@ class _ResetDialogState extends State<_ResetDialog> {
 
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Factory reset initiated'),
+        SnackBar(
+          content: Text(context.l10n.detailFactoryResetInitiated),
           backgroundColor: Colors.orange,
         ),
       );
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = ErrorHandler.getUserFriendlyMessage(e);
+          _error = ErrorHandler.getUserFriendlyMessage(e, context: context);
           _isResetting = false;
         });
       }
@@ -1179,13 +1200,13 @@ class _ResetDialogState extends State<_ResetDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Reset Device'),
+      title: Text(context.l10n.detailResetDevice),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Reset options for "${widget.device.name}"',
+            context.l10n.detailResetOptionsFor(widget.device.name),
             style: TextStyle(color: Colors.grey[600]),
           ),
           const SizedBox(height: 16),
@@ -1194,8 +1215,8 @@ class _ResetDialogState extends State<_ResetDialog> {
             onChanged: _isResetting
                 ? null
                 : (value) => setState(() => _resetData = value ?? false),
-            title: const Text('Reset User Data'),
-            subtitle: const Text('Clears schedules and rules'),
+            title: Text(context.l10n.detailResetUserData),
+            subtitle: Text(context.l10n.detailResetUserDataSubtitle),
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.zero,
           ),
@@ -1204,8 +1225,8 @@ class _ResetDialogState extends State<_ResetDialog> {
             onChanged: _isResetting
                 ? null
                 : (value) => setState(() => _resetWifi = value ?? false),
-            title: const Text('Reset WiFi Settings'),
-            subtitle: const Text('Device will need to be set up again'),
+            title: Text(context.l10n.detailResetWifi),
+            subtitle: Text(context.l10n.detailResetWifiSubtitle),
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.zero,
           ),
@@ -1217,18 +1238,18 @@ class _ResetDialogState extends State<_ResetDialog> {
             ),
           ],
           const Divider(height: 24),
-          TextButton.icon(
+          OutlinedButton.icon(
             onPressed: _isResetting ? null : _performFactoryReset,
             icon: const Icon(Icons.warning_amber_rounded),
-            label: const Text('Factory Reset'),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            label: Text(context.l10n.detailFactoryReset),
+            style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: _isResetting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: _isResetting ? null : _performReset,
@@ -1245,7 +1266,7 @@ class _ResetDialogState extends State<_ResetDialog> {
                     color: Colors.white,
                   ),
                 )
-              : const Text('Reset'),
+              : Text(context.l10n.detailReset),
         ),
       ],
     );

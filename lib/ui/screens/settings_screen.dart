@@ -7,6 +7,7 @@ import '../../providers/device_provider.dart';
 import '../../providers/pairing_provider.dart';
 import '../../services/wifi_detection_service.dart';
 import 'device_pairing_screen.dart';
+import '../../l10n/l10n.dart';
 
 class SettingsScreen extends StatefulWidget {
   final WifiDetectionService? wifiService;
@@ -89,17 +90,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (ssid != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Permission granted! WiFi name: $ssid'),
+              content: Text(context.l10n.settingsPermissionGrantedWifi(ssid)),
               backgroundColor: Colors.green,
             ),
           );
         } else {
           // Has location but no SSID - needs Local Network too
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Location granted, but Local Network permission also needed. Check Settings.',
-              ),
+            SnackBar(
+              content: Text(context.l10n.settingsLocalNetworkAlsoNeeded),
               backgroundColor: Colors.orange,
               duration: Duration(seconds: 4),
             ),
@@ -125,43 +124,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Location Permission Required'),
+        title: Text(context.l10n.settingsLocationRequired),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'To display your WiFi network name, iOS requires Location permission.\n',
-            ),
+            Text(context.l10n.settingsLocationRequiredBody),
             const SizedBox(height: 12),
             Text(
-              'Required Permissions:',
+              context.l10n.settingsRequiredPermissions,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const Text(
-              '1. Location Services ("While Using the App")\n'
-              '2. Local Network\n',
-              style: TextStyle(fontSize: 14),
+            Text(
+              context.l10n.settingsPermissionList,
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Note: Device discovery works without location permission. '
-              'This is only needed to show the WiFi name.',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+            Text(
+              context.l10n.settingsDiscoveryWithoutLocation,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               _requestPermissions();
             },
-            child: const Text('Try Again'),
+            child: Text(context.l10n.commonTryAgain),
           ),
         ],
       ),
@@ -172,46 +167,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Enable Location in Settings'),
+        title: Text(context.l10n.settingsEnableLocation),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Location permission was previously denied. You must enable it manually in Settings.\n',
-            ),
+            Text(context.l10n.settingsLocationDeniedBody),
             const SizedBox(height: 12),
             Text(
-              'Steps to enable:',
+              context.l10n.settingsStepsToEnable,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const Text(
-              '\n1. Open Settings\n'
-              '2. Scroll to "Bit Switch"\n'
-              '3. Tap "Location"\n'
-              '4. Select "While Using the App"\n'
-              '5. Return to this app and tap the refresh button\n',
-              style: TextStyle(fontSize: 14),
+            Text(
+              context.l10n.settingsEnableLocationSteps,
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Note: Location permission is only needed to display the WiFi name. '
-              'Device discovery works without it.',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+            Text(
+              context.l10n.settingsLocationOnlyWifiName,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Later'),
+            child: Text(context.l10n.commonLater),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               _openAppSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(context.l10n.commonOpenSettings),
           ),
         ],
       ),
@@ -222,44 +210,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Additional Permission Needed'),
+        title: Text(context.l10n.settingsAdditionalPermission),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'You have Location permission, but WiFi name isn\'t visible yet.\n',
-            ),
+            Text(context.l10n.settingsWifiNameNotVisible),
             const SizedBox(height: 12),
             Text(
-              'Please enable:',
+              context.l10n.settingsPleaseEnable,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const Text(
-              '\n1. Go to iPhone Settings\n'
-              '2. Scroll down to "Bit Switch"\n'
-              '3. Enable "Local Network"\n',
-              style: TextStyle(fontSize: 14),
+            Text(
+              context.l10n.settingsEnableLocalNetworkSteps,
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Local Network permission is required for both device discovery '
-              'and WiFi name access on iOS.',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+            Text(
+              context.l10n.settingsLocalNetworkIosReason,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               _openAppSettings();
             },
-            child: const Text('Open Settings'),
+            child: Text(context.l10n.commonOpenSettings),
           ),
         ],
       ),
@@ -269,14 +252,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(context.l10n.settingsTitle)),
       body: Consumer2<SettingsProvider, DeviceProvider>(
         builder: (context, settings, devices, child) {
           return ListView(
             children: [
               // Network information and permissions
               if (_isMobile) ...[
-                _buildSectionHeader(context, 'Network'),
+                _buildSectionHeader(
+                  context,
+                  context.l10n.settingsSectionNetwork,
+                ),
                 _buildWifiInfoTile(context),
                 _buildPermissionStatusTile(context),
                 const Divider(),
@@ -284,40 +270,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               // Device pairing (iOS and Android only)
               if (_isMobile) ...[
-                _buildSectionHeader(context, 'Device Setup'),
+                _buildSectionHeader(
+                  context,
+                  context.l10n.settingsSectionDeviceSetup,
+                ),
                 ListTile(
                   leading: const Icon(Icons.add_circle_outline),
-                  title: const Text('Pair New Device'),
-                  subtitle: const Text('Set up a new Wemo device'),
+                  title: Text(context.l10n.settingsPairNewDevice),
+                  subtitle: Text(context.l10n.settingsPairNewDeviceSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _openPairingScreen(context),
                 ),
                 const Divider(),
               ],
-              _buildSectionHeader(context, 'Discovery'),
+              _buildSectionHeader(
+                context,
+                context.l10n.settingsSectionDiscovery,
+              ),
               ListTile(
                 leading: const Icon(Icons.timer_outlined),
-                title: const Text('Discovery Timeout'),
-                subtitle: Text('${settings.discoveryTimeoutSeconds} seconds'),
+                title: Text(context.l10n.settingsDiscoveryTimeout),
+                subtitle: Text(
+                  context.l10n.commonSeconds(settings.discoveryTimeoutSeconds),
+                ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showDiscoveryTimeoutDialog(context, settings),
               ),
               ListTile(
                 leading: const Icon(Icons.network_ping),
-                title: const Text('Request Timeout'),
+                title: Text(context.l10n.settingsRequestTimeout),
                 subtitle: Text(
-                  '${settings.requestTimeoutSeconds} seconds per request',
+                  context.l10n.settingsSecondsPerRequest(
+                    settings.requestTimeoutSeconds,
+                  ),
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showRequestTimeoutDialog(context, settings),
               ),
               SwitchListTile(
                 secondary: const Icon(Icons.autorenew),
-                title: const Text('Auto-refresh'),
+                title: Text(context.l10n.settingsAutoRefresh),
                 subtitle: Text(
                   settings.autoRefreshEnabled
-                      ? 'Refreshing every ${settings.autoRefreshIntervalSeconds}s'
-                      : 'Off - Use manual refresh button',
+                      ? context.l10n.settingsRefreshingEvery(
+                          settings.autoRefreshIntervalSeconds,
+                        )
+                      : context.l10n.settingsAutoRefreshOff,
                 ),
                 value: settings.autoRefreshEnabled,
                 onChanged: (value) async {
@@ -336,39 +334,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (settings.autoRefreshEnabled)
                 ListTile(
                   leading: const Icon(Icons.schedule),
-                  title: const Text('Auto-refresh Interval'),
+                  title: Text(context.l10n.settingsAutoRefreshInterval),
                   subtitle: Text(
-                    '${settings.autoRefreshIntervalSeconds} seconds',
+                    context.l10n.commonSeconds(
+                      settings.autoRefreshIntervalSeconds,
+                    ),
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () =>
                       _showRefreshIntervalDialog(context, settings, devices),
                 ),
               const Divider(),
-              _buildSectionHeader(context, 'About'),
+              _buildSectionHeader(context, context.l10n.settingsSectionAbout),
               ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('About Bit Switch'),
+                title: Text(context.l10n.settingsAbout),
                 onTap: () => _showAboutDialog(context),
               ),
               ListTile(
                 leading: const Icon(Icons.code),
-                title: const Text('Version'),
+                title: Text(context.l10n.settingsVersion),
                 subtitle: const Text('1.0.1'),
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('Network Diagnostics'),
+                title: Text(context.l10n.settingsNetworkDiagnostics),
                 onTap: () => _showDiagnosticsDialog(context),
               ),
               const Divider(),
-              _buildSectionHeader(context, 'Debug'),
+              _buildSectionHeader(context, context.l10n.settingsSectionDebug),
               SwitchListTile(
                 secondary: const Icon(Icons.bug_report),
-                title: const Text('Show Debug Mode'),
-                subtitle: const Text(
-                  'Show debug icon in home screen for troubleshooting',
-                ),
+                title: Text(context.l10n.settingsShowDebug),
+                subtitle: Text(context.l10n.settingsShowDebugHomeSubtitle),
                 value: settings.showDebugOption,
                 onChanged: (value) async {
                   await settings.setShowDebugOption(value);
@@ -391,16 +389,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     String subtitle;
     if (_isCheckingPermissions) {
-      subtitle = 'Checking...';
+      subtitle = context.l10n.settingsChecking;
     } else if (_currentSsid != null) {
       subtitle = _currentSsid!;
     } else if (_hasLocationPermission) {
       // Has location permission but still no SSID - likely missing Local Network permission
       subtitle = _isIOS
-          ? 'Enable Local Network in Settings'
-          : 'Not connected to WiFi';
+          ? context.l10n.settingsEnableLocalNetwork
+          : context.l10n.settingsNotConnectedWifi;
     } else {
-      subtitle = 'Permission required to view';
+      subtitle = context.l10n.settingsPermissionRequiredView;
     }
 
     return ListTile(
@@ -408,7 +406,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _currentSsid != null ? Icons.wifi : Icons.wifi_off,
         color: _currentSsid != null ? theme.colorScheme.primary : null,
       ),
-      title: const Text('Current Network'),
+      title: Text(context.l10n.settingsCurrentNetwork),
       subtitle: Text(subtitle),
       trailing: _isCheckingPermissions
           ? const SizedBox(
@@ -419,7 +417,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: _checkPermissionsAndWifi,
-              tooltip: 'Refresh',
+              tooltip: context.l10n.commonRefresh,
             ),
       onTap: _currentSsid == null && _hasLocationPermission
           ? () => _showLocalNetworkPermissionDialog()
@@ -440,13 +438,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         fullyGranted ? Icons.check_circle : Icons.warning_amber,
         color: fullyGranted ? Colors.green : Colors.orange,
       ),
-      title: const Text('Network Access Status'),
+      title: Text(context.l10n.settingsNetworkAccessStatus),
       subtitle: Text(
         fullyGranted
-            ? 'All permissions granted'
+            ? context.l10n.settingsAllPermissionsGranted
             : partiallyGranted && _isIOS
-            ? 'Local Network permission needed'
-            : 'Location permission needed',
+            ? context.l10n.settingsLocalNetworkNeeded
+            : context.l10n.settingsLocationNeeded,
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -458,7 +456,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icons.refresh,
               color: _isCheckingPermissions ? theme.disabledColor : null,
             ),
-            tooltip: 'Refresh permissions',
+            tooltip: context.l10n.settingsRefreshPermissions,
           ),
           const SizedBox(width: 4),
           // Action button based on status
@@ -466,13 +464,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             FilledButton.icon(
               onPressed: _isCheckingPermissions ? null : _requestPermissions,
               icon: const Icon(Icons.lock_open, size: 18),
-              label: const Text('Grant'),
+              label: Text(context.l10n.commonGrant),
             )
           else if (partiallyGranted && _isIOS)
             OutlinedButton.icon(
               onPressed: () => _showLocalNetworkPermissionDialog(),
               icon: const Icon(Icons.settings, size: 18),
-              label: const Text('Fix'),
+              label: Text(context.l10n.commonFix),
             ),
         ],
       ),
@@ -482,35 +480,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('About WiFi Name Permission'),
+                  title: Text(context.l10n.settingsAboutWifiPermission),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'On iOS, displaying your WiFi network name requires location permission.\n',
-                      ),
+                      Text(context.l10n.settingsWifiPermissionIos),
                       const SizedBox(height: 8),
-                      Text('Important:', style: theme.textTheme.titleSmall),
-                      const Text(
-                        '• Device discovery works WITHOUT this permission\n'
-                        '• This is only needed to show the WiFi name\n'
-                        '• No location data is collected or stored',
-                        style: TextStyle(fontSize: 13),
+                      Text(
+                        context.l10n.settingsImportant,
+                        style: theme.textTheme.titleSmall,
+                      ),
+                      Text(
+                        context.l10n.settingsWifiPermissionImportant,
+                        style: const TextStyle(fontSize: 13),
                       ),
                     ],
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: Text(context.l10n.commonCancel),
                     ),
                     FilledButton(
                       onPressed: () {
                         Navigator.pop(context);
                         _requestPermissions();
                       },
-                      child: const Text('Grant Permission'),
+                      child: Text(context.l10n.settingsGrantPermission),
                     ),
                   ],
                 ),
@@ -540,18 +537,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Discovery Timeout'),
+        title: Text(context.l10n.settingsDiscoveryTimeout),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('How long to scan for devices:'),
+            Text(context.l10n.settingsHowLongScan),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               children: [5, 10, 30, 60, 120].map((seconds) {
                 return ChoiceChip(
                   label: Text(
-                    seconds < 60 ? '${seconds}s' : '${seconds ~/ 60}m',
+                    seconds < 60
+                        ? context.l10n.commonSecondsShort(seconds)
+                        : context.l10n.commonMinutesShort(seconds ~/ 60),
                   ),
                   selected: seconds == settings.discoveryTimeoutSeconds,
                   onSelected: (selected) async {
@@ -561,7 +560,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Discovery timeout set to $seconds seconds',
+                            context.l10n.settingsDiscoveryTimeoutSet(seconds),
                           ),
                         ),
                       );
@@ -575,7 +574,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
         ],
       ),
@@ -590,22 +589,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Request Timeout'),
+        title: Text(context.l10n.settingsRequestTimeout),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('How long to wait for device responses:'),
+            Text(context.l10n.settingsHowLongResponses),
             const SizedBox(height: 8),
-            const Text(
-              'Increase if you see "Connection closed" errors.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+            Text(
+              context.l10n.settingsIncreaseTimeoutHint,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               children: [2, 3, 5, 8, 10].map((seconds) {
                 return ChoiceChip(
-                  label: Text('${seconds}s'),
+                  label: Text(context.l10n.commonSecondsShort(seconds)),
                   selected: seconds == settings.requestTimeoutSeconds,
                   onSelected: (selected) async {
                     await settings.setRequestTimeoutSeconds(seconds);
@@ -618,7 +617,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Request timeout set to $seconds seconds',
+                            context.l10n.settingsRequestTimeoutSet(seconds),
                           ),
                         ),
                       );
@@ -632,7 +631,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
         ],
       ),
@@ -647,17 +646,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Auto-refresh Interval'),
+        title: Text(context.l10n.settingsAutoRefreshInterval),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Set the interval for automatic state refresh:'),
+            Text(context.l10n.settingsSetRefreshInterval),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               children: [15, 30, 60, 120].map((seconds) {
                 return ChoiceChip(
-                  label: Text('${seconds}s'),
+                  label: Text(context.l10n.commonSecondsShort(seconds)),
                   selected: seconds == settings.autoRefreshIntervalSeconds,
                   onSelected: (selected) async {
                     await settings.setAutoRefreshIntervalSeconds(seconds);
@@ -673,7 +672,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Refresh interval set to $seconds seconds',
+                            context.l10n.settingsRefreshIntervalSet(seconds),
                           ),
                         ),
                       );
@@ -687,7 +686,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
         ],
       ),
@@ -698,31 +697,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('About Bit Switch'),
-        content: const Column(
+        title: Text(context.l10n.settingsAbout),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'A clean, private local controller for your Wemo devices.',
-              style: TextStyle(fontWeight: FontWeight.w500),
+              context.l10n.settingsAboutTagline,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             SizedBox(height: 16),
             Text(
-              'Bit Switch uses local network discovery to find and control devices without cloud dependencies.',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+              context.l10n.settingsAboutDescription,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
             SizedBox(height: 16),
             Text(
-              'Version 1.0.1',
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+              context.l10n.settingsVersionValue,
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(context.l10n.commonClose),
           ),
         ],
       ),
@@ -733,30 +732,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Network Diagnostics'),
-        content: const Column(
+        title: Text(context.l10n.settingsNetworkDiagnostics),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Protocol: SSDP/UPnP'),
-            SizedBox(height: 8),
-            Text('Multicast Address: 239.255.255.250:1900'),
-            SizedBox(height: 8),
-            Text('Device Ports: 49152-49159'),
-            SizedBox(height: 8),
-            Text('Control Protocol: SOAP over HTTP'),
-            SizedBox(height: 16),
+            Text(context.l10n.settingsProtocol),
+            const SizedBox(height: 8),
+            Text(context.l10n.settingsMulticastAddress),
+            const SizedBox(height: 8),
+            Text(context.l10n.settingsDevicePorts),
+            const SizedBox(height: 8),
+            Text(context.l10n.settingsControlProtocol),
+            const SizedBox(height: 16),
             Text(
-              'Tip: Ensure your device is on the same network as your '
-              'Wemo devices and that UDP multicast is not blocked.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              context.l10n.settingsDiagnosticsTip,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(context.l10n.commonClose),
           ),
         ],
       ),
@@ -768,7 +766,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider(
-          create: (_) => PairingProvider(),
+          create: (_) => PairingProvider(localizations: context.l10n),
           child: const DevicePairingScreen(),
         ),
       ),
@@ -778,9 +776,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final deviceProvider = context.read<DeviceProvider>();
         deviceProvider.discoverDevices();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Device paired! Refreshing device list...'),
-          ),
+          SnackBar(content: Text(context.l10n.settingsDevicePaired)),
         );
       }
     });

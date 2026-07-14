@@ -1,4 +1,18 @@
+import 'package:flutter/widgets.dart';
+import 'package:bit_switch/l10n/app_localizations.dart';
+import 'package:bit_switch/l10n/l10n.dart';
 import 'exceptions.dart';
+
+/// Resolve localizations from the widget tree when a context is available,
+/// falling back to English for context-free callers (providers, services,
+/// tests).
+AppLocalizations _resolveLocalizations(BuildContext? context) {
+  if (context != null) {
+    final loc = AppLocalizations.of(context);
+    if (loc != null) return loc;
+  }
+  return currentAppLocalizations;
+}
 
 /// Known UPnP/SOAP error codes and their meanings
 class SoapErrorCodes {
@@ -20,28 +34,32 @@ class SoapErrorCodes {
   static const int noSuchSession = 612;
 
   /// Get a user-friendly message for a SOAP error code
-  static String? getMessage(int? errorCode) {
+  ///
+  /// [context] is optional; without it (or outside a localized widget tree)
+  /// messages fall back to English.
+  static String? getMessage(int? errorCode, {BuildContext? context}) {
     if (errorCode == null) return null;
+    final loc = _resolveLocalizations(context);
 
     switch (errorCode) {
       case invalidAction:
-        return 'The device does not support this action.';
+        return loc.errDeviceNotSupportAction;
       case invalidArgs:
-        return 'Invalid arguments were sent to the device.';
+        return loc.errInvalidArgs;
       case actionFailed:
-        return 'The device failed to perform the requested action.';
+        return loc.errActionFailed;
       case argumentValueInvalid:
-        return 'An invalid value was provided.';
+        return loc.errInvalidValue;
       case argumentValueOutOfRange:
-        return 'The value is out of the acceptable range.';
+        return loc.errValueOutOfRange;
       case optionalActionNotImplemented:
-        return 'This feature is not available on this device.';
+        return loc.errFeatureNotAvailable;
       case outOfMemory:
-        return 'The device is out of memory. Try again later.';
+        return loc.errOutOfMemory;
       case humanInterventionRequired:
-        return 'Manual action is required on the device.';
+        return loc.errManualActionRequired;
       case actionNotAuthorized:
-        return 'This action is not authorized.';
+        return loc.errActionNotAuthorized;
       default:
         return null;
     }
@@ -51,65 +69,80 @@ class SoapErrorCodes {
 /// Helper class to generate user-friendly error messages
 class ErrorHandler {
   /// Convert an exception to a user-friendly error message
-  static String getUserFriendlyMessage(dynamic error) {
+  ///
+  /// [context] is optional; without it (or outside a localized widget tree)
+  /// messages fall back to English.
+  static String getUserFriendlyMessage(dynamic error, {BuildContext? context}) {
+    final loc = _resolveLocalizations(context);
+
     if (error is NetworkException) {
-      return _handleNetworkException(error);
+      return _handleNetworkException(loc, error);
     }
 
     if (error is SoapException) {
-      return _handleSoapException(error);
+      return _handleSoapException(loc, error, context);
     }
 
     if (error is TimeoutException) {
-      return _handleTimeoutException(error);
+      return _handleTimeoutException(loc, error);
     }
 
     if (error is DeviceException) {
-      return _handleDeviceException(error);
+      return _handleDeviceException(loc, error);
     }
 
     if (error is DiscoveryException) {
-      return _handleDiscoveryException(error);
+      return _handleDiscoveryException(loc, error);
     }
 
     // Default fallback
-    return 'An unexpected error occurred. Please try again.';
+    return loc.errUnexpected;
   }
 
-  static String _handleNetworkException(NetworkException error) {
+  static String _handleNetworkException(
+    AppLocalizations loc,
+    NetworkException error,
+  ) {
     final message = error.message.toLowerCase();
 
     if (message.contains('connection closed') ||
         message.contains('connection reset') ||
         message.contains('connection refused')) {
-      return 'Unable to reach the device. It may be offline or on a different network.';
+      return loc.errDeviceUnreachableOffline;
     }
 
     if (message.contains('timed out')) {
       if (error.attemptCount != null && error.attemptCount! > 1) {
-        return 'Request timed out after ${error.attemptCount} attempts. The device may be offline.';
+        return loc.errRequestTimedOutAttempts(error.attemptCount!);
       }
-      return 'Request timed out. The device may be offline.';
+      return loc.errRequestTimedOut;
     }
 
     if (message.contains('no route to host')) {
-      return 'Cannot reach the device. Please check your WiFi connection.';
+      return loc.errNoRouteToHost;
     }
 
     if (message.contains('host unreachable')) {
-      return 'The device is unreachable. Please ensure it is powered on and connected to WiFi.';
+      return loc.errHostUnreachable;
     }
 
     if (error.attemptCount != null && error.attemptCount! > 1) {
-      return 'Unable to communicate with device after ${error.attemptCount} attempts.';
+      return loc.errCommFailedAttempts(error.attemptCount!);
     }
 
-    return 'Network error: Unable to communicate with device.';
+    return loc.errNetworkErrorComm;
   }
 
-  static String _handleSoapException(SoapException error) {
+  static String _handleSoapException(
+    AppLocalizations loc,
+    SoapException error,
+    BuildContext? context,
+  ) {
     // Check for specific UPnP error codes first
-    final errorCodeMessage = SoapErrorCodes.getMessage(error.errorCode);
+    final errorCodeMessage = SoapErrorCodes.getMessage(
+      error.errorCode,
+      context: context,
+    );
     if (errorCodeMessage != null) {
       return errorCodeMessage;
     }
@@ -119,11 +152,11 @@ class ErrorHandler {
       final fault = error.faultString!.toLowerCase();
 
       if (fault.contains('invalid') && fault.contains('action')) {
-        return 'The device does not support this action.';
+        return loc.errDeviceNotSupportAction;
       }
 
       if (fault.contains('unauthorized') || fault.contains('not authorized')) {
-        return 'This action is not authorized on the device.';
+        return loc.errActionNotAuthorizedDevice;
       }
     }
 
@@ -131,97 +164,106 @@ class ErrorHandler {
     if (error.httpStatusCode != null) {
       switch (error.httpStatusCode) {
         case 404:
-          return 'Device service not found. The device may need a firmware update.';
+          return loc.errDeviceServiceNotFound;
         case 500:
           if (error.isSoapFault) {
-            return 'The device encountered an error processing the request.';
+            return loc.errDeviceEncounteredError;
           }
-          return 'The device returned an internal error.';
+          return loc.errDeviceInternalError;
         case 503:
-          return 'The device is temporarily unavailable. Please try again.';
+          return loc.errDeviceTempUnavailable;
         default:
           if (error.httpStatusCode! >= 400) {
-            return 'Device returned an error (HTTP ${error.httpStatusCode}).';
+            return loc.errDeviceReturnedHttpError(error.httpStatusCode!);
           }
       }
     }
 
     // Include action context if available
     if (error.action != null) {
-      return 'Failed to ${_actionToVerb(error.action!)} on the device.';
+      return loc.errFailedToPerformAction(_actionToVerb(loc, error.action!));
     }
 
-    return 'The device returned an error.';
+    return loc.errDeviceReturnedError;
   }
 
-  static String _handleTimeoutException(TimeoutException error) {
+  static String _handleTimeoutException(
+    AppLocalizations loc,
+    TimeoutException error,
+  ) {
     if (error.operation != null) {
-      return 'The ${error.operation} operation timed out. Please try again.';
+      return loc.errOperationTimedOutName(error.operation!);
     }
 
     if (error.duration != null && error.duration!.inSeconds > 10) {
-      return 'Operation timed out after ${error.duration!.inSeconds} seconds.';
+      return loc.errOperationTimedOutSeconds(error.duration!.inSeconds);
     }
 
-    return 'Operation timed out. Please try again.';
+    return loc.errOperationTimedOut;
   }
 
-  static String _handleDeviceException(DeviceException error) {
+  static String _handleDeviceException(
+    AppLocalizations loc,
+    DeviceException error,
+  ) {
     // DeviceException messages are usually already user-friendly
     final message = error.message;
 
     // Add device name context if available
     if (error.deviceName != null && !message.contains(error.deviceName!)) {
-      return '${error.deviceName}: $message';
+      return loc.errDeviceExceptionMessage(error.deviceName!, message);
     }
 
     return message;
   }
 
-  static String _handleDiscoveryException(DiscoveryException error) {
+  static String _handleDiscoveryException(
+    AppLocalizations loc,
+    DiscoveryException error,
+  ) {
     final message = error.message.toLowerCase();
 
     if (message.contains('permission')) {
-      return 'Please enable Local Network permission in Settings to find devices.';
+      return loc.errEnableLocalNetwork;
     }
 
     if (message.contains('local network')) {
-      return 'Cannot access local network. Please enable Local Network permission in Settings.';
+      return loc.errCannotAccessLocalNetwork;
     }
 
     if (message.contains('wifi') || message.contains('network')) {
-      return 'Unable to discover devices. Please check your WiFi connection.';
+      return loc.errCheckWifiConnection;
     }
 
     if (message.contains('timeout') || message.contains('timed out')) {
       if (error.devicesFoundBeforeError != null &&
           error.devicesFoundBeforeError! > 0) {
-        return 'Discovery interrupted. ${error.devicesFoundBeforeError} device(s) found.';
+        return loc.errDiscoveryInterrupted(error.devicesFoundBeforeError!);
       }
-      return 'No devices found. Please ensure devices are powered on and connected to your network.';
+      return loc.errNoDevicesFound;
     }
 
-    return 'Unable to discover devices. Please check your WiFi connection.';
+    return loc.errCheckWifiConnection;
   }
 
   /// Convert a SOAP action name to a user-friendly verb
-  static String _actionToVerb(String action) {
+  static String _actionToVerb(AppLocalizations loc, String action) {
     switch (action) {
       case 'GetBinaryState':
-        return 'get device state';
+        return loc.actionGetDeviceState;
       case 'SetBinaryState':
-        return 'set device state';
+        return loc.actionSetDeviceState;
       case 'GetInsightParams':
-        return 'get energy data';
+        return loc.actionGetEnergyData;
       case 'GetApList':
-        return 'scan for networks';
+        return loc.actionScanNetworks;
       case 'ConnectHomeNetwork':
-        return 'connect to WiFi';
+        return loc.actionConnectWifi;
       case 'GetNetworkStatus':
-        return 'check connection status';
+        return loc.actionCheckConnection;
       case 'ReSetup':
       case 'ReSet':
-        return 'reset device';
+        return loc.actionResetDevice;
       default:
         // Convert camelCase to readable text
         final readable = action
@@ -230,34 +272,39 @@ class ErrorHandler {
               (m) => ' ${m.group(1)!.toLowerCase()}',
             )
             .trim();
-        return readable.isEmpty ? 'perform action' : readable;
+        return readable.isEmpty ? loc.actionPerform : readable;
     }
   }
 
   /// Get a recovery suggestion for an error
-  static String? getRecoverySuggestion(dynamic error) {
+  ///
+  /// [context] is optional; without it (or outside a localized widget tree)
+  /// suggestions fall back to English.
+  static String? getRecoverySuggestion(dynamic error, {BuildContext? context}) {
+    final loc = _resolveLocalizations(context);
+
     if (error is NetworkException) {
       if (error.message.contains('timed out')) {
-        return 'Try refreshing the device list or check if the device is responding.';
+        return loc.suggestTryRefreshing;
       }
-      return 'Ensure the device is powered on and connected to your WiFi network.';
+      return loc.suggestEnsurePoweredOn;
     }
 
     if (error is DiscoveryException) {
-      return 'Make sure your phone is connected to the same WiFi network as your devices.';
+      return loc.suggestMakeSureSameWifi;
     }
 
     if (error is SoapException) {
       if (error.errorCode == SoapErrorCodes.humanInterventionRequired) {
-        return 'Check the physical device for any buttons or switches that need attention.';
+        return loc.suggestCheckPhysical;
       }
       if (error.httpStatusCode == 503) {
-        return 'Wait a moment and try again.';
+        return loc.suggestWaitAndTry;
       }
     }
 
     if (error is TimeoutException) {
-      return 'The device may be busy. Try again in a few seconds.';
+      return loc.suggestDeviceBusy;
     }
 
     return null;

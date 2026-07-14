@@ -234,6 +234,54 @@ flutter clean
 
 ---
 
+## macOS (Apple Silicon): Offer the iPad app on Mac ("Designed for iPad")
+
+Bit Switch runs on macOS as the iPad version via Apple's "iPhone and iPad Apps on Apple Silicon Macs" program. The same IPA uploaded to App Store Connect serves Macs — no separate macOS target, build, or upload is needed.
+
+No Dart code changes are required: an iPad app running on a Mac still reports `Platform.isIOS == true`, so the existing iOS code paths (SSDP discovery, subnet-scan fallback, SOAP control, SSID fallback handling) all apply.
+
+### 1. Verify iPad support in the iOS project
+
+After regenerating the `ios/` folder (`flutter create --platforms=ios .`):
+
+- In Xcode, under Runner target > General > Deployment Info, confirm **iPad** is checked (`TARGETED_DEVICE_FAMILY = "1,2"` — the Flutter default).
+- Confirm `Info.plist` contains `UISupportedInterfaceOrientations~ipad` with all four orientations (also the Flutter default). Full iPad rotation/multitasking support is what makes the app behave well in a resizable Mac window.
+- Do **not** add `UIRequiredDeviceCapabilities` entries such as `wifi` or `location-services` — required device capabilities can exclude the app from Mac availability.
+
+### 2. Enable Mac availability in App Store Connect
+
+1. Go to [App Store Connect](https://appstoreconnect.apple.com) > your app > **Pricing and Availability**
+2. Under "iPhone and iPad Apps on Apple Silicon Macs", check **"Make this app available"**
+3. Save — this applies to the already-approved build; no new binary upload or review is needed to toggle it
+
+The app then appears in the Mac App Store (under the "iPhone & iPad Apps" tab in search results) on Apple Silicon Macs.
+
+### 3. Test on a Mac before enabling
+
+On an Apple Silicon Mac:
+
+```bash
+flutter pub get
+cd ios && pod install && cd ..
+open ios/Runner.xcworkspace
+```
+
+In Xcode, select the run destination **"My Mac (Designed for iPad)"** and run. Verify:
+
+- Device discovery finds Wemo devices (the Mac must be on the same LAN as the devices — Ethernet or Wi-Fi both work, discovery is IP-based)
+- Toggling devices on/off works
+- The window resizes without layout breakage
+
+### 4. Expected behavior differences on Mac
+
+- **Local Network permission:** macOS 15 (Sequoia) and later shows the same Local Network prompt as iOS. If discovery fails, re-enable it under System Settings > Privacy & Security > Local Network.
+- **Wi-Fi SSID display:** `getWifiName()` returns null on Mac, so the home screen shows the generic "Connected to WiFi" label instead of the network name. Discovery and control are unaffected.
+- **Location permission:** the app may prompt for Location on first launch (used only for SSID display on iPhone/iPad). Denying it on a Mac has no functional impact.
+- **Pairing new devices (WeMo AP setup):** works, but the user must join the `WeMo.XXX` network manually from the Mac's Wi-Fi menu — the in-app "Open WiFi Settings" shortcut may only open the app's settings pane on macOS.
+- **Wi-Fi scanning:** as on iOS/iPadOS, the OS prohibits scanning; the app uses the Wemo device's own network scanner or manual SSID entry.
+
+---
+
 ## Troubleshooting
 
 ### Error: "No signing certificate found" or "No provisioning profile"

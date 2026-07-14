@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../l10n/l10n.dart';
 
 class BrightnessSlider extends StatefulWidget {
   final int brightness;
   final ValueChanged<double>? onChanged;
 
-  const BrightnessSlider({
-    super.key,
-    required this.brightness,
-    this.onChanged,
-  });
+  const BrightnessSlider({super.key, required this.brightness, this.onChanged});
 
   @override
   State<BrightnessSlider> createState() => _BrightnessSliderState();
@@ -42,13 +39,10 @@ class _BrightnessSliderState extends State<BrightnessSlider> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.brightness_6,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.brightness_6, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  'Brightness',
+                  context.l10n.widgetBrightness,
                   style: theme.textTheme.titleMedium,
                 ),
               ],
@@ -65,20 +59,20 @@ class _BrightnessSliderState extends State<BrightnessSlider> {
         const SizedBox(height: 8),
         Row(
           children: [
-            Icon(
-              Icons.brightness_low,
-              size: 20,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.brightness_low, size: 20, color: Colors.grey[400]),
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: theme.colorScheme.primary,
                   inactiveTrackColor: Colors.grey[200],
                   thumbColor: theme.colorScheme.primary,
-                  overlayColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                  overlayColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.2,
+                  ),
                   trackHeight: 8,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 12,
+                  ),
                 ),
                 child: Slider(
                   value: _currentValue,
@@ -95,11 +89,7 @@ class _BrightnessSliderState extends State<BrightnessSlider> {
                 ),
               ),
             ),
-            Icon(
-              Icons.brightness_high,
-              size: 20,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.brightness_high, size: 20, color: Colors.grey[400]),
           ],
         ),
         const SizedBox(height: 8),

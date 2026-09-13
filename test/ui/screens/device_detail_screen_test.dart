@@ -661,11 +661,7 @@ void main() {
             .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
               if (methodCall.method == 'canStartScan') {
                 await Future.delayed(const Duration(milliseconds: 50));
-                // CanStartScan.yes — skips the (unmocked) permission-request
-                // flow entirely so the scan can actually complete and
-                // pumpAndSettle() below doesn't hang waiting on a real
-                // platform channel.
-                return 1;
+                return 1; // CanStartScan.yes
               }
               if (methodCall.method == 'startScan') return true;
               if (methodCall.method == 'getScannedResults') {
@@ -685,6 +681,11 @@ void main() {
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
+        // canStartScan's real 50ms delay is still in flight here. pumpAndSettle
+        // pumps frames but doesn't itself wait for real timers/futures created
+        // outside the fake test clock (we're inside runAsync), so let it
+        // actually resolve first or pumpAndSettle can spin until it times out.
+        await Future.delayed(const Duration(milliseconds: 60));
         await tester.pumpAndSettle();
       });
     });

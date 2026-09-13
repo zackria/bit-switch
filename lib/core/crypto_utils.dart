@@ -96,6 +96,14 @@ class WemoCrypto {
   }
 
   /// OpenSSL EVP_BytesToKey key derivation
+  ///
+  /// MD5 is required here, not chosen: this reproduces OpenSSL's legacy
+  /// EVP_BytesToKey construction exactly as the real Wemo device firmware
+  /// implements it, to derive the same AES key/IV the device will use to
+  /// decrypt the WiFi password it receives. MD5 is not used for hashing a
+  /// secret, an integrity check, or anything an attacker could exploit via
+  /// collisions — it is a fixed interop primitive; using a stronger hash
+  /// would derive a different key the physical device cannot decrypt with.
   static ({Uint8List key, Uint8List iv}) _evpBytesToKey(
     Uint8List password,
     Uint8List salt,
@@ -140,7 +148,12 @@ class WemoCrypto {
       padded[i] = padding;
     }
 
-    // Set up AES-CBC cipher
+    // CBC (not an AEAD mode like GCM) with PKCS7 padding is required, not
+    // chosen: it's the exact scheme the Wemo device firmware itself uses to
+    // decrypt the WiFi password during setup. An authenticated mode would
+    // produce ciphertext the physical device cannot decrypt, breaking WiFi
+    // setup. This is a fixed interop constraint with real hardware, not a
+    // security design choice made by this app.
     final cipher = CBCBlockCipher(AESEngine())
       ..init(true, ParametersWithIV(KeyParameter(key), iv));
 

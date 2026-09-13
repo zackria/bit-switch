@@ -448,11 +448,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           if (state.isLoading) ...[
             Center(
               child: Padding(
-                padding: EdgeInsets.all(48),
+                padding: const EdgeInsets.all(48),
                 child: Column(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 24),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 24),
                     Text(context.l10n.pairingLookingForDevice),
                   ],
                 ),
@@ -515,7 +515,9 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 hintText: '10.22.22.1',
                 border: const OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -574,153 +576,167 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           ),
         ),
 
-        // iOS limitation banner
         if (Theme.of(context).platform == TargetPlatform.iOS)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Card(
-              color: Colors.blue.shade50,
-              margin: EdgeInsets.zero,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: Colors.blue.shade700,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        context.l10n.pairingIosScanLimitation,
-                        style: TextStyle(
-                          color: Colors.blue.shade800,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
+          _buildIosScanLimitationBanner(context),
+
+        _buildNetworksList(context, provider),
+
+        if (state.selectedSsid != null)
+          _buildPasswordSection(context, provider),
+      ],
+    );
+  }
+
+  Widget _buildIosScanLimitationBanner(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Card(
+        color: Colors.blue.shade50,
+        margin: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  context.l10n.pairingIosScanLimitation,
+                  style: TextStyle(color: Colors.blue.shade800, fontSize: 12),
                 ),
               ),
-            ),
+            ],
           ),
+        ),
+      ),
+    );
+  }
 
-        if (state.isLoading && state.availableNetworks.isEmpty)
-          const Expanded(child: Center(child: CircularProgressIndicator()))
-        else if (state.availableNetworks.isEmpty)
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.wifi_off,
-                    size: 48,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(context.l10n.pairingNoNetworks),
-                  if (state.errorMessage != null) ...[
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Text(
-                        state.errorMessage!,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: theme.colorScheme.error,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: () => provider.refreshNetworks(),
-                    child: Text(context.l10n.pairingScanAgain),
-                  ),
-                ],
+  Widget _buildNetworksList(BuildContext context, PairingProvider provider) {
+    final theme = Theme.of(context);
+    final state = provider.state;
+
+    if (state.isLoading && state.availableNetworks.isEmpty) {
+      return const Expanded(child: Center(child: CircularProgressIndicator()));
+    }
+
+    if (state.availableNetworks.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.wifi_off,
+                size: 48,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
-            ),
-          )
-        else
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount:
-                  state.availableNetworks.length + 1, // +1 for manual entry
-              itemBuilder: (context, index) {
-                if (index == state.availableNetworks.length) {
-                  // Manual SSID entry option
-                  return _buildManualSsidEntry(context, provider);
-                }
-
-                final network = state.availableNetworks[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: NetworkListTile(
-                    network: network,
-                    isSelected: state.selectedSsid == network.ssid,
-                    onTap: () => provider.selectNetwork(network.ssid),
-                  ),
-                );
-              },
-            ),
-          ),
-
-        // Password and continue section
-        if (state.selectedSsid != null) ...[
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.pairingWifiPassword,
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                  onChanged: (value) => provider.setPassword(value),
-                ),
-                const SizedBox(height: 16),
-
-                if (state.errorMessage != null) ...[
-                  Text(
+              const SizedBox(height: 16),
+              Text(context.l10n.pairingNoNetworks),
+              if (state.errorMessage != null) ...[
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
                     state.errorMessage!,
-                    style: TextStyle(color: theme.colorScheme.error),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: (state.password?.isNotEmpty ?? false)
-                        ? () => provider.configureNetwork()
-                        : null,
-                    icon: const Icon(Icons.arrow_forward),
-                    label: Text(context.l10n.pairingConnect),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: theme.colorScheme.error,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],
-            ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => provider.refreshNetworks(),
+                child: Text(context.l10n.pairingScanAgain),
+              ),
+            ],
           ),
-        ],
+        ),
+      );
+    }
+
+    return Expanded(
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: state.availableNetworks.length + 1, // +1 for manual entry
+        itemBuilder: (context, index) {
+          if (index == state.availableNetworks.length) {
+            // Manual SSID entry option
+            return _buildManualSsidEntry(context, provider);
+          }
+
+          final network = state.availableNetworks[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: NetworkListTile(
+              network: network,
+              isSelected: state.selectedSsid == network.ssid,
+              onTap: () => provider.selectNetwork(network.ssid),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPasswordSection(BuildContext context, PairingProvider provider) {
+    final theme = Theme.of(context);
+    final state = provider.state;
+
+    return Column(
+      children: [
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: context.l10n.pairingWifiPassword,
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+                onChanged: (value) => provider.setPassword(value),
+              ),
+              const SizedBox(height: 16),
+
+              if (state.errorMessage != null) ...[
+                Text(
+                  state.errorMessage!,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+                const SizedBox(height: 8),
+              ],
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: (state.password?.isNotEmpty ?? false)
+                      ? () => provider.configureNetwork()
+                      : null,
+                  icon: const Icon(Icons.arrow_forward),
+                  label: Text(context.l10n.pairingConnect),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -868,12 +884,12 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
   Widget _buildFinalizeStep(BuildContext context, PairingProvider provider) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(48),
+        padding: const EdgeInsets.all(48),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 24),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 24),
             Text(context.l10n.pairingFinalizingSetup),
           ],
         ),

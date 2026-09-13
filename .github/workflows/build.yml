@@ -22,6 +22,8 @@ jobs:
         run: flutter pub get
       - name: Run tests with coverage
         run: flutter test --coverage
+      - name: Verify coverage report
+        run: test -s coverage/lcov.info
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
         env:

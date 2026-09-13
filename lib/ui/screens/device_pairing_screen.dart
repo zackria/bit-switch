@@ -103,6 +103,137 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
     }
   }
 
+  Widget _buildCircleIcon(BuildContext context, IconData icon) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primaryContainer,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 64, color: theme.colorScheme.primary),
+      ),
+    );
+  }
+
+  /// Card showing the current network and whether it's the expected one
+  /// (the device's AP during pairing, or the home network on reconnect).
+  Widget _buildNetworkStatusCard(
+    BuildContext context, {
+    required bool isConnected,
+    required String? currentSsid,
+    required String connectedLabel,
+  }) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(
+              isConnected ? Icons.check_circle : Icons.wifi_find,
+              color: isConnected ? Colors.green : theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.l10n.pairingCurrentNetwork,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  Text(
+                    currentSsid ?? context.l10n.commonNotConnected,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  if (isConnected)
+                    Text(
+                      connectedLabel,
+                      style: TextStyle(color: Colors.green[700]),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// "Open WiFi settings" + continue button pair used by the connect-to-AP
+  /// and reconnect-to-home steps.
+  Widget _buildWifiSettingsAndContinueButtons(
+    BuildContext context,
+    PairingProvider provider, {
+    required VoidCallback onContinue,
+    required String continueLabel,
+  }) {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => provider.openWifiSettings(),
+            icon: const Icon(Icons.settings),
+            label: Text(context.l10n.pairingOpenWifiSettings),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: onContinue,
+            icon: const Icon(Icons.arrow_forward),
+            label: Text(continueLabel),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Card showing a device's name and a subtitle (type, or connected SSID),
+  /// used on the select-network and success steps.
+  Widget _buildDeviceInfoCard(
+    BuildContext context, {
+    required String name,
+    required String subtitle,
+    EdgeInsetsGeometry? margin,
+    Widget? trailing,
+  }) {
+    final theme = Theme.of(context);
+    return Card(
+      margin: margin,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(Icons.devices, color: theme.colorScheme.primary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: theme.textTheme.titleMedium),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (trailing != null) trailing,
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildIntroStep(BuildContext context, PairingProvider provider) {
     final theme = Theme.of(context);
 
@@ -112,20 +243,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.wifi_tethering,
-                size: 64,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-          ),
+          _buildCircleIcon(context, Icons.wifi_tethering),
           const SizedBox(height: 32),
 
           // Title
@@ -269,20 +387,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.wifi,
-                size: 64,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-          ),
+          _buildCircleIcon(context, Icons.wifi),
           const SizedBox(height: 32),
 
           Text(
@@ -300,67 +405,20 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 24),
 
           // Current network status
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(
-                    state.isOnWemoAp ? Icons.check_circle : Icons.wifi_find,
-                    color: state.isOnWemoAp
-                        ? Colors.green
-                        : theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.pairingCurrentNetwork,
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        Text(
-                          state.currentSsid ?? context.l10n.commonNotConnected,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        if (state.isOnWemoAp)
-                          Text(
-                            context.l10n.pairingConnectedToDevice,
-                            style: TextStyle(color: Colors.green[700]),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          _buildNetworkStatusCard(
+            context,
+            isConnected: state.isOnWemoAp,
+            currentSsid: state.currentSsid,
+            connectedLabel: context.l10n.pairingConnectedToDevice,
           ),
 
           const SizedBox(height: 24),
 
-          // Open WiFi settings button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => provider.openWifiSettings(),
-              icon: const Icon(Icons.settings),
-              label: Text(context.l10n.pairingOpenWifiSettings),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Continue button
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: () => provider.confirmConnectedToDeviceAp(),
-              icon: const Icon(Icons.arrow_forward),
-              label: Text(context.l10n.pairingConnectedButton),
-            ),
+          _buildWifiSettingsAndContinueButtons(
+            context,
+            provider,
+            onContinue: () => provider.confirmConnectedToDeviceAp(),
+            continueLabel: context.l10n.pairingConnectedButton,
           ),
 
           if (state.errorMessage != null) ...[
@@ -488,34 +546,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
       children: [
         // Device info card
         if (state.device != null)
-          Card(
+          _buildDeviceInfoCard(
+            context,
+            name: state.device!.name,
+            subtitle: localizedDeviceType(context.l10n, state.device!.type),
             margin: const EdgeInsets.all(16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(Icons.devices, color: theme.colorScheme.primary),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.device!.name,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        Text(
-                          localizedDeviceType(context.l10n, state.device!.type),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
 
         // Network selection
@@ -792,20 +827,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.home,
-                size: 64,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-          ),
+          _buildCircleIcon(context, Icons.home),
           const SizedBox(height: 32),
 
           Text(
@@ -823,69 +845,20 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 24),
 
           // Current network status
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(
-                    state.isOnHomeNetwork
-                        ? Icons.check_circle
-                        : Icons.wifi_find,
-                    color: state.isOnHomeNetwork
-                        ? Colors.green
-                        : theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.pairingCurrentNetwork,
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        Text(
-                          state.currentSsid ?? context.l10n.commonNotConnected,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        if (state.isOnHomeNetwork)
-                          Text(
-                            context.l10n.pairingBackOnHome,
-                            style: TextStyle(color: Colors.green[700]),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          _buildNetworkStatusCard(
+            context,
+            isConnected: state.isOnHomeNetwork,
+            currentSsid: state.currentSsid,
+            connectedLabel: context.l10n.pairingBackOnHome,
           ),
 
           const SizedBox(height: 24),
 
-          // Open WiFi settings button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => provider.openWifiSettings(),
-              icon: const Icon(Icons.settings),
-              label: Text(context.l10n.pairingOpenWifiSettings),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Continue button
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: () => provider.confirmReconnectedToHome(),
-              icon: const Icon(Icons.arrow_forward),
-              label: Text(context.l10n.pairingReconnectedButton),
-            ),
+          _buildWifiSettingsAndContinueButtons(
+            context,
+            provider,
+            onContinue: () => provider.confirmReconnectedToHome(),
+            continueLabel: context.l10n.pairingReconnectedButton,
           ),
         ],
       ),
@@ -936,36 +909,13 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           const SizedBox(height: 16),
 
           if (state.device != null) ...[
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(Icons.devices, color: theme.colorScheme.primary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            state.device!.name,
-                            style: theme.textTheme.titleMedium,
-                          ),
-                          Text(
-                            context.l10n.pairingConnectedToSsid(
-                              state.selectedSsid ?? '',
-                            ),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.check_circle, color: Colors.green),
-                  ],
-                ),
+            _buildDeviceInfoCard(
+              context,
+              name: state.device!.name,
+              subtitle: context.l10n.pairingConnectedToSsid(
+                state.selectedSsid ?? '',
               ),
+              trailing: const Icon(Icons.check_circle, color: Colors.green),
             ),
             const SizedBox(height: 16),
           ],

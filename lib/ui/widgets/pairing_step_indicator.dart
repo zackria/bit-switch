@@ -12,7 +12,7 @@ class PairingStepIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final currentStepNum = currentStep.stepNumber;
-    final totalSteps = PairingStepExtension.totalSteps;
+    const totalSteps = PairingStepExtension.totalSteps;
 
     // For success/error, show all steps completed
     final displayStep =

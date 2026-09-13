@@ -22,6 +22,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const String _connectedToWifiFallback = 'Connected to WiFi';
+
   String? _wifiName;
   SettingsProvider? _settingsProvider;
   bool _settingsListenerAttached = false;
@@ -92,96 +94,103 @@ class _HomeScreenState extends State<HomeScreen> {
     // Device discovery and control work without it (only needs Local Network permission).
     // We check permission status without forcing a request, and gracefully fall back
     // to a generic message if not granted.
-
     try {
-      bool hasPermission = false;
-
-      if (Platform.isAndroid) {
-        // Check current permission status without forcing a request
-        final locationStatus = await Permission.locationWhenInUse.status;
-        final nearbyStatus = await Permission.nearbyWifiDevices.status;
-        final serviceStatus = await Permission.location.serviceStatus;
-
-        // Android 13+ can use NEARBY_WIFI_DEVICES without location
-        // Older Android needs location permission AND services enabled
-        hasPermission =
-            nearbyStatus.isGranted ||
-            (locationStatus.isGranted && serviceStatus.isEnabled);
-      } else if (Platform.isIOS) {
-        // Request location permission proactively so the dialog appears on first
-        // launch, before the Local Network dialog from SSDP discovery. On
-        // subsequent launches the OS returns the current status immediately
-        // without re-showing the dialog.
-        final status = await Permission.locationWhenInUse.request();
-        hasPermission = status.isGranted;
-      } else {
-        // Non-mobile platforms (tests, desktop) - allow fetching wifi name
-        hasPermission = true;
-      }
+      final hasPermission = await _checkWifiPermission();
 
       // If we don't have permission, show a friendly fallback (not an error)
       if (!hasPermission) {
-        if (mounted) {
-          setState(() => _wifiName = 'Connected to WiFi');
-        }
+        _fallbackToConnectedWifi();
         return;
       }
 
       // We have permission - try to get the actual WiFi name
-      final info = NetworkInfo();
-      String? name;
-
-      try {
-        // Use a short timeout when tests are running to avoid long waits
-        final binding = WidgetsBinding.instance;
-        final runningInTests = binding.runtimeType.toString().contains(
-          'TestWidgetsFlutterBinding',
-        );
-        final timeout = runningInTests
-            ? const Duration(milliseconds: 50)
-            : const Duration(seconds: 3);
-
-        final completer = Completer<String?>();
-        final timer = Timer(timeout, () {
-          if (!completer.isCompleted) completer.complete(null);
-        });
-        _activeTimers.add(timer);
-
-        info
-            .getWifiName()
-            .then((value) {
-              if (!completer.isCompleted) completer.complete(value);
-            })
-            .catchError((e) {
-              if (!completer.isCompleted) completer.complete(null);
-            })
-            .whenComplete(() {
-              try {
-                timer.cancel();
-              } catch (_) {}
-              _activeTimers.remove(timer);
-            });
-
-        name = await completer.future;
-      } catch (_) {
-        // Silently handle errors - WiFi name is not critical
-        name = null;
-      }
+      final name = await _fetchWifiNameWithTimeout();
 
       if (!mounted) return;
 
       if (name != null && name.isNotEmpty && name != '<unknown ssid>') {
         // Successfully got WiFi name - remove quotes that iOS sometimes adds
-        setState(() => _wifiName = name!.replaceAll('"', ''));
+        setState(() => _wifiName = name.replaceAll('"', ''));
       } else {
         // Couldn't get name but we have permission - show generic connected message
-        setState(() => _wifiName = 'Connected to WiFi');
+        _fallbackToConnectedWifi();
       }
     } catch (_) {
       // Any unexpected error - show generic message
-      if (mounted) {
-        setState(() => _wifiName = 'Connected to WiFi');
-      }
+      _fallbackToConnectedWifi();
+    }
+  }
+
+  Future<bool> _checkWifiPermission() async {
+    if (Platform.isAndroid) {
+      // Check current permission status without forcing a request
+      final locationStatus = await Permission.locationWhenInUse.status;
+      final nearbyStatus = await Permission.nearbyWifiDevices.status;
+      final serviceStatus = await Permission.location.serviceStatus;
+
+      // Android 13+ can use NEARBY_WIFI_DEVICES without location
+      // Older Android needs location permission AND services enabled
+      return nearbyStatus.isGranted ||
+          (locationStatus.isGranted && serviceStatus.isEnabled);
+    }
+
+    if (Platform.isIOS) {
+      // Request location permission proactively so the dialog appears on first
+      // launch, before the Local Network dialog from SSDP discovery. On
+      // subsequent launches the OS returns the current status immediately
+      // without re-showing the dialog.
+      final status = await Permission.locationWhenInUse.request();
+      return status.isGranted;
+    }
+
+    // Non-mobile platforms (tests, desktop) - allow fetching wifi name
+    return true;
+  }
+
+  Future<String?> _fetchWifiNameWithTimeout() async {
+    final info = NetworkInfo();
+
+    try {
+      // Use a short timeout when tests are running to avoid long waits
+      final binding = WidgetsBinding.instance;
+      final runningInTests = binding.runtimeType.toString().contains(
+        'TestWidgetsFlutterBinding',
+      );
+      final timeout = runningInTests
+          ? const Duration(milliseconds: 50)
+          : const Duration(seconds: 3);
+
+      final completer = Completer<String?>();
+      final timer = Timer(timeout, () {
+        if (!completer.isCompleted) completer.complete(null);
+      });
+      _activeTimers.add(timer);
+
+      info
+          .getWifiName()
+          .then((value) {
+            if (!completer.isCompleted) completer.complete(value);
+          })
+          .catchError((e) {
+            if (!completer.isCompleted) completer.complete(null);
+          })
+          .whenComplete(() {
+            try {
+              timer.cancel();
+            } catch (_) {}
+            _activeTimers.remove(timer);
+          });
+
+      return await completer.future;
+    } catch (_) {
+      // Silently handle errors - WiFi name is not critical
+      return null;
+    }
+  }
+
+  void _fallbackToConnectedWifi() {
+    if (mounted) {
+      setState(() => _wifiName = _connectedToWifiFallback);
     }
   }
 
@@ -197,43 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           // Debug icon - only shown when enabled in settings
           Consumer2<SettingsProvider, DeviceProvider>(
-            builder: (context, settings, provider, child) {
-              if (!settings.showDebugOption) return const SizedBox.shrink();
-              return IconButton(
-                icon: Icon(
-                  Icons.bug_report,
-                  color: provider.debugMode ? Colors.amber : null,
-                ),
-                onPressed: () {
-                  provider.setDebugMode(!provider.debugMode);
-                },
-                tooltip: context.l10n.homeToggleDebug,
-              );
-            },
+            builder: _buildDebugToggleAction,
           ),
-          Consumer<DeviceProvider>(
-            builder: (context, provider, child) {
-              return IconButton(
-                icon: provider.isDiscovering
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.refresh),
-                onPressed: provider.isDiscovering
-                    ? null
-                    : () {
-                        provider.clearDevices();
-                        provider.discoverDevices();
-                      },
-                tooltip: context.l10n.homeRefreshDevices,
-              );
-            },
-          ),
+          Consumer<DeviceProvider>(builder: _buildRefreshAction),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => _navigateToSettings(context),
@@ -241,163 +216,201 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      // Selector optimizes list rebuilding; error/isDiscovering are handled by
+      // the smaller Consumers nested below so they don't force a full rebuild.
       body: Selector<DeviceProvider, List<WemoDevice>>(
         selector: (_, provider) => provider.devices,
         shouldRebuild: (previous, next) => !listEquals(previous, next),
-        builder: (context, devices, child) {
-          // Access provider for error checking and other flags without rebuilding on list change
-          // We can use context.read or a separate Consumer/Selector for specific flags if needed.
-          // But here we need to show error snackbar. Ideally this should be a listener,
-          // but sticking to previous pattern for now, we can check error via context.read
-          // inside a frame callback or use a separate Consumer for error.
+        builder: (context, devices, child) => Consumer<DeviceProvider>(
+          builder: (context, provider, child) =>
+              _buildBody(context, provider, devices),
+        ),
+      ),
+    );
+  }
 
-          return Consumer<DeviceProvider>(
-            builder: (context, provider, child) {
-              // Show error if any - this part still rebuilds on any change,
-              // but the expensive list building below is now optimized?
-              // Wait, if I nest Consumer inside Selector's builder, it defeats the purpose
-              // if I put the List inside Consumer.
+  Widget _buildDebugToggleAction(
+    BuildContext context,
+    SettingsProvider settings,
+    DeviceProvider provider,
+    Widget? child,
+  ) {
+    if (!settings.showDebugOption) return const SizedBox.shrink();
+    return IconButton(
+      icon: Icon(
+        Icons.bug_report,
+        color: provider.debugMode ? Colors.amber : null,
+      ),
+      onPressed: () => provider.setDebugMode(!provider.debugMode),
+      tooltip: context.l10n.homeToggleDebug,
+    );
+  }
 
-              // Correct approach:
-              // 1. Selector for List (optimized list building).
-              // 2. Separate mechanism for Error showing (Listener or small Consumer).
-              // 3. Separate mechanism for "isDiscovering" UI (small Consumer).
-
-              if (provider.error != null) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(provider.error!),
-                      action: SnackBarAction(
-                        label: context.l10n.homeDismiss,
-                        onPressed: () => provider.clearError(),
-                      ),
-                    ),
-                  );
-                  provider.clearError();
-                });
-              }
-
-              return RefreshIndicator(
-                onRefresh: _refreshDevices,
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    // WiFi Info is always at the top
-                    _buildWifiInfo(context),
-                    const SizedBox(height: 16),
-
-                    // Debug panel (only shown when debug mode is enabled)
-                    Consumer<DeviceProvider>(
-                      builder: (context, provider, _) {
-                        if (!provider.debugMode) return const SizedBox.shrink();
-                        return _buildDebugPanel(context, provider);
-                      },
-                    ),
-
-                    if (devices.isEmpty)
-                      // Empty state / Discovery state
-                      // We need 'isDiscovering' here.
-                      // Accessing provider.isDiscovering inside this builder (which is triggered by List change)
-                      // might be stale if List didn't change but isDiscovering did.
-                      // So we need a nested Consumer/Selector for the empty state content.
-                      Container(
-                        constraints: BoxConstraints(
-                          minHeight: MediaQuery.of(context).size.height * 0.5,
-                        ),
-                        child: Consumer<DeviceProvider>(
-                          builder: (context, provider, child) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (provider.isDiscovering)
-                                  const CircularProgressIndicator()
-                                else
-                                  const Icon(
-                                    Icons.devices_other,
-                                    size: 64,
-                                    color: Colors.grey,
-                                  ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  provider.isDiscovering
-                                      ? context.l10n.homeDiscovering
-                                      : context.l10n.homeNoDevices,
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(color: Colors.grey),
-                                ),
-                                if (!provider.isDiscovering) ...[
-                                  const SizedBox(height: 16),
-                                  ElevatedButton.icon(
-                                    onPressed: () => provider.discoverDevices(),
-                                    icon: const Icon(Icons.search),
-                                    label: Text(context.l10n.homeScanDevices),
-                                  ),
-                                ],
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    else ...[
-                      // Devices found state
-                      // Use a Consumer just for the refresh bar if it needs 'isDiscovering' status
-                      Consumer<DeviceProvider>(
-                        builder: (context, provider, _) =>
-                            _buildRefreshBar(context, provider),
-                      ),
-                      const SizedBox(height: 12),
-                      ...devices.map((device) {
-                        // Uses DeviceListItem which manages its own state updates
-                        return DeviceListItem(
-                          device: device,
-                          onTap: () => _navigateToDetail(context, device),
-                          onToggle: () => _toggleDevice(context, device),
-                        );
-                      }),
-                      // Show scanning indicator at bottom when discovery is in progress
-                      Consumer<DeviceProvider>(
-                        builder: (context, provider, _) {
-                          if (!provider.isDiscovering) {
-                            return const SizedBox.shrink();
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: Center(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    context.l10n.homeLookingForMore,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurfaceVariant,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              );
+  Widget _buildRefreshAction(
+    BuildContext context,
+    DeviceProvider provider,
+    Widget? child,
+  ) {
+    return IconButton(
+      icon: provider.isDiscovering
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          : const Icon(Icons.refresh),
+      onPressed: provider.isDiscovering
+          ? null
+          : () {
+              provider.clearDevices();
+              provider.discoverDevices();
             },
+      tooltip: context.l10n.homeRefreshDevices,
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    DeviceProvider provider,
+    List<WemoDevice> devices,
+  ) {
+    if (provider.error != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(provider.error!),
+            action: SnackBarAction(
+              label: context.l10n.homeDismiss,
+              onPressed: () => provider.clearError(),
+            ),
+          ),
+        );
+        provider.clearError();
+      });
+    }
+
+    return RefreshIndicator(
+      onRefresh: _refreshDevices,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          // WiFi Info is always at the top
+          _buildWifiInfo(context),
+          const SizedBox(height: 16),
+
+          // Debug panel (only shown when debug mode is enabled)
+          Consumer<DeviceProvider>(
+            builder: (context, provider, _) {
+              if (!provider.debugMode) return const SizedBox.shrink();
+              return _buildDebugPanel(context, provider);
+            },
+          ),
+
+          if (devices.isEmpty)
+            _buildEmptyState(context)
+          else
+            ..._buildDeviceListSection(context, devices),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    // Empty state / Discovery state - nested Consumer so 'isDiscovering'
+    // changes update this even when the (empty) device list doesn't.
+    return Container(
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height * 0.5,
+      ),
+      child: Consumer<DeviceProvider>(
+        builder: (context, provider, child) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (provider.isDiscovering)
+                const CircularProgressIndicator()
+              else
+                const Icon(Icons.devices_other, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(
+                provider.isDiscovering
+                    ? context.l10n.homeDiscovering
+                    : context.l10n.homeNoDevices,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: Colors.grey),
+              ),
+              if (!provider.isDiscovering) ...[
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () => provider.discoverDevices(),
+                  icon: const Icon(Icons.search),
+                  label: Text(context.l10n.homeScanDevices),
+                ),
+              ],
+            ],
           );
         },
+      ),
+    );
+  }
+
+  List<Widget> _buildDeviceListSection(
+    BuildContext context,
+    List<WemoDevice> devices,
+  ) {
+    return [
+      // Use a Consumer just for the refresh bar if it needs 'isDiscovering' status
+      Consumer<DeviceProvider>(
+        builder: (context, provider, _) =>
+            _buildRefreshBar(context, provider),
+      ),
+      const SizedBox(height: 12),
+      ...devices.map((device) {
+        // Uses DeviceListItem which manages its own state updates
+        return DeviceListItem(
+          device: device,
+          onTap: () => _navigateToDetail(context, device),
+          onToggle: () => _toggleDevice(context, device),
+        );
+      }),
+      // Show scanning indicator at bottom when discovery is in progress
+      Consumer<DeviceProvider>(builder: _buildScanningIndicator),
+    ];
+  }
+
+  Widget _buildScanningIndicator(
+    BuildContext context,
+    DeviceProvider provider,
+    Widget? child,
+  ) {
+    if (!provider.isDiscovering) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              context.l10n.homeLookingForMore,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -468,7 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildWifiInfo(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final name = _wifiName == 'Connected to WiFi'
+    final name = _wifiName == _connectedToWifiFallback
         ? context.l10n.homeConnectedWifi
         : (_wifiName ?? context.l10n.commonUnknownWifi);
 

@@ -58,43 +58,46 @@ class WemoControlApp extends StatelessWidget {
 
   ThemeData _buildLightTheme() {
     return _buildTheme(
-      brightness: Brightness.light,
-      primaryColor: const Color(0xFF4CAF50),
-      secondaryColor: const Color(0xFF2196F3),
-      surface: Colors.white,
-      surfaceContainerHighest: Colors.grey[100]!,
-      appBarBackground: const Color(0xFF4CAF50),
-      cardElevation: 2,
-      cardColor: null,
-      inactiveTrackColor: Colors.grey[300],
+      Brightness.light,
+      _ThemePalette(
+        primaryColor: const Color(0xFF4CAF50),
+        secondaryColor: const Color(0xFF2196F3),
+        surface: Colors.white,
+        surfaceContainerHighest: Colors.grey[100]!,
+        appBarBackground: const Color(0xFF4CAF50),
+        cardElevation: 2,
+        cardColor: null,
+        inactiveTrackColor: Colors.grey[300],
+      ),
     );
   }
 
   ThemeData _buildDarkTheme() {
     return _buildTheme(
-      brightness: Brightness.dark,
-      primaryColor: const Color(0xFF66BB6A),
-      secondaryColor: const Color(0xFF42A5F5),
-      surface: const Color(0xFF1E1E1E),
-      surfaceContainerHighest: const Color(0xFF2D2D2D),
-      appBarBackground: const Color(0xFF2D2D2D),
-      cardElevation: 4,
-      cardColor: const Color(0xFF2D2D2D),
-      inactiveTrackColor: Colors.grey[700],
+      Brightness.dark,
+      _ThemePalette(
+        primaryColor: const Color(0xFF66BB6A),
+        secondaryColor: const Color(0xFF42A5F5),
+        surface: const Color(0xFF1E1E1E),
+        surfaceContainerHighest: const Color(0xFF2D2D2D),
+        appBarBackground: const Color(0xFF2D2D2D),
+        cardElevation: 4,
+        cardColor: const Color(0xFF2D2D2D),
+        inactiveTrackColor: Colors.grey[700],
+      ),
     );
   }
 
-  ThemeData _buildTheme({
-    required Brightness brightness,
-    required Color primaryColor,
-    required Color secondaryColor,
-    required Color surface,
-    required Color surfaceContainerHighest,
-    required Color appBarBackground,
-    required double cardElevation,
-    required Color? cardColor,
-    required Color? inactiveTrackColor,
-  }) {
+  ThemeData _buildTheme(Brightness brightness, _ThemePalette palette) {
+    final primaryColor = palette.primaryColor;
+    final secondaryColor = palette.secondaryColor;
+    final surface = palette.surface;
+    final surfaceContainerHighest = palette.surfaceContainerHighest;
+    final appBarBackground = palette.appBarBackground;
+    final cardElevation = palette.cardElevation;
+    final cardColor = palette.cardColor;
+    final inactiveTrackColor = palette.inactiveTrackColor;
+
     final colorScheme = brightness == Brightness.light
         ? ColorScheme.light(
             primary: primaryColor,
@@ -149,4 +152,26 @@ class WemoControlApp extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ThemePalette {
+  const _ThemePalette({
+    required this.primaryColor,
+    required this.secondaryColor,
+    required this.surface,
+    required this.surfaceContainerHighest,
+    required this.appBarBackground,
+    required this.cardElevation,
+    required this.cardColor,
+    required this.inactiveTrackColor,
+  });
+
+  final Color primaryColor;
+  final Color secondaryColor;
+  final Color surface;
+  final Color surfaceContainerHighest;
+  final Color appBarBackground;
+  final double cardElevation;
+  final Color? cardColor;
+  final Color? inactiveTrackColor;
 }

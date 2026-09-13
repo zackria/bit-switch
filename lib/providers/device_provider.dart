@@ -76,31 +76,11 @@ class DeviceProvider extends ChangeNotifier {
   Future<void> _runNetworkDiagnostics() async {
     _log('=== Network Diagnostics ===');
 
-    String? localIp;
     try {
       // Get network interfaces
       final interfaces = await NetworkInterface.list();
       _log('Network interfaces: ${interfaces.length}');
-      for (final interface in interfaces) {
-        for (final addr in interface.addresses) {
-          if (addr.type == InternetAddressType.IPv4) {
-            _log('  ${interface.name}: ${addr.address}');
-            // Capture WiFi IP (en0 on iOS, wlan on Android)
-            if (interface.name.contains('en0') ||
-                interface.name.contains('wlan') ||
-                interface.name.contains('wifi')) {
-              localIp = addr.address;
-            }
-            // Also check for private IPs as fallback
-            if (localIp == null &&
-                (addr.address.startsWith('192.168.') ||
-                    addr.address.startsWith('10.') ||
-                    addr.address.startsWith('172.'))) {
-              localIp = addr.address;
-            }
-          }
-        }
-      }
+      final localIp = _findWifiIp(interfaces);
       if (localIp != null) {
         _log('>>> Local WiFi IP: $localIp');
       } else {
@@ -110,8 +90,40 @@ class DeviceProvider extends ChangeNotifier {
       _log('Failed to get interfaces: $e');
     }
 
+    await _testUdpSocket();
+
+    _log('=== End Diagnostics ===');
+    _log('Tap refresh to start discovery...');
+  }
+
+  /// Log each IPv4 address and return the best guess at the WiFi/local IP
+  String? _findWifiIp(List<NetworkInterface> interfaces) {
+    String? localIp;
+    for (final interface in interfaces) {
+      for (final addr in interface.addresses) {
+        if (addr.type != InternetAddressType.IPv4) continue;
+        _log('  ${interface.name}: ${addr.address}');
+        // Capture WiFi IP (en0 on iOS, wlan on Android)
+        if (interface.name.contains('en0') ||
+            interface.name.contains('wlan') ||
+            interface.name.contains('wifi')) {
+          localIp = addr.address;
+        }
+        // Also check for private IPs as fallback
+        if (localIp == null &&
+            (addr.address.startsWith('192.168.') ||
+                addr.address.startsWith('10.') ||
+                addr.address.startsWith('172.'))) {
+          localIp = addr.address;
+        }
+      }
+    }
+    return localIp;
+  }
+
+  /// Try to create a UDP socket and send a multicast test packet
+  Future<void> _testUdpSocket() async {
     try {
-      // Try to create a UDP socket
       final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
       _log('UDP socket test: OK (port ${socket.port})');
 
@@ -129,9 +141,6 @@ class DeviceProvider extends ChangeNotifier {
     } catch (e) {
       _log('UDP socket test FAILED: $e');
     }
-
-    _log('=== End Diagnostics ===');
-    _log('Tap refresh to start discovery...');
   }
 
   /// Add a debug log message
@@ -229,20 +238,7 @@ class DeviceProvider extends ChangeNotifier {
     String? localIp;
     try {
       final interfaces = await (getInterfaces ?? NetworkInterface.list)();
-      for (final interface in interfaces) {
-        for (final addr in interface.addresses) {
-          if (addr.type == InternetAddressType.IPv4 &&
-              !addr.address.startsWith('127.')) {
-            if (addr.address.startsWith('192.168.') ||
-                addr.address.startsWith('10.') ||
-                addr.address.startsWith('172.')) {
-              localIp = addr.address;
-              break;
-            }
-          }
-        }
-        if (localIp != null) break;
-      }
+      localIp = _findLocalSubnetIp(interfaces);
     } catch (e) {
       _log('ERROR: Could not determine local IP: $e');
       _error = currentAppLocalizations.errCheckWifiConnection;
@@ -259,6 +255,27 @@ class DeviceProvider extends ChangeNotifier {
     final subnet = localIp.substring(0, localIp.lastIndexOf('.'));
     _log('Scanning subnet: $subnet.1-254');
 
+    yield* _scanSubnetBatches(subnet);
+  }
+
+  /// Find the first non-loopback private IPv4 address across all interfaces
+  String? _findLocalSubnetIp(List<NetworkInterface> interfaces) {
+    for (final interface in interfaces) {
+      for (final addr in interface.addresses) {
+        if (addr.type == InternetAddressType.IPv4 &&
+            !addr.address.startsWith('127.') &&
+            (addr.address.startsWith('192.168.') ||
+                addr.address.startsWith('10.') ||
+                addr.address.startsWith('172.'))) {
+          return addr.address;
+        }
+      }
+    }
+    return null;
+  }
+
+  /// Scan the subnet in parallel batches, yielding devices as they're found
+  Stream<WemoDevice> _scanSubnetBatches(String subnet) async* {
     const ports = [49153, 49152, 49154, 49151, 49155];
 
     // Batch size for parallel scanning - balance between speed and system resources

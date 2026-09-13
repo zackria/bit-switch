@@ -113,10 +113,11 @@ class PairingProvider extends ChangeNotifier {
 
     // Update current SSID
     final currentSsid = await _wifiService.getCurrentSsid();
-    if (kDebugMode)
+    if (kDebugMode) {
       debugPrint(
         '[Pairing] confirmConnectedToDeviceAp: currentSsid=$currentSsid homeNetworkSsid=${_state.homeNetworkSsid}',
       );
+    }
 
     _state = _state.copyWith(currentSsid: currentSsid);
 
@@ -124,10 +125,11 @@ class PairingProvider extends ChangeNotifier {
     // early with a clear message rather than silently discovering the wrong device.
     final homeNet = _state.homeNetworkSsid;
     if (homeNet != null && currentSsid == homeNet) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint(
           '[Pairing] Still on home network "$homeNet" — aborting discovery',
         );
+      }
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
@@ -172,10 +174,11 @@ class PairingProvider extends ChangeNotifier {
       }
 
       if (device != null) {
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint(
             '[Pairing] Device found: ${device.name} at ${device.host}:${device.port}',
           );
+        }
         _state = _state.copyWith(
           device: device,
           step: PairingStep.selectNetwork,
@@ -187,10 +190,11 @@ class PairingProvider extends ChangeNotifier {
         // Fetch available networks from the device
         await _fetchAvailableNetworks();
       } else {
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint(
             '[Pairing] No device found at ${WemoConstants.wemoApDefaultIp}',
           );
+        }
         _state = _state.copyWith(
           isLoading: false,
           clearLoadingMessage: true,
@@ -201,10 +205,11 @@ class PairingProvider extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e, st) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint(
           '[Pairing] _discoverDeviceOnAp error: ${e.runtimeType}: $e\n$st',
         );
+      }
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
@@ -271,13 +276,16 @@ class PairingProvider extends ChangeNotifier {
 
   /// Fetch available WiFi networks from the device
   Future<void> _fetchAvailableNetworks() async {
-    if (_state.device == null) return;
+    if (_state.device == null) {
+      return;
+    }
 
     final device = _state.device!;
-    if (kDebugMode)
+    if (kDebugMode) {
       debugPrint(
         '[Pairing] _fetchAvailableNetworks: device=${device.name} host=${device.host}:${device.port}',
       );
+    }
 
     _state = _state.copyWith(
       isLoading: true,
@@ -291,29 +299,34 @@ class PairingProvider extends ChangeNotifier {
     await Future.delayed(const Duration(seconds: 2));
 
     try {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[Pairing] Calling getAvailableNetworks (attempt 1)...');
+      }
       List<WifiNetwork> networks = await _controlService.getAvailableNetworks(
         device,
       );
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint(
           '[Pairing] getAvailableNetworks attempt 1 returned ${networks.length} networks',
         );
+      }
 
       // If the first call returned an empty list the device may still be
       // populating results. Wait briefly and try once more.
       if (networks.isEmpty) {
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint('[Pairing] Empty list — waiting 3 s then retrying...');
+        }
         await Future.delayed(const Duration(seconds: 3));
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint('[Pairing] Calling getAvailableNetworks (attempt 2)...');
+        }
         networks = await _controlService.getAvailableNetworks(device);
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint(
             '[Pairing] getAvailableNetworks attempt 2 returned ${networks.length} networks',
           );
+        }
       }
 
       // Sort by signal strength (highest first)
@@ -326,10 +339,11 @@ class PairingProvider extends ChangeNotifier {
       );
       notifyListeners();
     } catch (e, st) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint(
           '[Pairing] getAvailableNetworks FAILED: ${e.runtimeType}: $e\n$st',
         );
+      }
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,
@@ -434,7 +448,7 @@ class PairingProvider extends ChangeNotifier {
   /// Poll the device for connection status
   Future<void> _pollForConnection() async {
     final startTime = DateTime.now();
-    final timeout = WemoConstants.wifiSetupTimeout;
+    const timeout = WemoConstants.wifiSetupTimeout;
 
     while (DateTime.now().difference(startTime) < timeout) {
       try {
@@ -513,30 +527,7 @@ class PairingProvider extends ChangeNotifier {
   /// Finalize the device setup
   Future<void> _finalizeSetup() async {
     try {
-      // Discover the device on the home network
-      WemoDevice? device;
-
-      // Try to find the device via SSDP
-      await for (final d in _discoveryService.discoverDevices(
-        timeout: WemoConstants.pairingDiscoveryTimeout,
-      )) {
-        // Match by serial number or MAC if available
-        if (_state.device?.serialNumber != null &&
-            d.serialNumber == _state.device?.serialNumber) {
-          device = d;
-          break;
-        }
-        if (_state.device?.macAddress != null &&
-            d.macAddress == _state.device?.macAddress) {
-          device = d;
-          break;
-        }
-        // Otherwise take any device with matching name
-        if (d.name == _state.device?.name) {
-          device = d;
-          break;
-        }
-      }
+      final device = await _findDeviceOnHomeNetwork();
 
       if (device != null) {
         // Update device with new network location
@@ -580,6 +571,31 @@ class PairingProvider extends ChangeNotifier {
       );
       notifyListeners();
     }
+  }
+
+  Future<WemoDevice?> _findDeviceOnHomeNetwork() async {
+    WemoDevice? device;
+
+    await for (final d in _discoveryService.discoverDevices(
+      timeout: WemoConstants.pairingDiscoveryTimeout,
+    )) {
+      if (_state.device?.serialNumber != null &&
+          d.serialNumber == _state.device?.serialNumber) {
+        device = d;
+        break;
+      }
+      if (_state.device?.macAddress != null &&
+          d.macAddress == _state.device?.macAddress) {
+        device = d;
+        break;
+      }
+      if (d.name == _state.device?.name) {
+        device = d;
+        break;
+      }
+    }
+
+    return device;
   }
 
   /// Start watching for SSID changes

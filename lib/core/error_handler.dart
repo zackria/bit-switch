@@ -68,6 +68,8 @@ class SoapErrorCodes {
 
 /// Helper class to generate user-friendly error messages
 class ErrorHandler {
+  static const String _timedOutMarker = 'timed out';
+
   /// Convert an exception to a user-friendly error message
   ///
   /// [context] is optional; without it (or outside a localized widget tree)
@@ -111,7 +113,7 @@ class ErrorHandler {
       return loc.errDeviceUnreachableOffline;
     }
 
-    if (message.contains('timed out')) {
+    if (message.contains(_timedOutMarker)) {
       if (error.attemptCount != null && error.attemptCount! > 1) {
         return loc.errRequestTimedOutAttempts(error.attemptCount!);
       }
@@ -147,36 +149,14 @@ class ErrorHandler {
       return errorCodeMessage;
     }
 
-    // Check fault string for common patterns
-    if (error.faultString != null) {
-      final fault = error.faultString!.toLowerCase();
-
-      if (fault.contains('invalid') && fault.contains('action')) {
-        return loc.errDeviceNotSupportAction;
-      }
-
-      if (fault.contains('unauthorized') || fault.contains('not authorized')) {
-        return loc.errActionNotAuthorizedDevice;
-      }
+    final faultStringMessage = _handleSoapFaultString(loc, error.faultString);
+    if (faultStringMessage != null) {
+      return faultStringMessage;
     }
 
-    // HTTP-level errors
-    if (error.httpStatusCode != null) {
-      switch (error.httpStatusCode) {
-        case 404:
-          return loc.errDeviceServiceNotFound;
-        case 500:
-          if (error.isSoapFault) {
-            return loc.errDeviceEncounteredError;
-          }
-          return loc.errDeviceInternalError;
-        case 503:
-          return loc.errDeviceTempUnavailable;
-        default:
-          if (error.httpStatusCode! >= 400) {
-            return loc.errDeviceReturnedHttpError(error.httpStatusCode!);
-          }
-      }
+    final httpStatusMessage = _handleSoapHttpStatus(loc, error);
+    if (httpStatusMessage != null) {
+      return httpStatusMessage;
     }
 
     // Include action context if available
@@ -185,6 +165,53 @@ class ErrorHandler {
     }
 
     return loc.errDeviceReturnedError;
+  }
+
+  // Check fault string for common patterns
+  static String? _handleSoapFaultString(
+    AppLocalizations loc,
+    String? faultString,
+  ) {
+    if (faultString == null) {
+      return null;
+    }
+    final fault = faultString.toLowerCase();
+
+    if (fault.contains('invalid') && fault.contains('action')) {
+      return loc.errDeviceNotSupportAction;
+    }
+
+    if (fault.contains('unauthorized') || fault.contains('not authorized')) {
+      return loc.errActionNotAuthorizedDevice;
+    }
+
+    return null;
+  }
+
+  // HTTP-level errors
+  static String? _handleSoapHttpStatus(
+    AppLocalizations loc,
+    SoapException error,
+  ) {
+    if (error.httpStatusCode == null) {
+      return null;
+    }
+    switch (error.httpStatusCode) {
+      case 404:
+        return loc.errDeviceServiceNotFound;
+      case 500:
+        if (error.isSoapFault) {
+          return loc.errDeviceEncounteredError;
+        }
+        return loc.errDeviceInternalError;
+      case 503:
+        return loc.errDeviceTempUnavailable;
+      default:
+        if (error.httpStatusCode! >= 400) {
+          return loc.errDeviceReturnedHttpError(error.httpStatusCode!);
+        }
+    }
+    return null;
   }
 
   static String _handleTimeoutException(
@@ -235,7 +262,7 @@ class ErrorHandler {
       return loc.errCheckWifiConnection;
     }
 
-    if (message.contains('timeout') || message.contains('timed out')) {
+    if (message.contains('timeout') || message.contains(_timedOutMarker)) {
       if (error.devicesFoundBeforeError != null &&
           error.devicesFoundBeforeError! > 0) {
         return loc.errDiscoveryInterrupted(error.devicesFoundBeforeError!);
@@ -284,7 +311,7 @@ class ErrorHandler {
     final loc = _resolveLocalizations(context);
 
     if (error is NetworkException) {
-      if (error.message.contains('timed out')) {
+      if (error.message.contains(_timedOutMarker)) {
         return loc.suggestTryRefreshing;
       }
       return loc.suggestEnsurePoweredOn;
@@ -315,7 +342,7 @@ class ErrorHandler {
     if (error is NetworkException) {
       // Connection issues are often temporary - perform case-insensitive match
       final msg = error.message.toLowerCase();
-      return msg.contains('timed out') || msg.contains('connection reset');
+      return msg.contains(_timedOutMarker) || msg.contains('connection reset');
     }
 
     if (error is SoapException) {

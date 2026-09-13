@@ -100,7 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SnackBar(
               content: Text(context.l10n.settingsLocalNetworkAlsoNeeded),
               backgroundColor: Colors.orange,
-              duration: Duration(seconds: 4),
+              duration: const Duration(seconds: 4),
             ),
           );
         }
@@ -133,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 12),
             Text(
               context.l10n.settingsRequiredPermissions,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
               context.l10n.settingsPermissionList,
@@ -176,7 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 12),
             Text(
               context.l10n.settingsStepsToEnable,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
               context.l10n.settingsEnableLocationSteps,
@@ -219,7 +219,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 12),
             Text(
               context.l10n.settingsPleaseEnable,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
               context.l10n.settingsEnableLocalNetworkSteps,
@@ -446,34 +446,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ? context.l10n.settingsLocalNetworkNeeded
             : context.l10n.settingsLocationNeeded,
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Refresh button
-          IconButton(
-            onPressed: _isCheckingPermissions ? null : _checkPermissionsAndWifi,
-            icon: Icon(
-              Icons.refresh,
-              color: _isCheckingPermissions ? theme.disabledColor : null,
-            ),
-            tooltip: context.l10n.settingsRefreshPermissions,
-          ),
-          const SizedBox(width: 4),
-          // Action button based on status
-          if (!_hasLocationPermission)
-            FilledButton.icon(
-              onPressed: _isCheckingPermissions ? null : _requestPermissions,
-              icon: const Icon(Icons.lock_open, size: 18),
-              label: Text(context.l10n.commonGrant),
-            )
-          else if (partiallyGranted && _isIOS)
-            OutlinedButton.icon(
-              onPressed: () => _showLocalNetworkPermissionDialog(),
-              icon: const Icon(Icons.settings, size: 18),
-              label: Text(context.l10n.commonFix),
-            ),
-        ],
-      ),
+      trailing: _buildPermissionActionsRow(context, theme, partiallyGranted),
       onTap: _hasLocationPermission
           ? null
           : () {
@@ -513,6 +486,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               );
             },
+    );
+  }
+
+  Widget _buildPermissionActionsRow(
+    BuildContext context,
+    ThemeData theme,
+    bool partiallyGranted,
+  ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Refresh button
+        IconButton(
+          onPressed: _isCheckingPermissions ? null : _checkPermissionsAndWifi,
+          icon: Icon(
+            Icons.refresh,
+            color: _isCheckingPermissions ? theme.disabledColor : null,
+          ),
+          tooltip: context.l10n.settingsRefreshPermissions,
+        ),
+        const SizedBox(width: 4),
+        // Action button based on status
+        if (!_hasLocationPermission)
+          FilledButton.icon(
+            onPressed: _isCheckingPermissions ? null : _requestPermissions,
+            icon: const Icon(Icons.lock_open, size: 18),
+            label: Text(context.l10n.commonGrant),
+          )
+        else if (partiallyGranted && _isIOS)
+          OutlinedButton.icon(
+            onPressed: () => _showLocalNetworkPermissionDialog(),
+            icon: const Icon(Icons.settings, size: 18),
+            label: Text(context.l10n.commonFix),
+          ),
+      ],
     );
   }
 
@@ -706,12 +714,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               context.l10n.settingsAboutTagline,
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               context.l10n.settingsAboutDescription,
               style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               context.l10n.settingsVersionValue,
               style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),

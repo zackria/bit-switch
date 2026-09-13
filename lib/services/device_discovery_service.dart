@@ -223,6 +223,18 @@ class DeviceDiscoveryService {
     if (udnLower.contains('coffeemaker') || modelLower.contains('coffee')) {
       return WemoDeviceType.coffeemaker;
     }
+    final additionalType = _matchAdditionalDeviceType(udnLower, modelLower);
+    if (additionalType != null) {
+      return additionalType;
+    }
+
+    return WemoDeviceType.unknown;
+  }
+
+  WemoDeviceType? _matchAdditionalDeviceType(
+    String udnLower,
+    String modelLower,
+  ) {
     if (udnLower.contains('maker')) {
       return WemoDeviceType.maker;
     }
@@ -238,8 +250,7 @@ class DeviceDiscoveryService {
     if (modelLower.contains('outdoor')) {
       return WemoDeviceType.outdoorPlug;
     }
-
-    return WemoDeviceType.unknown;
+    return null;
   }
 
   /// Probe a specific host for a Wemo device

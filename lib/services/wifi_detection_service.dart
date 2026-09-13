@@ -45,8 +45,8 @@ class WifiPermissionDelegate {
 class WifiDetectionService {
   final WifiInfoDelegate _wifiInfoDelegate;
   final WifiPermissionDelegate _permissionDelegate;
-  final bool? _isIOSOverride;
-  final bool? _isAndroidOverride;
+  final bool? isIOSOverride;
+  final bool? isAndroidOverride;
   bool _permissionRequested = false;
   bool _hasPermission = false;
 
@@ -54,16 +54,14 @@ class WifiDetectionService {
     WifiInfoDelegate? wifiInfoDelegate,
     NetworkInfo? networkInfo,
     WifiPermissionDelegate? permissionDelegate,
-    bool? isIOSOverride,
-    bool? isAndroidOverride,
+    this.isIOSOverride,
+    this.isAndroidOverride,
   }) : _wifiInfoDelegate =
            wifiInfoDelegate ?? NetworkInfoDelegate(networkInfo),
-       _permissionDelegate = permissionDelegate ?? WifiPermissionDelegate(),
-       _isIOSOverride = isIOSOverride,
-       _isAndroidOverride = isAndroidOverride;
+       _permissionDelegate = permissionDelegate ?? WifiPermissionDelegate();
 
-  bool get _isIOS => _isIOSOverride ?? Platform.isIOS;
-  bool get _isAndroid => _isAndroidOverride ?? Platform.isAndroid;
+  bool get _isIOS => isIOSOverride ?? Platform.isIOS;
+  bool get _isAndroid => isAndroidOverride ?? Platform.isAndroid;
 
   /// Log message only in debug mode
   void _log(String message) {
@@ -110,30 +108,7 @@ class WifiDetectionService {
 
         return _hasPermission;
       } else if (_isAndroid) {
-        _log('Requesting Android permissions...');
-        final nearbyStatus = await _permissionDelegate.requestNearbyWifiDevices();
-        _log('NEARBY_WIFI_DEVICES result: $nearbyStatus');
-
-        if (nearbyStatus.isGranted) {
-          _permissionRequested = true;
-          _hasPermission = true;
-          return true;
-        }
-
-        if (nearbyStatus.isPermanentlyDenied) {
-          return null;
-        }
-
-        final locationStatus = await _permissionDelegate.requestLocationWhenInUse();
-        _log('Android location result: $locationStatus');
-        _permissionRequested = true;
-        _hasPermission = locationStatus.isGranted;
-
-        if (locationStatus.isPermanentlyDenied) {
-          return null;
-        }
-
-        return _hasPermission;
+        return await _requestAndroidLocationPermission();
       }
 
       _log('Desktop platform - no permission needed');
@@ -144,6 +119,33 @@ class WifiDetectionService {
       _log('Error requesting permission: $e');
       return false;
     }
+  }
+
+  Future<bool?> _requestAndroidLocationPermission() async {
+    _log('Requesting Android permissions...');
+    final nearbyStatus = await _permissionDelegate.requestNearbyWifiDevices();
+    _log('NEARBY_WIFI_DEVICES result: $nearbyStatus');
+
+    if (nearbyStatus.isGranted) {
+      _permissionRequested = true;
+      _hasPermission = true;
+      return true;
+    }
+
+    if (nearbyStatus.isPermanentlyDenied) {
+      return null;
+    }
+
+    final locationStatus = await _permissionDelegate.requestLocationWhenInUse();
+    _log('Android location result: $locationStatus');
+    _permissionRequested = true;
+    _hasPermission = locationStatus.isGranted;
+
+    if (locationStatus.isPermanentlyDenied) {
+      return null;
+    }
+
+    return _hasPermission;
   }
 
   /// Check if we have location permission without requesting it

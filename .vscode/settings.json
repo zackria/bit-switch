@@ -2,5 +2,9 @@
     "chat.tools.terminal.autoApprove": {
         "flutter": true
     },
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "sonarlint.connectedMode.project": {
+        "connectionId": "zackria",
+        "projectKey": "zackria_bit-switch"
+    }
 }

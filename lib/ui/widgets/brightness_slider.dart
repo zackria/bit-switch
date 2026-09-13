@@ -96,48 +96,18 @@ class _BrightnessSliderState extends State<BrightnessSlider> {
         // Preset brightness buttons
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _PresetButton(
-              label: '25%',
+          children: [25, 50, 75, 100].map((preset) {
+            return _PresetButton(
+              label: '$preset%',
               onPressed: widget.onChanged != null
                   ? () {
-                      setState(() => _currentValue = 25);
-                      widget.onChanged?.call(25);
+                      setState(() => _currentValue = preset.toDouble());
+                      widget.onChanged?.call(preset.toDouble());
                     }
                   : null,
-              isSelected: _currentValue == 25,
-            ),
-            _PresetButton(
-              label: '50%',
-              onPressed: widget.onChanged != null
-                  ? () {
-                      setState(() => _currentValue = 50);
-                      widget.onChanged?.call(50);
-                    }
-                  : null,
-              isSelected: _currentValue == 50,
-            ),
-            _PresetButton(
-              label: '75%',
-              onPressed: widget.onChanged != null
-                  ? () {
-                      setState(() => _currentValue = 75);
-                      widget.onChanged?.call(75);
-                    }
-                  : null,
-              isSelected: _currentValue == 75,
-            ),
-            _PresetButton(
-              label: '100%',
-              onPressed: widget.onChanged != null
-                  ? () {
-                      setState(() => _currentValue = 100);
-                      widget.onChanged?.call(100);
-                    }
-                  : null,
-              isSelected: _currentValue == 100,
-            ),
-          ],
+              isSelected: _currentValue == preset,
+            );
+          }).toList(),
         ),
       ],
     );

@@ -58,6 +58,60 @@ class DeviceControlService {
     _soapClient.timeout = timeout;
   }
 
+  /// Rethrow [e] as-is (preserving [stackTrace]) if it's already a
+  /// [WemoException], otherwise wrap it in a [DeviceException] describing
+  /// which operation on which device failed.
+  Never _wrapError(
+    Object e,
+    StackTrace stackTrace,
+    WemoDevice device, {
+    required String message,
+    required String operation,
+  }) {
+    if (e is WemoException) Error.throwWithStackTrace(e, stackTrace);
+    Error.throwWithStackTrace(
+      DeviceException(
+        message,
+        deviceName: device.name,
+        host: device.host,
+        port: device.port,
+        operation: operation,
+        cause: e,
+      ),
+      stackTrace,
+    );
+  }
+
+  /// Encrypt [password] for [device], trying encryption method 1 (original)
+  /// first and falling back to method 2 (RTOS) if that fails.
+  String _encryptPasswordForDevice(WemoDevice device, String password) {
+    final mac = device.macAddress ?? '';
+    final serial = device.serialNumber ?? '';
+
+    if (mac.isEmpty || serial.isEmpty) {
+      throw DeviceException(
+        'Device MAC address or serial number not available',
+        deviceName: device.name,
+      );
+    }
+
+    try {
+      return WemoCrypto.encryptPassword(
+        password: password,
+        mac: mac,
+        serial: serial,
+        method: 1,
+      );
+    } catch (_) {
+      return WemoCrypto.encryptPassword(
+        password: password,
+        mac: mac,
+        serial: serial,
+        method: 2,
+      );
+    }
+  }
+
   /// Get the current binary state of a device
   Future<DeviceState> getState(WemoDevice device) async {
     try {
@@ -71,16 +125,8 @@ class DeviceControlService {
 
       final binaryState = response['BinaryState'] ?? '0';
       return _parseBinaryState(binaryState, device);
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to get state',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
-        operation: 'getState',
-        cause: e,
-      );
+    } catch (e, st) {
+      _wrapError(e, st, device, message: 'Failed to get state', operation: 'getState');
     }
   }
 
@@ -95,15 +141,13 @@ class DeviceControlService {
         serviceType: WemoConstants.basicEventService,
         arguments: {'BinaryState': isOn ? '1' : '0'},
       );
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to set state to ${isOn ? "on" : "off"}',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to set state to ${isOn ? "on" : "off"}',
         operation: 'setState',
-        cause: e,
       );
     }
   }
@@ -146,15 +190,13 @@ class DeviceControlService {
           'brightness': clampedBrightness.toString(),
         },
       );
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to set brightness to $clampedBrightness',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to set brightness to $clampedBrightness',
         operation: 'setBrightness',
-        cause: e,
       );
     }
   }
@@ -178,15 +220,13 @@ class DeviceControlService {
       );
 
       return _parseInsightParams(response['InsightParams'] ?? '', device);
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to get Insight parameters',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to get Insight parameters',
         operation: 'getInsightParams',
-        cause: e,
       );
     }
   }
@@ -289,16 +329,8 @@ class DeviceControlService {
         return ResetResult.resetRemote;
       }
       return ResetResult.failed;
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to reset device',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
-        operation: 'resetDevice',
-        cause: e,
-      );
+    } catch (e, st) {
+      _wrapError(e, st, device, message: 'Failed to reset device', operation: 'resetDevice');
     }
   }
 
@@ -316,15 +348,13 @@ class DeviceControlService {
         },
       );
       return ResetResult.success;
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to factory reset device',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to factory reset device',
         operation: 'factoryReset',
-        cause: e,
       );
     }
   }
@@ -347,15 +377,13 @@ class DeviceControlService {
 
       final apList = response['ApList'] ?? '';
       return _parseApList(apList);
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to get available networks',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to get available networks',
         operation: 'getAvailableNetworks',
-        cause: e,
       );
     }
   }
@@ -396,35 +424,7 @@ class DeviceControlService {
     Duration timeout = const Duration(seconds: 30),
   }) async {
     try {
-      // Get device info for encryption
-      final mac = device.macAddress ?? '';
-      final serial = device.serialNumber ?? '';
-
-      if (mac.isEmpty || serial.isEmpty) {
-        throw DeviceException(
-          'Device MAC address or serial number not available',
-          deviceName: device.name,
-        );
-      }
-
-      // Encrypt the password using the device's encryption method
-      // Try method 1 first (original), fall back to method 2 (RTOS) if needed
-      String encryptedPassword;
-      try {
-        encryptedPassword = WemoCrypto.encryptPassword(
-          password: password,
-          mac: mac,
-          serial: serial,
-          method: 1,
-        );
-      } catch (_) {
-        encryptedPassword = WemoCrypto.encryptPassword(
-          password: password,
-          mac: mac,
-          serial: serial,
-          method: 2,
-        );
-      }
+      final encryptedPassword = _encryptPasswordForDevice(device, password);
 
       // Send the connect command
       await _soapClient.call(
@@ -457,16 +457,8 @@ class DeviceControlService {
       }
 
       return WifiSetupStatus.failed;
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to setup WiFi',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
-        operation: 'setupWifi',
-        cause: e,
-      );
+    } catch (e, st) {
+      _wrapError(e, st, device, message: 'Failed to setup WiFi', operation: 'setupWifi');
     }
   }
 
@@ -510,15 +502,13 @@ class DeviceControlService {
         action: 'CloseNetwork',
         serviceType: WemoConstants.wifiSetupService,
       );
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to close WiFi connection',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to close WiFi connection',
         operation: 'closeWifiConnection',
-        cause: e,
       );
     }
   }
@@ -534,15 +524,13 @@ class DeviceControlService {
         action: 'SetSetupDoneStatus',
         serviceType: WemoConstants.wifiSetupService,
       );
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to mark setup as done',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to mark setup as done',
         operation: 'setSetupDoneStatus',
-        cause: e,
       );
     }
   }
@@ -558,16 +546,8 @@ class DeviceControlService {
         action: 'CloseSetup',
         serviceType: WemoConstants.wifiSetupService,
       );
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to close setup',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
-        operation: 'closeSetup',
-        cause: e,
-      );
+    } catch (e, st) {
+      _wrapError(e, st, device, message: 'Failed to close setup', operation: 'closeSetup');
     }
   }
 
@@ -581,34 +561,7 @@ class DeviceControlService {
     String encryption = 'AES',
   }) async {
     try {
-      // Get device info for encryption
-      final mac = device.macAddress ?? '';
-      final serial = device.serialNumber ?? '';
-
-      if (mac.isEmpty || serial.isEmpty) {
-        throw DeviceException(
-          'Device MAC address or serial number not available',
-          deviceName: device.name,
-        );
-      }
-
-      // Encrypt the password using the device's encryption method
-      String encryptedPassword;
-      try {
-        encryptedPassword = WemoCrypto.encryptPassword(
-          password: password,
-          mac: mac,
-          serial: serial,
-          method: 1,
-        );
-      } catch (_) {
-        encryptedPassword = WemoCrypto.encryptPassword(
-          password: password,
-          mac: mac,
-          serial: serial,
-          method: 2,
-        );
-      }
+      final encryptedPassword = _encryptPasswordForDevice(device, password);
 
       // Send the connect command
       await _soapClient.call(
@@ -624,15 +577,13 @@ class DeviceControlService {
           'encrypt': encryption,
         },
       );
-    } catch (e) {
-      if (e is WemoException) rethrow;
-      throw DeviceException(
-        'Failed to connect to home network',
-        deviceName: device.name,
-        host: device.host,
-        port: device.port,
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to connect to home network',
         operation: 'connectToHomeNetwork',
-        cause: e,
       );
     }
   }

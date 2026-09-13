@@ -13,6 +13,7 @@ import '../widgets/brightness_slider.dart';
 import '../widgets/insight_stats.dart';
 import '../../core/error_handler.dart';
 import '../../l10n/l10n.dart';
+import '../utils/device_icons.dart';
 
 class DeviceDetailScreen extends StatelessWidget {
   final WemoDevice device;
@@ -141,7 +142,7 @@ class DeviceDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDeviceTypeHeader(BuildContext context) {
-    final iconData = _getDeviceIcon(device.type);
+    final iconData = device.type.icon;
 
     return Column(
       children: [
@@ -239,35 +240,6 @@ class DeviceDetailScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  IconData _getDeviceIcon(WemoDeviceType type) {
-    switch (type) {
-      case WemoDeviceType.wemoSwitch:
-      case WemoDeviceType.outdoorPlug:
-        return Icons.power;
-      case WemoDeviceType.lightSwitch:
-        return Icons.lightbulb_outline;
-      case WemoDeviceType.dimmer:
-      case WemoDeviceType.dimmerV2:
-        return Icons.brightness_6;
-      case WemoDeviceType.insight:
-        return Icons.insights;
-      case WemoDeviceType.motion:
-        return Icons.sensors;
-      case WemoDeviceType.maker:
-        return Icons.handyman;
-      case WemoDeviceType.bridge:
-        return Icons.device_hub;
-      case WemoDeviceType.coffeemaker:
-        return Icons.coffee;
-      case WemoDeviceType.crockpot:
-        return Icons.soup_kitchen;
-      case WemoDeviceType.humidifier:
-        return Icons.water_drop;
-      case WemoDeviceType.unknown:
-        return Icons.device_unknown;
-    }
   }
 
   Future<void> _toggleDevice(

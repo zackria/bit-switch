@@ -57,75 +57,75 @@ class WemoControlApp extends StatelessWidget {
   }
 
   ThemeData _buildLightTheme() {
-    const primaryColor = Color(0xFF4CAF50);
-    const secondaryColor = Color(0xFF2196F3);
-
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.light(
-        primary: primaryColor,
-        secondary: secondaryColor,
-        surface: Colors.white,
-        surfaceContainerHighest: Colors.grey[100]!,
-        primaryContainer: primaryColor.withValues(alpha: 0.1),
-        onPrimaryContainer: primaryColor,
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      cardTheme: CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      ),
-      switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return primaryColor;
-          }
-          return Colors.grey;
-        }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return primaryColor.withValues(alpha: 0.5);
-          }
-          return Colors.grey[300];
-        }),
-      ),
+    return _buildTheme(
+      brightness: Brightness.light,
+      primaryColor: const Color(0xFF4CAF50),
+      secondaryColor: const Color(0xFF2196F3),
+      surface: Colors.white,
+      surfaceContainerHighest: Colors.grey[100]!,
+      appBarBackground: const Color(0xFF4CAF50),
+      cardElevation: 2,
+      cardColor: null,
+      inactiveTrackColor: Colors.grey[300],
     );
   }
 
   ThemeData _buildDarkTheme() {
-    const primaryColor = Color(0xFF66BB6A);
-    const secondaryColor = Color(0xFF42A5F5);
+    return _buildTheme(
+      brightness: Brightness.dark,
+      primaryColor: const Color(0xFF66BB6A),
+      secondaryColor: const Color(0xFF42A5F5),
+      surface: const Color(0xFF1E1E1E),
+      surfaceContainerHighest: const Color(0xFF2D2D2D),
+      appBarBackground: const Color(0xFF2D2D2D),
+      cardElevation: 4,
+      cardColor: const Color(0xFF2D2D2D),
+      inactiveTrackColor: Colors.grey[700],
+    );
+  }
+
+  ThemeData _buildTheme({
+    required Brightness brightness,
+    required Color primaryColor,
+    required Color secondaryColor,
+    required Color surface,
+    required Color surfaceContainerHighest,
+    required Color appBarBackground,
+    required double cardElevation,
+    required Color? cardColor,
+    required Color? inactiveTrackColor,
+  }) {
+    final colorScheme = brightness == Brightness.light
+        ? ColorScheme.light(
+            primary: primaryColor,
+            secondary: secondaryColor,
+            surface: surface,
+            surfaceContainerHighest: surfaceContainerHighest,
+            primaryContainer: primaryColor.withValues(alpha: 0.1),
+            onPrimaryContainer: primaryColor,
+          )
+        : ColorScheme.dark(
+            primary: primaryColor,
+            secondary: secondaryColor,
+            surface: surface,
+            surfaceContainerHighest: surfaceContainerHighest,
+            primaryContainer: primaryColor.withValues(alpha: 0.2),
+            onPrimaryContainer: primaryColor,
+          );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.dark(
-        primary: primaryColor,
-        secondary: secondaryColor,
-        surface: const Color(0xFF1E1E1E),
-        surfaceContainerHighest: const Color(0xFF2D2D2D),
-        primaryContainer: primaryColor.withValues(alpha: 0.2),
-        onPrimaryContainer: primaryColor,
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF2D2D2D),
+      brightness: brightness,
+      colorScheme: colorScheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: appBarBackground,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
       cardTheme: CardThemeData(
-        elevation: 4,
-        color: const Color(0xFF2D2D2D),
+        elevation: cardElevation,
+        color: cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -144,7 +144,7 @@ class WemoControlApp extends StatelessWidget {
           if (states.contains(WidgetState.selected)) {
             return primaryColor.withValues(alpha: 0.5);
           }
-          return Colors.grey[700];
+          return inactiveTrackColor;
         }),
       ),
     );

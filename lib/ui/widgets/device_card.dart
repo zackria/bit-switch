@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/wemo_device.dart';
 import '../../models/device_state.dart';
 import '../../l10n/l10n.dart';
+import '../utils/device_icons.dart';
 
 class DeviceCard extends StatelessWidget {
   final WemoDevice device;
@@ -45,7 +46,7 @@ class DeviceCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  _getDeviceIcon(device.type),
+                  device.type.icon,
                   size: 28,
                   color: _getIconColor(context, isOn, isReachable),
                 ),
@@ -140,35 +141,6 @@ class DeviceCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  IconData _getDeviceIcon(WemoDeviceType type) {
-    switch (type) {
-      case WemoDeviceType.wemoSwitch:
-      case WemoDeviceType.outdoorPlug:
-        return Icons.power;
-      case WemoDeviceType.lightSwitch:
-        return Icons.lightbulb_outline;
-      case WemoDeviceType.dimmer:
-      case WemoDeviceType.dimmerV2:
-        return Icons.brightness_6;
-      case WemoDeviceType.insight:
-        return Icons.insights;
-      case WemoDeviceType.motion:
-        return Icons.sensors;
-      case WemoDeviceType.maker:
-        return Icons.handyman;
-      case WemoDeviceType.bridge:
-        return Icons.device_hub;
-      case WemoDeviceType.coffeemaker:
-        return Icons.coffee;
-      case WemoDeviceType.crockpot:
-        return Icons.soup_kitchen;
-      case WemoDeviceType.humidifier:
-        return Icons.water_drop;
-      case WemoDeviceType.unknown:
-        return Icons.device_unknown;
-    }
   }
 
   Color _getIconBackgroundColor(

@@ -159,10 +159,13 @@ class _ThrowingControlService extends DeviceControlService {
 // Test helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildScreen(PairingProvider provider) =>
+Widget _buildScreen(PairingProvider provider, {TargetPlatform? platform}) =>
     ChangeNotifierProvider<PairingProvider>.value(
       value: provider,
-      child: const MaterialApp(home: DevicePairingScreen()),
+      child: MaterialApp(
+        theme: platform != null ? ThemeData(platform: platform) : null,
+        home: const DevicePairingScreen(),
+      ),
     );
 
 PairingProvider _makeProvider({
@@ -184,9 +187,10 @@ PairingProvider _makeProvider({
 /// After this returns, provider.state.step == PairingStep.intro and state is reset.
 Future<void> _pumpAndStart(
   WidgetTester tester,
-  PairingProvider provider,
-) async {
-  await tester.pumpWidget(_buildScreen(provider));
+  PairingProvider provider, {
+  TargetPlatform? platform,
+}) async {
+  await tester.pumpWidget(_buildScreen(provider, platform: platform));
   await tester.pump(); // trigger postFrameCallback
   await tester.pump(); // allow startPairing() to settle
 }
@@ -704,11 +708,8 @@ void main() {
   group('DevicePairingScreen — selectNetwork iOS banner', () {
     testWidgets('shows iOS scan limitation banner on iOS', (tester) async {
       await tester.runAsync(() async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        addTearDown(() => debugDefaultTargetPlatformOverride = null);
-
         final provider = _makeProvider();
-        await _pumpAndStart(tester, provider);
+        await _pumpAndStart(tester, provider, platform: TargetPlatform.iOS);
         provider.goToStep(PairingStep.selectNetwork);
         await tester.pump();
 
@@ -718,11 +719,12 @@ void main() {
 
     testWidgets('hides iOS scan limitation banner on Android', (tester) async {
       await tester.runAsync(() async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.android;
-        addTearDown(() => debugDefaultTargetPlatformOverride = null);
-
         final provider = _makeProvider();
-        await _pumpAndStart(tester, provider);
+        await _pumpAndStart(
+          tester,
+          provider,
+          platform: TargetPlatform.android,
+        );
         provider.goToStep(PairingStep.selectNetwork);
         await tester.pump();
 

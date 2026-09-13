@@ -265,16 +265,20 @@ void main() {
           ),
         );
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
 
         // The internal fetch timeout (shortened to 50ms in tests) fires
-        // before the mocked platform call resolves (150ms), so the screen
-        // falls back to the generic message instead of waiting for the
-        // real value.
+        // before the mocked platform call resolves (150ms). tester.pump()
+        // only advances the simulated frame clock, not real timers, so we
+        // need a real wait (we're inside runAsync) for the 50ms Timer to
+        // actually fire before checking the fallback text appeared.
+        await Future.delayed(const Duration(milliseconds: 100));
+        await tester.pump();
+
         expect(find.textContaining('Connected to WiFi'), findsOneWidget);
 
         // Let the slow platform call resolve so it doesn't leak past the test.
-        await tester.pump(const Duration(milliseconds: 150));
+        await Future.delayed(const Duration(milliseconds: 150));
+        await tester.pump();
       });
     });
 
@@ -315,7 +319,11 @@ void main() {
           await tester.pump();
           expect(provider.isDiscovering, true);
 
-          await tester.pump(const Duration(milliseconds: 200));
+          // tester.pump() only advances the simulated frame clock; the mock
+          // discovery service's delay is a real Future.delayed (we're inside
+          // runAsync), so wait for real time to pass before it resolves.
+          await Future.delayed(const Duration(milliseconds: 200));
+          await tester.pump();
           expect(provider.isDiscovering, false);
         });
       },
@@ -352,7 +360,11 @@ void main() {
           expect(find.text('1 device found, scanning...'), findsOneWidget);
           expect(find.text('Looking for more devices...'), findsOneWidget);
 
-          await tester.pump(const Duration(milliseconds: 250));
+          // tester.pump() only advances the simulated frame clock; the fake
+          // discovery service's delay is a real Future.delayed (we're inside
+          // runAsync), so wait for real time to pass before it resolves.
+          await Future.delayed(const Duration(milliseconds: 250));
+          await tester.pump();
           expect(provider.isDiscovering, false);
         });
       },

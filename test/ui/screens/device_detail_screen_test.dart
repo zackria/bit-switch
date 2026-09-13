@@ -676,7 +676,8 @@ void main() {
 
         await tester.ensureVisible(find.text('WiFi Setup'));
         await tester.tap(find.text('WiFi Setup'));
-        await tester.pump();
+        await tester.pump(); // process the tap and start the page route
+        await tester.pump(); // build the new route and run its initState
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
 

@@ -241,6 +241,147 @@ void main() {
         expect(find.byType(SettingsScreen), findsOneWidget);
       });
     });
+
+    testWidgets('wifi name falls back to generic message when fetch exceeds timeout', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('dev.fluttercommunity.plus/network_info'),
+              (MethodCall methodCall) async {
+                if (methodCall.method == 'wifiName') {
+                  await Future.delayed(const Duration(milliseconds: 150));
+                  return 'TooSlowWifi';
+                }
+                return null;
+              },
+            );
+
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // The internal fetch timeout (shortened to 50ms in tests) fires
+        // before the mocked platform call resolves (150ms), so the screen
+        // falls back to the generic message instead of waiting for the
+        // real value.
+        expect(find.textContaining('Connected to WiFi'), findsOneWidget);
+
+        // Let the slow platform call resolve so it doesn't leak past the test.
+        await tester.pump(const Duration(milliseconds: 150));
+      });
+    });
+
+    testWidgets(
+      'refresh action in app bar triggers discovery and disables while discovering',
+      (tester) async {
+        await tester.runAsync(() async {
+          final delayedDiscovery = MockDiscoveryService(
+            devices: [testDevice],
+            delay: const Duration(milliseconds: 150),
+          );
+          final provider = DeviceProvider(
+            controlService: DeviceControlService(soapClient: MockSoapClient()),
+            discoveryService: delayedDiscovery,
+          );
+
+          await tester.pumpWidget(
+            createScreen(
+              settingsProvider: settingsProvider,
+              deviceProvider: provider,
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(provider.isDiscovering, false);
+
+          await tester.tap(find.byTooltip('Refresh devices'));
+          await tester.pump();
+
+          expect(provider.isDiscovering, true);
+
+          // The button is disabled while discovering, so tapping it again
+          // is a no-op.
+          await tester.tap(
+            find.byTooltip('Refresh devices'),
+            warnIfMissed: false,
+          );
+          await tester.pump();
+          expect(provider.isDiscovering, true);
+
+          await tester.pump(const Duration(milliseconds: 200));
+          expect(provider.isDiscovering, false);
+        });
+      },
+    );
+
+    testWidgets(
+      'shows scanning indicator and updated count while devices are already found',
+      (tester) async {
+        await tester.runAsync(() async {
+          final slowDiscovery = _SlowToFinishDiscoveryService(
+            devices: [testDevice],
+            delay: const Duration(milliseconds: 200),
+          );
+          final provider = DeviceProvider(
+            controlService: DeviceControlService(soapClient: MockSoapClient()),
+            discoveryService: slowDiscovery,
+          );
+
+          await tester.pumpWidget(
+            createScreen(
+              settingsProvider: settingsProvider,
+              deviceProvider: provider,
+            ),
+          );
+          await tester.pump();
+
+          // ignore: unawaited_futures
+          provider.discoverDevices(timeout: Duration.zero);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 30));
+
+          expect(provider.isDiscovering, true);
+          expect(find.text('Kitchen Light'), findsOneWidget);
+          expect(find.text('1 device found, scanning...'), findsOneWidget);
+          expect(find.text('Looking for more devices...'), findsOneWidget);
+
+          await tester.pump(const Duration(milliseconds: 250));
+          expect(provider.isDiscovering, false);
+        });
+      },
+    );
+
+    testWidgets('disabling auto-refresh in settings stops periodic refresh', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pump();
+
+        await settingsProvider.setAutoRefreshEnabled(true);
+        await tester.pump();
+        expect(find.text('Auto'), findsOneWidget);
+
+        await settingsProvider.setAutoRefreshEnabled(false);
+        await tester.pump();
+        expect(find.text('Auto'), findsNothing);
+      });
+    });
   });
 
   group('HomeScreen error states', () {
@@ -279,6 +420,33 @@ void main() {
 
         expect(find.byType(SnackBar), findsOneWidget);
         expect(find.textContaining('Failed'), findsOneWidget);
+      });
+    });
+
+    testWidgets('dismiss action in error snackbar clears the error', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: HomeScreen()),
+          ),
+        );
+
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pump();
+        await tester.pump();
+
+        expect(find.byType(SnackBar), findsOneWidget);
+
+        await tester.tap(find.text('Dismiss'));
+        await tester.pump();
+
+        expect(deviceProvider.error, isNull);
       });
     });
   });
@@ -400,6 +568,37 @@ void main() {
         expect(find.text('Debug Log'), findsOneWidget);
       });
     });
+
+    testWidgets('tapping debug icon in app bar toggles the debug panel', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await settingsProvider.setShowDebugOption(true);
+
+        await tester.pumpWidget(
+          createScreen(
+            settingsProvider: settingsProvider,
+            deviceProvider: deviceProvider,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(deviceProvider.debugMode, false);
+        expect(find.text('Debug Log'), findsNothing);
+
+        await tester.tap(find.byTooltip('Toggle debug mode'));
+        await tester.pumpAndSettle();
+
+        expect(deviceProvider.debugMode, true);
+        expect(find.text('Debug Log'), findsOneWidget);
+
+        await tester.tap(find.byTooltip('Toggle debug mode'));
+        await tester.pumpAndSettle();
+
+        expect(deviceProvider.debugMode, false);
+        expect(find.text('Debug Log'), findsNothing);
+      });
+    });
   });
 }
 
@@ -426,5 +625,31 @@ class MockDiscoveryService extends DeviceDiscoveryService {
     for (final device in devices) {
       yield device;
     }
+  }
+}
+
+/// Discovery service that yields its devices immediately but keeps the
+/// stream open for [delay] afterwards, so `isDiscovering` stays true while
+/// devices are already present in the provider's list. Used to exercise the
+/// "scanning for more" UI that only shows while discovery is still active
+/// and at least one device has already been found.
+class _SlowToFinishDiscoveryService extends DeviceDiscoveryService {
+  final List<WemoDevice> devices;
+  final Duration delay;
+
+  _SlowToFinishDiscoveryService({
+    required this.devices,
+    this.delay = const Duration(milliseconds: 200),
+  }) : super(ssdpClient: SsdpClient());
+
+  @override
+  Stream<WemoDevice> discoverDevices({
+    Duration timeout = const Duration(seconds: 10),
+    void Function(String)? onDebugLog,
+  }) async* {
+    for (final device in devices) {
+      yield device;
+    }
+    await Future.delayed(delay);
   }
 }

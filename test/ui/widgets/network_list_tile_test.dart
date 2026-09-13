@@ -171,5 +171,89 @@ void main() {
 
       expect(find.byIcon(Icons.lock), findsOneWidget);
     });
+
+    testWidgets('should not show lock icon for open networks', (tester) async {
+      final network = WifiNetwork(
+        ssid: 'OpenNoLock',
+        channel: 1,
+        signalStrength: 50,
+        authMode: 'OPEN',
+        encryption: 'NONE',
+      );
+
+      await tester.pumpWidget(buildTestWidget(network: network));
+
+      expect(find.byIcon(Icons.lock), findsNothing);
+    });
+
+    testWidgets('should show medium-low signal icon for signal in the 30-49 range', (tester) async {
+      final network = WifiNetwork(
+        ssid: 'ModerateSignal',
+        channel: 6,
+        signalStrength: 35,
+        authMode: 'WPA2',
+        encryption: 'AES',
+      );
+
+      await tester.pumpWidget(buildTestWidget(network: network));
+
+      expect(find.byIcon(Icons.network_wifi_2_bar), findsOneWidget);
+    });
+
+    testWidgets('should show WEP insecure label', (tester) async {
+      final network = WifiNetwork(
+        ssid: 'WepNetwork',
+        channel: 6,
+        signalStrength: 60,
+        authMode: 'WEP',
+        encryption: 'WEP',
+      );
+
+      await tester.pumpWidget(buildTestWidget(network: network));
+
+      expect(find.text('WEP (insecure)'), findsOneWidget);
+    });
+
+    testWidgets('should show generic WPA label with encryption when not WPA2/WPAPSK', (tester) async {
+      final network = WifiNetwork(
+        ssid: 'WpaNetwork',
+        channel: 6,
+        signalStrength: 60,
+        authMode: 'WPA',
+        encryption: 'TKIP',
+      );
+
+      await tester.pumpWidget(buildTestWidget(network: network));
+
+      expect(find.text('WPA (TKIP)'), findsOneWidget);
+    });
+
+    testWidgets('should show WPA2 label with encryption when not AES/CCMP', (tester) async {
+      final network = WifiNetwork(
+        ssid: 'Wpa2TkipNetwork',
+        channel: 6,
+        signalStrength: 60,
+        authMode: 'WPA2',
+        encryption: 'TKIP',
+      );
+
+      await tester.pumpWidget(buildTestWidget(network: network));
+
+      expect(find.text('WPA2 (TKIP)'), findsOneWidget);
+    });
+
+    testWidgets('should show raw auth/encryption label for unrecognized security types', (tester) async {
+      final network = WifiNetwork(
+        ssid: 'MysteryNetwork',
+        channel: 6,
+        signalStrength: 60,
+        authMode: 'UNKNOWN',
+        encryption: 'UNKNOWN',
+      );
+
+      await tester.pumpWidget(buildTestWidget(network: network));
+
+      expect(find.text('UNKNOWN / UNKNOWN'), findsOneWidget);
+    });
   });
 }

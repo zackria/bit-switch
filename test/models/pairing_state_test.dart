@@ -324,5 +324,189 @@ void main() {
       expect(str, contains('WeMo.ABC'));
       expect(str, contains('isLoading: true'));
     });
+
+    test('copyWith should update every field independently', () {
+      final state = PairingState.initial();
+      const device = WemoDevice(
+        id: 'dev-1',
+        name: 'Living Room',
+        host: '192.168.1.5',
+        port: 49153,
+        type: WemoDeviceType.wemoSwitch,
+      );
+      final networks = [
+        WifiNetwork(
+          ssid: 'Net',
+          channel: 3,
+          signalStrength: 70,
+          authMode: 'WPA2',
+          encryption: 'AES',
+        ),
+      ];
+
+      final updated = state.copyWith(
+        step: PairingStep.configuring,
+        currentSsid: 'WeMo.999',
+        homeNetworkSsid: 'MyHome',
+        device: device,
+        availableNetworks: networks,
+        selectedSsid: 'MyHome',
+        password: 'secret',
+        isLoading: true,
+        loadingMessage: 'Working',
+        errorMessage: 'Oops',
+        canRetry: false,
+      );
+
+      expect(updated.step, PairingStep.configuring);
+      expect(updated.currentSsid, 'WeMo.999');
+      expect(updated.homeNetworkSsid, 'MyHome');
+      expect(updated.device, device);
+      expect(updated.availableNetworks, networks);
+      expect(updated.selectedSsid, 'MyHome');
+      expect(updated.password, 'secret');
+      expect(updated.isLoading, true);
+      expect(updated.loadingMessage, 'Working');
+      expect(updated.errorMessage, 'Oops');
+      expect(updated.canRetry, false);
+    });
+
+    test('copyWith with no arguments keeps all existing field values', () {
+      const device = WemoDevice(
+        id: 'dev-2',
+        name: 'Kitchen',
+        host: '192.168.1.9',
+        port: 49153,
+        type: WemoDeviceType.wemoSwitch,
+      );
+      final networks = [
+        WifiNetwork(
+          ssid: 'Kept',
+          channel: 6,
+          signalStrength: 55,
+          authMode: 'WPA2',
+          encryption: 'AES',
+        ),
+      ];
+
+      final state = PairingState(
+        step: PairingStep.selectNetwork,
+        currentSsid: 'WeMo.KEEP',
+        homeNetworkSsid: 'HomeKeep',
+        device: device,
+        availableNetworks: networks,
+        selectedSsid: 'HomeKeep',
+        password: 'pw',
+        isLoading: true,
+        loadingMessage: 'msg',
+        errorMessage: 'err',
+        canRetry: false,
+      );
+
+      final copy = state.copyWith();
+
+      expect(copy.step, state.step);
+      expect(copy.currentSsid, state.currentSsid);
+      expect(copy.homeNetworkSsid, state.homeNetworkSsid);
+      expect(copy.device, state.device);
+      expect(copy.availableNetworks, state.availableNetworks);
+      expect(copy.selectedSsid, state.selectedSsid);
+      expect(copy.password, state.password);
+      expect(copy.isLoading, state.isLoading);
+      expect(copy.loadingMessage, state.loadingMessage);
+      expect(copy.errorMessage, state.errorMessage);
+      expect(copy.canRetry, state.canRetry);
+    });
+
+    test('copyWith remaining clear flags should null out fields', () {
+      final state = PairingState.initial().copyWith(
+        homeNetworkSsid: 'HomeNet',
+        selectedSsid: 'Selected',
+        password: 'secret',
+        loadingMessage: 'Loading...',
+      );
+
+      final cleared = state.copyWith(
+        clearHomeNetworkSsid: true,
+        clearSelectedSsid: true,
+        clearPassword: true,
+        clearLoadingMessage: true,
+      );
+
+      expect(cleared.homeNetworkSsid, isNull);
+      expect(cleared.selectedSsid, isNull);
+      expect(cleared.password, isNull);
+      expect(cleared.loadingMessage, isNull);
+    });
+
+    test('isOnHomeNetwork should be false when currentSsid is null', () {
+      final state = PairingState.initial().copyWith(
+        homeNetworkSsid: 'HomeNetwork',
+      );
+      expect(state.isOnHomeNetwork, false);
+    });
+
+    test('hashCode should match for equal states and differ for different states', () {
+      final state1 = PairingState.initial().copyWith(
+        step: PairingStep.selectNetwork,
+        currentSsid: 'WeMo.ABC',
+      );
+      final state2 = PairingState.initial().copyWith(
+        step: PairingStep.selectNetwork,
+        currentSsid: 'WeMo.ABC',
+      );
+      final state3 = PairingState.initial().copyWith(
+        step: PairingStep.intro,
+        currentSsid: 'WeMo.ABC',
+      );
+
+      expect(state1.hashCode, state2.hashCode);
+      expect(state1.hashCode, isNot(state3.hashCode));
+    });
+
+    test('equality should return false for different list instances with equal contents', () {
+      final state1 = PairingState.initial().copyWith(
+        availableNetworks: [
+          WifiNetwork(
+            ssid: 'Same',
+            channel: 1,
+            signalStrength: 10,
+            authMode: 'WPA',
+            encryption: 'AES',
+          ),
+        ],
+      );
+      final state2 = PairingState.initial().copyWith(
+        availableNetworks: [
+          WifiNetwork(
+            ssid: 'Same',
+            channel: 1,
+            signalStrength: 10,
+            authMode: 'WPA',
+            encryption: 'AES',
+          ),
+        ],
+      );
+
+      expect(state1, isNot(state2));
+    });
+
+    test('toString should show null device when device is not set', () {
+      final state = PairingState.initial();
+      expect(state.toString(), contains('device: null'));
+    });
+
+    test('toString should include device name when device is present', () {
+      final state = PairingState.initial().copyWith(
+        device: const WemoDevice(
+          id: 'id-1',
+          name: 'Bedroom Switch',
+          host: '10.0.0.5',
+          port: 49153,
+          type: WemoDeviceType.wemoSwitch,
+        ),
+      );
+      expect(state.toString(), contains('Bedroom Switch'));
+    });
   });
 }

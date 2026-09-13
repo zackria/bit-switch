@@ -27,6 +27,41 @@ void main() {
       expect(updated.type, device.type);
     });
 
+    test('copyWith should allow overriding every field independently', () {
+      final updated = device.copyWith(
+        id: 'new-id',
+        name: 'New Name',
+        host: '10.0.0.5',
+        port: 8080,
+        type: WemoDeviceType.dimmer,
+        manufacturer: 'Belkin',
+        model: 'F7C027',
+        serialNumber: 'SN123',
+        firmwareVersion: '1.0.0',
+        macAddress: 'AA:BB:CC:DD:EE:FF',
+        udn: 'uuid:Socket-1_0-12345',
+      );
+
+      expect(updated.id, 'new-id');
+      expect(updated.name, 'New Name');
+      expect(updated.host, '10.0.0.5');
+      expect(updated.port, 8080);
+      expect(updated.type, WemoDeviceType.dimmer);
+      expect(updated.manufacturer, 'Belkin');
+      expect(updated.model, 'F7C027');
+      expect(updated.serialNumber, 'SN123');
+      expect(updated.firmwareVersion, '1.0.0');
+      expect(updated.macAddress, 'AA:BB:CC:DD:EE:FF');
+      expect(updated.udn, 'uuid:Socket-1_0-12345');
+    });
+
+    test('copyWith with no arguments should preserve all fields', () {
+      final same = device.copyWith();
+      expect(same, device);
+      expect(same.manufacturer, device.manufacturer);
+      expect(same.udn, device.udn);
+    });
+
     test('equality should work correctly', () {
       const device2 = WemoDevice(
         id: 'test-id',
@@ -55,6 +90,18 @@ void main() {
       expect(device, device4); // Should be equal
       expect(device, isNot(device2)); // Should NOT be equal (different name)
       expect(device, isNot(device3)); // Should NOT be equal (different ID)
+    });
+
+    test('hashCode should be equal for equal instances', () {
+      final other = WemoDevice(
+        id: device.id,
+        name: device.name,
+        host: device.host,
+        port: device.port,
+        type: device.type,
+      );
+
+      expect(device.hashCode, equals(other.hashCode));
     });
 
     test('toString should return correct string representation', () {

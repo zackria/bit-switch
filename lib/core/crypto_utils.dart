@@ -122,7 +122,7 @@ class WemoCrypto {
       data.addAll(password);
       data.addAll(salt);
 
-      final digest = md5.convert(data);
+      final digest = md5.convert(data); // NOSONAR - required OpenSSL EVP_BytesToKey interop primitive, not a security hash
       prev = Uint8List.fromList(digest.bytes);
       result.addAll(prev);
     }
@@ -154,7 +154,7 @@ class WemoCrypto {
     // produce ciphertext the physical device cannot decrypt, breaking WiFi
     // setup. This is a fixed interop constraint with real hardware, not a
     // security design choice made by this app.
-    final cipher = CBCBlockCipher(AESEngine())
+    final cipher = CBCBlockCipher(AESEngine()) // NOSONAR - required to match Wemo firmware AES-128-CBC/PKCS7 decryption
       ..init(true, ParametersWithIV(KeyParameter(key), iv));
 
     // Encrypt block by block

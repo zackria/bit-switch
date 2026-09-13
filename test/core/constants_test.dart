@@ -9,4 +9,9 @@ void main() {
     expect(WemoConstants.deviceTypesByUuid, isNotEmpty);
     expect(WemoConstants.setupXmlPath, '/setup.xml');
   });
+
+  test('wemoApSsidPattern should match WeMo AP SSIDs only', () {
+    expect(WemoConstants.wemoApSsidPattern.hasMatch('WeMo.CoffeeMaker'), isTrue);
+    expect(WemoConstants.wemoApSsidPattern.hasMatch('NotWeMo'), isFalse);
+  });
 }

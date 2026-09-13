@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bit_switch/core/ssdp_client.dart';
 import 'package:bit_switch/core/constants.dart';
+import 'package:bit_switch/core/exceptions.dart';
 
 void main() {
   group('SsdpClient', () {
@@ -158,6 +159,19 @@ void main() {
       },
     );
 
+    test(
+      'discoverAll should collect devices emitted by discover',
+      () async {
+        final client = _FakeDeviceSsdpClient();
+        final devices = await client.discoverAll(
+          timeout: const Duration(milliseconds: 100),
+        );
+        expect(devices.length, 1);
+        expect(devices.first.host, '192.168.1.5');
+        expect(devices.first.port, 49153);
+      },
+    );
+
     test('probe should return null if connection fails', () async {
       final client = SsdpClient();
       // Use an address that is definitely unreachable to ensure failure
@@ -199,6 +213,19 @@ void main() {
         isNull,
       );
     });
+
+    test(
+      'parseResponse should return null when decoding throws an exception',
+      () {
+        // A negative value is not a valid char code, so
+        // String.fromCharCodes throws and the catch-all branch should
+        // return null instead of propagating the exception.
+        expect(
+          SsdpClient.parseResponse([-1], InternetAddress('127.0.0.1')),
+          isNull,
+        );
+      },
+    );
 
     test('parseResponse should handle USN with known prefix', () {
       final baseResponse =
@@ -359,6 +386,40 @@ void main() {
       expect(testResults, isEmpty);
       expect(logs.any((m) => m.contains('Non-Wemo response (filtered)')), isTrue);
     });
+
+    test(
+      'discover aborts with DiscoveryException after repeated send failures',
+      () async {
+        final client = SsdpClient();
+        final logs = <String>[];
+
+        // An oversized search target pushes the M-SEARCH UDP datagram past
+        // the hard 65507-byte UDP payload limit, so every socket.send() call
+        // throws. That should trip the "too many consecutive failures" abort
+        // in _sendOneDiscoveryRequest, propagate through _failSending, and
+        // (since the failure isn't permission-related) be retried by the
+        // outer discover() loop until the final attempt rethrows.
+        final oversizedSearchTarget = 'X' * 70000;
+
+        final stream = client.discover(
+          timeout: const Duration(milliseconds: 200),
+          searchTarget: oversizedSearchTarget,
+          onDebugLog: logs.add,
+        );
+
+        await expectLater(
+          stream.toList(),
+          throwsA(isA<DiscoveryException>()),
+        );
+
+        expect(logs.any((m) => m.contains('Send error on request #1')), isTrue);
+        expect(
+          logs.any((m) => m.contains('Discovery attempt 3 failed')),
+          isTrue,
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
   });
 
   group('WemoConstants', () {
@@ -447,5 +508,23 @@ class _TestSsdpClient extends SsdpClient {
     void Function(String)? onDebugLog,
   }) async* {
     return;
+  }
+}
+
+// A test SSDP client that yields a single fake device without touching the
+// network, used to exercise discoverAll's aggregation loop.
+class _FakeDeviceSsdpClient extends SsdpClient {
+  @override
+  Stream<SsdpResponse> discover({
+    Duration timeout = const Duration(seconds: 3),
+    String searchTarget = '',
+    void Function(String)? onDebugLog,
+  }) async* {
+    yield SsdpResponse(
+      location: 'http://192.168.1.5:49153/setup.xml',
+      usn: 'uuid:Socket-1_0-FAKE',
+      server: 'Belkin',
+      address: InternetAddress('192.168.1.5'),
+    );
   }
 }

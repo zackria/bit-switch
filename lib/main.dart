@@ -9,6 +9,13 @@ import 'providers/settings_provider.dart';
 import 'ui/screens/home_screen.dart';
 
 void main() {
+  configureGlobalErrorHandlers();
+  runApp(const WemoControlApp());
+}
+
+/// Registers the app's global error handlers. Extracted from [main] so it can
+/// be exercised directly in tests without calling [runApp].
+void configureGlobalErrorHandlers() {
   // Catch errors in the Flutter framework (widget build errors, etc.)
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -25,19 +32,21 @@ void main() {
     }
     return true; // Prevent app crash
   };
-
-  runApp(const WemoControlApp());
 }
 
 class WemoControlApp extends StatelessWidget {
-  const WemoControlApp({super.key});
+  const WemoControlApp({super.key, this.deviceProvider, this.settingsProvider});
+
+  /// Overrides for testing; when omitted, real providers are created.
+  final DeviceProvider? deviceProvider;
+  final SettingsProvider? settingsProvider;
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DeviceProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => deviceProvider ?? DeviceProvider()),
+        ChangeNotifierProvider(create: (_) => settingsProvider ?? SettingsProvider()),
       ],
       child: MaterialApp(
         onGenerateTitle: (context) => context.l10n.appTitle,

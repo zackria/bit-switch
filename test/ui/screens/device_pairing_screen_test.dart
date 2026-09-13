@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -88,6 +90,61 @@ class _FakeControlService extends DeviceControlService {
   @override
   Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
     return wifiStatus;
+  }
+
+  @override
+  Future<void> setSetupDoneStatus(WemoDevice device) async {}
+
+  @override
+  Future<void> closeSetup(WemoDevice device) async {}
+}
+
+/// Discovery service whose [probeHost] stays pending until [completer] is
+/// completed, so tests can observe the intermediate "looking for device"
+/// loading state.
+class _PendingDiscoveryService extends DeviceDiscoveryService {
+  final Completer<WemoDevice?> completer;
+
+  _PendingDiscoveryService(this.completer);
+
+  @override
+  Future<WemoDevice?> probeHost(
+    String host, {
+    List<int>? ports,
+    Duration? timeout,
+  }) {
+    return completer.future;
+  }
+
+  @override
+  Stream<WemoDevice> discoverDevices({
+    Duration? timeout = const Duration(seconds: 2),
+    void Function(String)? onDebugLog,
+  }) {
+    return const Stream.empty();
+  }
+}
+
+/// Control service whose [getAvailableNetworks] always fails, to exercise the
+/// error-alongside-empty-list state on the selectNetwork step.
+class _ThrowingControlService extends DeviceControlService {
+  @override
+  Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async {
+    throw Exception('scan failed');
+  }
+
+  @override
+  Future<void> connectToHomeNetwork(
+    WemoDevice device, {
+    required String ssid,
+    required String password,
+    String authMode = 'WPAPSK',
+    String encryption = 'AES',
+  }) async {}
+
+  @override
+  Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
+    return WifiSetupStatus.connecting;
   }
 
   @override
@@ -353,6 +410,78 @@ void main() {
           ),
         );
         expect(button.onPressed, isNotNull);
+      });
+    });
+
+    testWidgets('shows loading indicator while looking for device', (tester) async {
+      await tester.runAsync(() async {
+        final completer = Completer<WemoDevice?>();
+        final provider = PairingProvider(
+          wifiService: _FakeWifiService(getSsid: () async => null),
+          controlService: _FakeControlService(),
+          discoveryService: _PendingDiscoveryService(completer),
+        );
+        await _pumpAndStart(tester, provider);
+
+        // Kick off discovery without awaiting completion so the pending
+        // probeHost future keeps the screen in its loading state.
+        final future = provider.confirmConnectedToDeviceAp();
+        await tester.pump();
+        await tester.pump();
+
+        expect(provider.state.step, PairingStep.discoverDevice);
+        expect(provider.state.isLoading, isTrue);
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.text('Looking for your Wemo device...'), findsOneWidget);
+
+        completer.complete(null);
+        await future;
+        await tester.pump();
+      });
+    });
+
+    testWidgets('tapping Try Again invokes retryDiscovery', (tester) async {
+      await tester.runAsync(() async {
+        final provider = PairingProvider(
+          wifiService: _FakeWifiService(getSsid: () async => null),
+          controlService: _FakeControlService(),
+          discoveryService: _FakeDiscoveryService(probeResult: null),
+        );
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.discoverDevice);
+        await tester.pump();
+
+        await tester.tap(find.text('Try Again'));
+        await tester.pump();
+        await tester.pump();
+
+        expect(provider.state.step, PairingStep.discoverDevice);
+        expect(provider.state.errorMessage, isNotNull);
+      });
+    });
+
+    testWidgets('tapping Connect to IP invokes tryManualIp', (tester) async {
+      await tester.runAsync(() async {
+        final provider = PairingProvider(
+          wifiService: _FakeWifiService(getSsid: () async => null),
+          controlService: _FakeControlService(),
+          discoveryService: _FakeDiscoveryService(probeResult: null),
+        );
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.discoverDevice);
+        await tester.pump();
+
+        await tester.enterText(find.byType(TextField).first, '192.168.1.50');
+        await tester.pump();
+        // Trigger a Consumer rebuild so the button picks up the new text
+        provider.setPassword('');
+        await tester.pump();
+
+        await tester.tap(find.text('Connect to IP'));
+        await tester.pump();
+        await tester.pump();
+
+        expect(provider.state.errorMessage, contains('192.168.1.50'));
       });
     });
   });

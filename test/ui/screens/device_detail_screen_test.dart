@@ -661,7 +661,11 @@ void main() {
             .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
               if (methodCall.method == 'canStartScan') {
                 await Future.delayed(const Duration(milliseconds: 50));
-                return 0;
+                // CanStartScan.yes — skips the (unmocked) permission-request
+                // flow entirely so the scan can actually complete and
+                // pumpAndSettle() below doesn't hang waiting on a real
+                // platform channel.
+                return 1;
               }
               if (methodCall.method == 'startScan') return true;
               if (methodCall.method == 'getScannedResults') {

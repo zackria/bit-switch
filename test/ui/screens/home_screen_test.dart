@@ -587,6 +587,10 @@ void main() {
         expect(find.text('Debug Log'), findsNothing);
 
         await tester.tap(find.byTooltip('Toggle debug mode'));
+        // Turning debug mode on triggers real network diagnostics I/O in the
+        // background; give it time to finish before settling, mirroring the
+        // pattern used elsewhere in this file for the same reason.
+        await Future.delayed(const Duration(milliseconds: 500));
         await tester.pumpAndSettle();
 
         expect(deviceProvider.debugMode, true);

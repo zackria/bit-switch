@@ -61,11 +61,18 @@ class DeviceProvider extends ChangeNotifier {
   bool get debugMode => _debugMode;
 
   /// Enable/disable debug mode
-  void setDebugMode(bool enabled) {
+  ///
+  /// [getInterfaces] can be supplied (primarily in tests) to control which
+  /// network interfaces the diagnostics step observes instead of the real
+  /// [NetworkInterface.list], mirroring the seam used by [scanSubnet].
+  void setDebugMode(
+    bool enabled, {
+    Future<List<NetworkInterface>> Function()? getInterfaces,
+  }) {
     _debugMode = enabled;
     if (enabled) {
       // Run network diagnostics when debug mode is enabled
-      _runNetworkDiagnostics();
+      _runNetworkDiagnostics(getInterfaces: getInterfaces);
     } else {
       _debugLog.clear();
     }
@@ -73,12 +80,14 @@ class DeviceProvider extends ChangeNotifier {
   }
 
   /// Run network diagnostics to help debug connectivity issues
-  Future<void> _runNetworkDiagnostics() async {
+  Future<void> _runNetworkDiagnostics({
+    Future<List<NetworkInterface>> Function()? getInterfaces,
+  }) async {
     _log('=== Network Diagnostics ===');
 
     try {
       // Get network interfaces
-      final interfaces = await NetworkInterface.list();
+      final interfaces = await (getInterfaces ?? NetworkInterface.list)();
       _log('Network interfaces: ${interfaces.length}');
       final localIp = _findWifiIp(interfaces);
       if (localIp != null) {

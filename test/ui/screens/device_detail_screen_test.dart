@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:bit_switch/ui/screens/device_detail_screen.dart';
+import 'package:bit_switch/ui/widgets/power_button.dart';
 import 'package:bit_switch/providers/device_provider.dart';
 import 'package:bit_switch/services/device_control_service.dart';
 import 'package:bit_switch/services/device_discovery_service.dart';
@@ -463,5 +464,777 @@ void main() {
         );
       });
     });
+
+    // --- WiFi setup: iOS banner (Theme.of(context).platform, not dart:io) ---
+
+    testWidgets('shows iOS manual-entry banner when platform is iOS', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(
+          ChangeNotifierProvider<DeviceProvider>.value(
+            value: deviceProvider,
+            child: MaterialApp(
+              theme: ThemeData(platform: TargetPlatform.iOS),
+              home: DeviceDetailScreen(device: testDevice),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(
+            'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. Please enter your network name manually below.',
+          ),
+          findsOneWidget,
+        );
+      });
+    });
+
+    // --- WiFi setup: Android-style scan permission gate ---
+    //
+    // Note: `Platform.isIOS`/`Platform.isAndroid` are the real dart:io
+    // getters and reflect the actual OS this test process runs on (never
+    // "ios"/"android" for a plain `flutter test` run). So:
+    //  - `_scanNetworks()` always takes the non-iOS branch here, which is
+    //    why these tests exercise `_scanNetworksAndroid()`.
+    //  - `_requestWifiScanPermission()` always falls through to its
+    //    "desktop platforms don't need permission" branch (returns true),
+    //    since neither Platform.isIOS nor Platform.isAndroid is true on this
+    //    host. That means `_requestIosWifiScanPermission()` and
+    //    `_requestAndroidWifiScanPermission()` (and therefore the
+    //    NEARBY_WIFI_DEVICES / location-permission branches, and the
+    //    `detailPermissionScan` error branch) cannot be reached from a
+    //    widget test without either a real mobile OS process or adding a
+    //    Platform-abstraction seam to the source — neither of which is
+    //    available here, so those specific branches are left uncovered.
+
+    testWidgets(
+      'wifi scan proceeds without requesting permission when already available',
+      (tester) async {
+        await tester.runAsync(() async {
+          const channel = MethodChannel('wifi_scan');
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(channel, (
+                MethodCall methodCall,
+              ) async {
+                if (methodCall.method == 'canStartScan') {
+                  return 1; // CanStartScan.yes — permission check is skipped
+                }
+                if (methodCall.method == 'startScan') return true;
+                if (methodCall.method == 'getScannedResults') {
+                  return [
+                    {
+                      'ssid': 'GrantedNet',
+                      'bssid': '00:11:22:33:44:66',
+                      'level': -50,
+                      'frequency': 2412,
+                      'capabilities': '[WPA2-PSK-CCMP][ESS]',
+                    },
+                  ];
+                }
+                return null;
+              });
+
+          await deviceProvider.discoverDevices(timeout: Duration.zero);
+          await tester.pumpWidget(createScreen(deviceProvider));
+          await tester.pumpAndSettle();
+
+          await tester.ensureVisible(find.text('WiFi Setup'));
+          await tester.tap(find.text('WiFi Setup'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('GrantedNet'), findsOneWidget);
+        });
+      },
+    );
+
+    testWidgets(
+      'wifi scan requests permission before scanning when not yet available',
+      (tester) async {
+        await tester.runAsync(() async {
+          const channel = MethodChannel('wifi_scan');
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(channel, (
+                MethodCall methodCall,
+              ) async {
+                if (methodCall.method == 'canStartScan') {
+                  return 2; // CanStartScan.noLocationPermissionRequired
+                }
+                if (methodCall.method == 'startScan') return true;
+                if (methodCall.method == 'getScannedResults') {
+                  return [
+                    {
+                      'ssid': 'PermRequestedNet',
+                      'bssid': '00:11:22:33:44:77',
+                      'level': -50,
+                      'frequency': 2412,
+                      'capabilities': '[WPA2-PSK-CCMP][ESS]',
+                    },
+                  ];
+                }
+                return null;
+              });
+
+          await deviceProvider.discoverDevices(timeout: Duration.zero);
+          await tester.pumpWidget(createScreen(deviceProvider));
+          await tester.pumpAndSettle();
+
+          await tester.ensureVisible(find.text('WiFi Setup'));
+          await tester.tap(find.text('WiFi Setup'));
+          await tester.pumpAndSettle();
+
+          // On this desktop test host the permission request falls through
+          // to "desktop platforms don't need permission", so the scan still
+          // succeeds — see the note above the previous test.
+          expect(find.text('PermRequestedNet'), findsOneWidget);
+        });
+      },
+    );
+
+    testWidgets('shows manual-entry error when network scan throws', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        const channel = MethodChannel('wifi_scan');
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+              if (methodCall.method == 'canStartScan') {
+                throw PlatformException(code: 'error', message: 'boom');
+              }
+              return null;
+            });
+
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text('Could not scan networks. Enter the network name manually.'),
+          findsOneWidget,
+        );
+      });
+    });
+
+    testWidgets('shows enter-network message when scan finds no networks', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        const channel = MethodChannel('wifi_scan');
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+              if (methodCall.method == 'canStartScan') return 0;
+              if (methodCall.method == 'startScan') return true;
+              if (methodCall.method == 'getScannedResults') {
+                return <Map<String, dynamic>>[];
+              }
+              return null;
+            });
+
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Enter your network name below'), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows scanning indicator while a network scan is in progress', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        const channel = MethodChannel('wifi_scan');
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+              if (methodCall.method == 'canStartScan') {
+                await Future.delayed(const Duration(milliseconds: 50));
+                return 0;
+              }
+              if (methodCall.method == 'startScan') return true;
+              if (methodCall.method == 'getScannedResults') {
+                return <Map<String, dynamic>>[];
+              }
+              return null;
+            });
+
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pump();
+
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+        await tester.pumpAndSettle();
+      });
+    });
+
+    testWidgets(
+      'lists scanned networks sorted, deduped, and with correct signal/security info',
+      (tester) async {
+        await tester.runAsync(() async {
+          const channel = MethodChannel('wifi_scan');
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(channel, (
+                MethodCall methodCall,
+              ) async {
+                if (methodCall.method == 'canStartScan') return 0;
+                if (methodCall.method == 'startScan') return true;
+                if (methodCall.method == 'getScannedResults') {
+                  return [
+                    {
+                      'ssid': 'StrongNet',
+                      'bssid': '00:11:22:33:44:01',
+                      'level': -20,
+                      'frequency': 5180,
+                      'capabilities': '[WPA2-PSK-CCMP][ESS]',
+                    },
+                    // Weaker duplicate of StrongNet — should be deduped away.
+                    {
+                      'ssid': 'StrongNet',
+                      'bssid': '00:11:22:33:44:02',
+                      'level': -90,
+                      'frequency': 5180,
+                      'capabilities': '[WPA2-PSK-CCMP][ESS]',
+                    },
+                    {
+                      'ssid': 'MidNet',
+                      'bssid': '00:11:22:33:44:03',
+                      'level': -79,
+                      'frequency': 2412,
+                      'capabilities': '',
+                    },
+                    {
+                      'ssid': 'WeakNet',
+                      'bssid': '00:11:22:33:44:04',
+                      'level': -95,
+                      'frequency': 2462,
+                      'capabilities': '[WEP][ESS]',
+                    },
+                    // Hidden network (empty SSID) — should be filtered out.
+                    {
+                      'ssid': '',
+                      'bssid': '00:11:22:33:44:05',
+                      'level': -50,
+                      'frequency': 2412,
+                      'capabilities': '[WPA2-PSK-CCMP][ESS]',
+                    },
+                  ];
+                }
+                return null;
+              });
+
+          await deviceProvider.discoverDevices(timeout: Duration.zero);
+          await tester.pumpWidget(createScreen(deviceProvider));
+          await tester.pumpAndSettle();
+
+          await tester.ensureVisible(find.text('WiFi Setup'));
+          await tester.tap(find.text('WiFi Setup'));
+          await tester.pumpAndSettle();
+
+          // 5 access points in, but 1 was a weaker duplicate (deduped) and
+          // 1 had an empty SSID (filtered) — 3 tiles should remain.
+          expect(find.byType(ListTile), findsNWidgets(3));
+
+          expect(find.text('StrongNet'), findsOneWidget);
+          expect(find.text('WPA2 • Ch 36'), findsOneWidget);
+          expect(
+            find.descendant(
+              of: find.widgetWithText(ListTile, 'StrongNet'),
+              matching: find.byIcon(Icons.signal_wifi_4_bar),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.widgetWithText(ListTile, 'StrongNet'),
+              matching: find.byIcon(Icons.lock),
+            ),
+            findsOneWidget,
+          );
+
+          expect(find.text('MidNet'), findsOneWidget);
+          expect(find.text('OPEN • Ch 1'), findsOneWidget);
+          expect(
+            find.descendant(
+              of: find.widgetWithText(ListTile, 'MidNet'),
+              matching: find.byIcon(Icons.network_wifi_2_bar),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.widgetWithText(ListTile, 'MidNet'),
+              matching: find.byIcon(Icons.lock),
+            ),
+            findsNothing,
+          );
+
+          expect(find.text('WeakNet'), findsOneWidget);
+          expect(find.text('WEP • Ch 11'), findsOneWidget);
+          expect(
+            find.descendant(
+              of: find.widgetWithText(ListTile, 'WeakNet'),
+              matching: find.byIcon(Icons.network_wifi_1_bar),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.widgetWithText(ListTile, 'WeakNet'),
+              matching: find.byIcon(Icons.lock),
+            ),
+            findsOneWidget,
+          );
+        });
+      },
+    );
+
+    testWidgets('selecting a network fills SSID field and clears existing error', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        // Trigger the "no network name" validation error first.
+        await tester.tap(find.text('Connect'));
+        await tester.pump();
+        expect(
+          find.text('Please enter or select a network name'),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.text('TestWiFi'));
+        await tester.pump();
+
+        expect(
+          find.text('Please enter or select a network name'),
+          findsNothing,
+        );
+        // One match for the list tile title, one for the now-filled field.
+        expect(find.text('TestWiFi'), findsNWidgets(2));
+      });
+    });
+
+    testWidgets('wifi setup shows success snackbar and pops when connected', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: MockWifiSetupControlService(
+            status: WifiSetupStatus.connected,
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Network Name (SSID)'),
+          'Net1',
+        );
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Password'),
+          '12345678',
+        );
+        await tester.tap(find.text('Connect'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('WiFi configured successfully!'), findsOneWidget);
+        // Back on DeviceDetailScreen — only the Advanced-section button
+        // remains, confirming the WiFi setup screen was popped.
+        expect(find.text('WiFi Setup'), findsOneWidget);
+      });
+    });
+
+    testWidgets('wifi setup shows failed status message without an exception', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: MockWifiSetupControlService(
+            status: WifiSetupStatus.failed,
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('WiFi Setup'));
+        await tester.tap(find.text('WiFi Setup'));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Network Name (SSID)'),
+          'Net1',
+        );
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Password'),
+          '12345678',
+        );
+        await tester.tap(find.text('Connect'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Connection failed'), findsOneWidget);
+      });
+    });
+
+    // --- Reset dialog ---
+
+    testWidgets(
+      'reset dialog shows matching warnings for selected options and supports cancelling confirmation',
+      (tester) async {
+        await tester.runAsync(() async {
+          await deviceProvider.discoverDevices(timeout: Duration.zero);
+          await tester.pumpWidget(createScreen(deviceProvider));
+          await tester.pumpAndSettle();
+
+          await tester.ensureVisible(
+            find.widgetWithText(OutlinedButton, 'Reset'),
+          );
+          await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+          await tester.pumpAndSettle();
+
+          // Select "Reset User Data" only — only the data warning shows.
+          await tester.tap(find.text('Reset User Data'));
+          await tester.pump();
+          await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+          await tester.pumpAndSettle();
+
+          expect(
+            find.text('• All schedules and automation rules will be deleted'),
+            findsOneWidget,
+          );
+          expect(find.text('• WiFi settings will be erased'), findsNothing);
+
+          // Cancel the confirmation — no reset should be performed.
+          await tester.tap(find.widgetWithText(TextButton, 'Cancel').last);
+          await tester.pumpAndSettle();
+
+          expect(find.text('Reset options for "Test Device"'), findsOneWidget);
+
+          // Also select "Reset WiFi Settings" — all warnings should show.
+          await tester.tap(find.text('Reset WiFi Settings'));
+          await tester.pump();
+          await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+          await tester.pumpAndSettle();
+
+          expect(
+            find.text('• All schedules and automation rules will be deleted'),
+            findsOneWidget,
+          );
+          expect(find.text('• WiFi settings will be erased'), findsOneWidget);
+          expect(
+            find.text('• You will need to set up the device again'),
+            findsOneWidget,
+          );
+          expect(
+            find.text('• The device may become temporarily unreachable'),
+            findsOneWidget,
+          );
+
+          await tester.tap(find.widgetWithText(TextButton, 'Cancel').last);
+          await tester.pumpAndSettle();
+
+          // Deselect "Reset User Data" — only the WiFi warnings should remain.
+          await tester.tap(find.text('Reset User Data'));
+          await tester.pump();
+          await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+          await tester.pumpAndSettle();
+
+          expect(
+            find.text('• All schedules and automation rules will be deleted'),
+            findsNothing,
+          );
+          expect(find.text('• WiFi settings will be erased'), findsOneWidget);
+
+          await tester.tap(find.widgetWithText(TextButton, 'Cancel').last);
+          await tester.pumpAndSettle();
+        });
+      },
+    );
+
+    testWidgets('shows success snackbar and pops when reset succeeds', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              if (a == 'GetBinaryState') return {'BinaryState': '1'};
+              if (a == 'ReSetup') return {'Reset': 'success'};
+              return {};
+            }),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+
+        await provider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Reset WiFi Settings'));
+        await tester.pump();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Yes, Reset'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Device reset successfully'), findsOneWidget);
+        // Reset dialog is gone; only the Advanced-section button remains.
+        expect(find.widgetWithText(OutlinedButton, 'Reset'), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows user-friendly error when reset throws', (tester) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              if (a == 'GetBinaryState') return {'BinaryState': '1'};
+              if (a == 'ReSetup') {
+                throw NetworkException('Connection closed by peer');
+              }
+              return {};
+            }),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+
+        await provider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Reset WiFi Settings'));
+        await tester.pump();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Reset'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Yes, Reset'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.textContaining('Unable to reach the device'),
+          findsOneWidget,
+        );
+      });
+    });
+
+    testWidgets('cancels factory reset confirmation without resetting', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Factory Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.widgetWithText(TextButton, 'Cancel').last);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Reset options for "Test Device"'), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows user-friendly error when factory reset throws', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              if (a == 'GetBinaryState') return {'BinaryState': '1'};
+              if (a == 'ReSet') {
+                throw NetworkException('Connection closed by peer');
+              }
+              return {};
+            }),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+
+        await provider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Factory Reset'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(TextButton, 'Factory Reset'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.textContaining('Unable to reach the device'),
+          findsOneWidget,
+        );
+      });
+    });
+
+    // --- Quick actions / power button / brightness ---
+
+    testWidgets(
+      'hides quick action buttons for devices that do not support on/off',
+      (tester) async {
+        await tester.runAsync(() async {
+          final motionDevice = testDevice.copyWith(
+            type: WemoDeviceType.motion,
+          );
+          final provider = DeviceProvider(
+            controlService: DeviceControlService(
+              soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+                if (a == 'GetBinaryState') return {'BinaryState': '1'};
+                return {};
+              }),
+            ),
+            discoveryService: MockDiscoveryService([motionDevice]),
+          );
+          await provider.discoverDevices(timeout: Duration.zero);
+          await tester.pumpWidget(
+            createScreen(provider, overrideDevice: motionDevice),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('On'), findsNothing);
+          expect(find.text('Off'), findsNothing);
+        });
+      },
+    );
+
+    testWidgets('quick action buttons turn device on and off', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        expect(deviceProvider.getDeviceState(testDevice.id).isOn, true);
+
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Off'));
+        await tester.pumpAndSettle();
+        expect(deviceProvider.getDeviceState(testDevice.id).isOn, false);
+
+        await tester.tap(find.widgetWithText(ElevatedButton, 'On'));
+        await tester.pumpAndSettle();
+        expect(deviceProvider.getDeviceState(testDevice.id).isOn, true);
+      });
+    });
+
+    testWidgets('tapping power button toggles device state', (tester) async {
+      await tester.runAsync(() async {
+        await deviceProvider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(deviceProvider));
+        await tester.pumpAndSettle();
+
+        expect(deviceProvider.getDeviceState(testDevice.id).isOn, true);
+
+        await tester.tap(find.byType(PowerButton));
+        await tester.pumpAndSettle();
+
+        expect(deviceProvider.getDeviceState(testDevice.id).isOn, false);
+      });
+    });
+
+    testWidgets('shows failure snackbar when toggling device throws', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = DeviceProvider(
+          controlService: DeviceControlService(
+            soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+              if (a == 'GetBinaryState') return {'BinaryState': '1'};
+              if (a == 'SetBinaryState') {
+                throw NetworkException('Connection closed by peer');
+              }
+              return {};
+            }),
+          ),
+          discoveryService: MockDiscoveryService([testDevice]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+        await tester.pumpWidget(createScreen(provider));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(PowerButton));
+        await tester.pumpAndSettle();
+
+        expect(find.textContaining('Failed to toggle:'), findsOneWidget);
+      });
+    });
+
+    testWidgets(
+      'shows brightness slider for dimmer devices and updates brightness',
+      (tester) async {
+        await tester.runAsync(() async {
+          final dimmer = testDevice.copyWith(type: WemoDeviceType.dimmer);
+          final provider = DeviceProvider(
+            controlService: DeviceControlService(
+              soapClient: MockSoapClient((h, p, s, a, t, ar) async {
+                if (a == 'GetBinaryState') return {'BinaryState': '1'};
+                return {};
+              }),
+            ),
+            discoveryService: MockDiscoveryService([dimmer]),
+          );
+          await provider.discoverDevices(timeout: Duration.zero);
+          await tester.pumpWidget(
+            createScreen(provider, overrideDevice: dimmer),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('Brightness'), findsOneWidget);
+
+          await tester.tap(find.widgetWithText(OutlinedButton, '75%'));
+          await tester.pumpAndSettle();
+
+          expect(provider.getDeviceState(dimmer.id).brightness, 75);
+        });
+      },
+    );
   });
 }

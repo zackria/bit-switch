@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bit_switch/providers/device_provider.dart';
 import 'package:bit_switch/services/device_control_service.dart';
@@ -352,6 +354,182 @@ void main() {
       expect(provider.error, isNotNull);
       expect(provider.error, isNot(equals('Network Error')));
     });
+
+    test('turnOn sets a user-friendly error and rethrows on failure', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(
+          setStateHandler: (d, isOn) async {
+            throw DeviceException('turn on failed');
+          },
+        ),
+        discoveryService: MockDiscoveryService([device]),
+      );
+      await provider.discoverDevices(timeout: Duration.zero);
+
+      try {
+        await provider.turnOn(device.id);
+      } catch (_) {}
+
+      expect(provider.error, 'turn on failed');
+    });
+
+    test('turnOff sets a user-friendly error and rethrows on failure', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(
+          setStateHandler: (d, isOn) async {
+            throw DeviceException('turn off failed');
+          },
+        ),
+        discoveryService: MockDiscoveryService([device]),
+      );
+      await provider.discoverDevices(timeout: Duration.zero);
+
+      try {
+        await provider.turnOff(device.id);
+      } catch (_) {}
+
+      expect(provider.error, 'turn off failed');
+    });
+
+    test('toggle sets a user-friendly error and rethrows on failure', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(
+          getStateHandler: (d) async {
+            throw DeviceException('toggle read failed');
+          },
+        ),
+        discoveryService: MockDiscoveryService([device]),
+      );
+      await provider.discoverDevices(timeout: Duration.zero);
+
+      try {
+        await provider.toggle(device.id);
+      } catch (_) {}
+
+      expect(provider.error, 'toggle read failed');
+    });
+
+    test(
+      'refreshDeviceState stores a DeviceState.error when the control service throws',
+      () async {
+        final provider = DeviceProvider(
+          controlService: MockControlService(
+            getStateHandler: (d) async {
+              throw DeviceException('state read failed');
+            },
+          ),
+          discoveryService: MockDiscoveryService([device]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+
+        await provider.refreshDeviceState(device.id);
+
+        final state = provider.getDeviceState(device.id);
+        expect(state.isReachable, false);
+        expect(state.error, contains('state read failed'));
+      },
+    );
+
+    test(
+      'turnOn, turnOff, toggle, setBrightness, and refreshDeviceState are '
+      'no-ops for an unknown device id',
+      () async {
+        final provider = DeviceProvider(
+          controlService: MockControlService(),
+          discoveryService: MockDiscoveryService(const []),
+        );
+
+        await provider.turnOn('missing');
+        await provider.turnOff('missing');
+        await provider.toggle('missing');
+        await provider.setBrightness('missing', 50);
+        await provider.refreshDeviceState('missing');
+
+        expect(provider.devices, isEmpty);
+        expect(provider.error, isNull);
+        // Unknown devices fall back to DeviceState.unknown().
+        expect(provider.getDeviceState('missing').isReachable, false);
+      },
+    );
+
+    test(
+      'dispose disposes services and guards notifyListeners afterward',
+      () async {
+        final provider = DeviceProvider(
+          controlService: MockControlService(),
+          discoveryService: MockDiscoveryService([device]),
+        );
+        await provider.discoverDevices(timeout: Duration.zero);
+        // Let any unawaited background state refresh triggered by discovery
+        // settle before we start counting notifications, so it can't race
+        // with the listener attached below.
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        var notifyCount = 0;
+        provider.addListener(() => notifyCount++);
+
+        provider.dispose();
+
+        // Calling dispose a second time must be a guarded no-op.
+        expect(() => provider.dispose(), returnsNormally);
+
+        // Any method that calls notifyListeners() after dispose should be a
+        // silent no-op instead of hitting Flutter's "used after dispose"
+        // assertion.
+        expect(() => provider.clearError(), returnsNormally);
+        expect(notifyCount, 0);
+      },
+    );
+
+    test(
+      'debug diagnostics logs a warning when no network interfaces are found',
+      () async {
+        final provider = DeviceProvider(
+          controlService: MockControlService(),
+          discoveryService: MockDiscoveryService(const []),
+        );
+
+        provider.setDebugMode(
+          true,
+          getInterfaces: () async => <NetworkInterface>[],
+        );
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        expect(
+          provider.debugLog.any((l) => l.contains('Network interfaces: 0')),
+          true,
+        );
+        expect(
+          provider.debugLog.any((l) => l.contains('No WiFi IP found')),
+          true,
+        );
+      },
+    );
+
+    test(
+      'debug diagnostics logs a failure message when getInterfaces throws',
+      () async {
+        final provider = DeviceProvider(
+          controlService: MockControlService(),
+          discoveryService: MockDiscoveryService(const []),
+        );
+
+        provider.setDebugMode(
+          true,
+          getInterfaces: () async {
+            throw Exception('interfaces unavailable');
+          },
+        );
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        expect(
+          provider.debugLog.any(
+            (l) => l.contains('Failed to get interfaces'),
+          ),
+          true,
+        );
+      },
+    );
   });
 }
 

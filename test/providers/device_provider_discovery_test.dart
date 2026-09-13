@@ -62,20 +62,152 @@ void main() {
         expect(provider.error, contains('boom'));
       },
     );
+
+    test(
+      'discoverDevices maps a SocketException from the discovery stream to '
+      'a WiFi/local-network error message',
+      () async {
+        final discovery = _FakeDiscoveryService(
+          discoverStream: Stream<WemoDevice>.error(
+            const SocketException('connection failed'),
+          ),
+        );
+        final provider = DeviceProvider(
+          discoveryService: discovery,
+          controlService: _FakeControlService(),
+        );
+
+        await provider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        expect(provider.error, isNotNull);
+        expect(provider.error, contains('WiFi'));
+      },
+    );
+
+    test(
+      'discoverDevices maps a generic discovery stream error to the '
+      'unexpected-error DiscoveryException message',
+      () async {
+        final discovery = _FakeDiscoveryService(
+          discoverStream: Stream<WemoDevice>.error(Exception('boom')),
+        );
+        final provider = DeviceProvider(
+          discoveryService: discovery,
+          controlService: _FakeControlService(),
+        );
+
+        await provider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        expect(provider.error, 'Unexpected error during discovery');
+      },
+    );
+
+    test(
+      'probeDeviceByIp logs "no device" when TCP succeeds but probeHost '
+      'finds nothing',
+      () async {
+        final server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+        final port = server.port;
+        server.listen((client) => client.destroy());
+
+        final discovery = _FakeDiscoveryService(probeResult: null);
+        final provider = DeviceProvider(
+          discoveryService: discovery,
+          controlService: _FakeControlService(),
+        );
+        provider.setDebugMode(true);
+
+        await provider.probeDeviceByIp('127.0.0.1', port: port);
+
+        expect(
+          provider.debugLog.any(
+            (line) => line.contains('No Wemo device at this address'),
+          ),
+          true,
+        );
+        expect(provider.devices, isEmpty);
+
+        await server.close();
+      },
+    );
+
+    test(
+      'probeDeviceByIp logs HTTP failure when probeHost throws',
+      () async {
+        final server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+        final port = server.port;
+        server.listen((client) => client.destroy());
+
+        final discovery = _FakeDiscoveryService(
+          probeError: Exception('probe boom'),
+        );
+        final provider = DeviceProvider(
+          discoveryService: discovery,
+          controlService: _FakeControlService(),
+        );
+        provider.setDebugMode(true);
+
+        await provider.probeDeviceByIp('127.0.0.1', port: port);
+
+        expect(
+          provider.debugLog.any(
+            (line) => line.contains('HTTP request FAILED'),
+          ),
+          true,
+        );
+        expect(provider.devices, isEmpty);
+
+        await server.close();
+      },
+    );
+
+    test(
+      'discoverDevices ignores concurrent calls while one is already in '
+      'progress',
+      () async {
+        final provider = DeviceProvider(
+          discoveryService: _SlowDiscoveryService(),
+          controlService: _FakeControlService(),
+        );
+
+        final first = provider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        // Give the first call a chance to set isDiscovering before we try a
+        // second, concurrent call.
+        await Future.delayed(const Duration(milliseconds: 10));
+        expect(provider.isDiscovering, true);
+
+        // A second call made while the first is still in flight must be a
+        // no-op and must not interfere with the in-flight discovery.
+        await provider.discoverDevices();
+        expect(provider.isDiscovering, true);
+
+        await first;
+        expect(provider.isDiscovering, false);
+      },
+    );
   });
 }
 
 class _FakeDiscoveryService extends DeviceDiscoveryService {
   final WemoDevice? probeResult;
+  final Object? probeError;
   final Stream<WemoDevice>? discoverStream;
 
-  _FakeDiscoveryService({this.probeResult, this.discoverStream});
+  _FakeDiscoveryService({this.probeResult, this.probeError, this.discoverStream});
 
   @override
   Future<WemoDevice?> probeHost(
     String host, {
     List<int> ports = const [49153],
   }) async {
+    if (probeError != null) throw probeError!;
     return probeResult;
   }
 
@@ -89,3 +221,16 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
 }
 
 class _FakeControlService extends DeviceControlService {}
+
+/// A discovery service whose stream stays open for a short delay before
+/// completing with no devices, used to exercise the "already discovering"
+/// concurrency guard in [DeviceProvider.discoverDevices].
+class _SlowDiscoveryService extends DeviceDiscoveryService {
+  @override
+  Stream<WemoDevice> discoverDevices({
+    Duration timeout = const Duration(seconds: 5),
+    void Function(String)? onDebugLog,
+  }) async* {
+    await Future.delayed(const Duration(milliseconds: 100));
+  }
+}

@@ -56,18 +56,18 @@ dependencies:
   network_info_plus: ^8.2.0
 
   # Permission handling
-  permission_handler: ^12.0.3
+  permission_handler: ^13.0.2
 
   # Crypto for AES encryption (WiFi setup)
   pointycastle: ^4.0.0
 
   # WiFi network scanning from phone
-  wifi_scan: ^0.4.1+2
+  wifi_scan: ^0.5.0
   crypto: ^3.0.7
   rxdart: ^0.28.0
 
   # Open system settings
-  app_settings: ^7.0.0
+  app_settings: ^9.0.0
 
   # Internationalization support
   intl: ^0.20.2

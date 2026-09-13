@@ -508,6 +508,41 @@ void main() {
         expect(find.text('Scan Again'), findsOneWidget);
       });
     });
+
+    testWidgets('tapping Scan Again triggers a refresh', (tester) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.selectNetwork);
+        await tester.pump();
+
+        // No device is set, so refreshNetworks() is a fast no-op, but the
+        // button handler still runs and rebuilds without error.
+        await tester.tap(find.text('Scan Again'));
+        await tester.pump();
+        await tester.pump();
+
+        expect(find.text('No networks found'), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows error message alongside empty network list', (tester) async {
+      await tester.runAsync(() async {
+        final provider = PairingProvider(
+          wifiService: _FakeWifiService(getSsid: () async => null),
+          controlService: _ThrowingControlService(),
+          discoveryService: _FakeDiscoveryService(probeResult: _device),
+        );
+        await _pumpAndStart(tester, provider);
+        // confirmConnectedToDeviceAp discovers the device, then
+        // _fetchAvailableNetworks fails while fetching networks.
+        await provider.confirmConnectedToDeviceAp();
+        await tester.pump();
+
+        expect(find.text('No networks found'), findsOneWidget);
+        expect(find.textContaining('scan failed'), findsWidgets);
+      });
+    });
   });
 
   group('DevicePairingScreen — selectNetwork step interactions', () {
@@ -612,6 +647,87 @@ void main() {
         expect(provider.state.selectedSsid, 'ManualNet');
       });
     });
+
+    testWidgets('Connect button enabled and tapping it invokes configureNetwork', (tester) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.selectNetwork);
+        provider.selectNetwork('HomeNet');
+        provider.setPassword('secret');
+        await tester.pump();
+
+        final button = tester.widget<FilledButton>(
+          find.ancestor(
+            of: find.text('Connect'),
+            matching: find.byType(FilledButton),
+          ),
+        );
+        expect(button.onPressed, isNotNull);
+
+        await tester.tap(find.text('Connect'));
+        await tester.pump();
+
+        // No device was ever discovered, so configureNetwork() takes its
+        // early-return error path instead of trying to contact a device.
+        expect(
+          provider.state.errorMessage,
+          'Please select a network and enter the password.',
+        );
+      });
+    });
+
+    testWidgets('shows loading indicator while fetching available networks', (tester) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider(probeResult: _device, networks: _networks);
+        await _pumpAndStart(tester, provider);
+
+        // confirmConnectedToDeviceAp discovers the device almost immediately,
+        // then _fetchAvailableNetworks waits a real 2s before resolving —
+        // giving us a window to observe the "fetching networks" loading state.
+        final future = provider.confirmConnectedToDeviceAp();
+        await Future.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+
+        expect(provider.state.step, PairingStep.selectNetwork);
+        expect(provider.state.isLoading, isTrue);
+        expect(provider.state.availableNetworks, isEmpty);
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+        await future;
+        await tester.pump();
+      });
+    });
+  });
+
+  group('DevicePairingScreen — selectNetwork iOS banner', () {
+    testWidgets('shows iOS scan limitation banner on iOS', (tester) async {
+      await tester.runAsync(() async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.selectNetwork);
+        await tester.pump();
+
+        expect(find.textContaining('iOS strictly prohibits'), findsOneWidget);
+      });
+    });
+
+    testWidgets('hides iOS scan limitation banner on Android', (tester) async {
+      await tester.runAsync(() async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.selectNetwork);
+        await tester.pump();
+
+        expect(find.textContaining('iOS strictly prohibits'), findsNothing);
+      });
+    });
   });
 
   group('DevicePairingScreen — configuring step', () {
@@ -692,6 +808,21 @@ void main() {
         expect(find.text('Setup Complete!'), findsNothing);
       });
     });
+
+    testWidgets('shows device info card with connected SSID when device is set', (tester) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider(probeResult: _device, networks: _networks);
+        await _pumpAndStart(tester, provider);
+        await provider.confirmConnectedToDeviceAp();
+        provider.selectNetwork('Network A');
+        provider.goToStep(PairingStep.success);
+        await tester.pump();
+
+        expect(find.text('WeMo Switch'), findsOneWidget);
+        expect(find.text('Connected to Network A'), findsOneWidget);
+        expect(find.byIcon(Icons.check_circle), findsOneWidget);
+      });
+    });
   });
 
   group('DevicePairingScreen — error step (canRetry: true)', () {
@@ -732,6 +863,44 @@ void main() {
 
         expect(find.text('Start Over'), findsNothing);
         expect(find.text('Cancel'), findsOneWidget);
+      });
+    });
+
+    testWidgets('Cancel button pops route and resets provider to intro', (tester) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await tester.pumpWidget(
+          ChangeNotifierProvider<PairingProvider>.value(
+            value: provider,
+            child: MaterialApp(
+              home: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          ChangeNotifierProvider<PairingProvider>.value(
+                            value: provider,
+                            child: const DevicePairingScreen(),
+                          ),
+                    ),
+                  ),
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+
+        provider.setError('Fatal error', canRetry: false);
+        await tester.pump();
+
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Open'), findsOneWidget);
+        expect(provider.state.step, PairingStep.intro);
       });
     });
   });

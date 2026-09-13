@@ -472,7 +472,6 @@ MX: $mx\r
     return state.totalBytesSent;
   }
 
-  /// Returns true if the caller should stop sending further requests.
   Future<bool> _sendOneDiscoveryRequest({
     required int index,
     required RawDatagramSocket socket,

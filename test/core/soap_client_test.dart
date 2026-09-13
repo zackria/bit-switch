@@ -274,7 +274,7 @@ void main() {
     });
 
     test('timeout can be updated at runtime', () {
-      final client = SoapClient(timeout: const Duration(seconds: 3));
+      final client = SoapClient();
       expect(client.timeout, const Duration(seconds: 3));
 
       client.timeout = const Duration(seconds: 10);
@@ -308,7 +308,7 @@ void main() {
           serviceName: 'basicevent1',
           action: 'GetBinaryState',
           serviceType: 'urn:Belkin:service:basicevent:1',
-          maxRetriesOverride: 1,
+          options: const SoapCallOptions(maxRetriesOverride: 1),
         ),
         throwsA(isA<NetworkException>()),
       );

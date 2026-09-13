@@ -371,8 +371,10 @@ class DeviceControlService {
         serviceName: 'WiFiSetup1',
         action: 'GetApList',
         serviceType: WemoConstants.wifiSetupService,
-        requestTimeout: const Duration(seconds: 15),
-        maxRetriesOverride: 2,
+        options: const SoapCallOptions(
+          requestTimeout: Duration(seconds: 15),
+          maxRetriesOverride: 2,
+        ),
       );
 
       final apList = response['ApList'] ?? '';

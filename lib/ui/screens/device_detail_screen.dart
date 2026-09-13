@@ -378,101 +378,10 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
 
     try {
       if (Platform.isIOS) {
-        // iOS does not support wifi_scan (Apple prohibits Wi-Fi scanning).
-        // Try the Wemo device's own network scanner via SOAP.
-        // This may fail if the device is not in setup/AP mode.
-        try {
-          final deviceNetworks = await _controlService.getAvailableNetworks(
-            widget.device,
-          );
-          deviceNetworks.sort(
-            (a, b) => b.signalStrength.compareTo(a.signalStrength),
-          );
-
-          if (mounted) {
-            setState(() {
-              _networks = deviceNetworks;
-              _isScanning = false;
-            });
-          }
-          return;
-        } catch (_) {
-          // Device scan failed (device may not be in setup mode).
-          // Show informational message for manual entry.
-          if (mounted) {
-            setState(() {
-              _networks = [];
-              _isScanning = false;
-              _iosScanUnavailable = true;
-            });
-          }
-          return;
-        }
+        await _scanNetworksIos();
+        return;
       }
-
-      // On Android, use phone's WiFi scanner instead of device SOAP call
-      // This works reliably when device is already on the home network
-
-      // Check if we can scan
-      final canScan = await WiFiScan.instance.canStartScan();
-      if (canScan != CanStartScan.yes) {
-        // Request location permission if needed (required for WiFi scanning)
-        final permissionGranted = await _requestWifiScanPermission();
-        if (!permissionGranted) {
-          if (mounted) {
-            setState(() {
-              _networks = [];
-              _isScanning = false;
-              _error = context.l10n.detailPermissionScan;
-            });
-          }
-          return;
-        }
-      }
-
-      // Start scan
-      final result = await WiFiScan.instance.startScan();
-      if (result != true) {
-        throw Exception('WiFi scan could not be started');
-      }
-
-      // Get results
-      final accessPoints = await WiFiScan.instance.getScannedResults();
-
-      // Convert to our WifiNetwork model
-      final networks = accessPoints
-          .where((ap) => ap.ssid.isNotEmpty) // Filter out hidden networks
-          .map(
-            (ap) => WifiNetwork(
-              ssid: ap.ssid,
-              channel: _frequencyToChannel(ap.frequency),
-              signalStrength: _levelToPercent(ap.level),
-              authMode: _getAuthMode(ap.capabilities),
-              encryption: _getEncryption(ap.capabilities),
-            ),
-          )
-          .toList();
-
-      // Remove duplicates (same SSID can appear multiple times)
-      final uniqueNetworks = <String, WifiNetwork>{};
-      for (final network in networks) {
-        if (!uniqueNetworks.containsKey(network.ssid) ||
-            uniqueNetworks[network.ssid]!.signalStrength <
-                network.signalStrength) {
-          uniqueNetworks[network.ssid] = network;
-        }
-      }
-
-      // Sort by signal strength
-      final sortedNetworks = uniqueNetworks.values.toList()
-        ..sort((a, b) => b.signalStrength.compareTo(a.signalStrength));
-
-      if (mounted) {
-        setState(() {
-          _networks = sortedNetworks;
-          _isScanning = false;
-        });
-      }
+      await _scanNetworksAndroid();
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -484,6 +393,108 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
     }
   }
 
+  Future<void> _scanNetworksIos() async {
+    // iOS does not support wifi_scan (Apple prohibits Wi-Fi scanning).
+    // Try the Wemo device's own network scanner via SOAP.
+    // This may fail if the device is not in setup/AP mode.
+    try {
+      final deviceNetworks = await _controlService.getAvailableNetworks(
+        widget.device,
+      );
+      deviceNetworks.sort(
+        (a, b) => b.signalStrength.compareTo(a.signalStrength),
+      );
+
+      if (mounted) {
+        setState(() {
+          _networks = deviceNetworks;
+          _isScanning = false;
+        });
+      }
+    } catch (_) {
+      // Device scan failed (device may not be in setup mode).
+      // Show informational message for manual entry.
+      if (mounted) {
+        setState(() {
+          _networks = [];
+          _isScanning = false;
+          _iosScanUnavailable = true;
+        });
+      }
+    }
+  }
+
+  Future<void> _scanNetworksAndroid() async {
+    // On Android, use phone's WiFi scanner instead of device SOAP call
+    // This works reliably when device is already on the home network
+
+    // Check if we can scan
+    final canScan = await WiFiScan.instance.canStartScan();
+    if (canScan != CanStartScan.yes) {
+      // Request location permission if needed (required for WiFi scanning)
+      final permissionGranted = await _requestWifiScanPermission();
+      if (!permissionGranted) {
+        if (mounted) {
+          setState(() {
+            _networks = [];
+            _isScanning = false;
+            _error = context.l10n.detailPermissionScan;
+          });
+        }
+        return;
+      }
+    }
+
+    // Start scan
+    final result = await WiFiScan.instance.startScan();
+    if (result != true) {
+      throw Exception('WiFi scan could not be started');
+    }
+
+    // Get results
+    final accessPoints = await WiFiScan.instance.getScannedResults();
+    final sortedNetworks = _dedupeAndSortNetworks(accessPoints);
+
+    if (mounted) {
+      setState(() {
+        _networks = sortedNetworks;
+        _isScanning = false;
+      });
+    }
+  }
+
+  List<WifiNetwork> _dedupeAndSortNetworks(
+    List<WiFiAccessPoint> accessPoints,
+  ) {
+    // Convert to our WifiNetwork model
+    final networks = accessPoints
+        .where((ap) => ap.ssid.isNotEmpty) // Filter out hidden networks
+        .map(
+          (ap) => WifiNetwork(
+            ssid: ap.ssid,
+            channel: _frequencyToChannel(ap.frequency),
+            signalStrength: _levelToPercent(ap.level),
+            authMode: _getAuthMode(ap.capabilities),
+            encryption: _getEncryption(ap.capabilities),
+          ),
+        )
+        .toList();
+
+    // Remove duplicates (same SSID can appear multiple times)
+    final uniqueNetworks = <String, WifiNetwork>{};
+    for (final network in networks) {
+      if (!uniqueNetworks.containsKey(network.ssid) ||
+          uniqueNetworks[network.ssid]!.signalStrength <
+              network.signalStrength) {
+        uniqueNetworks[network.ssid] = network;
+      }
+    }
+
+    // Sort by signal strength
+    return uniqueNetworks.values.toList()
+      ..sort((a, b) => b.signalStrength.compareTo(a.signalStrength));
+  }
+
   /// Request WiFi scan permission (location or nearbyWifiDevices)
   /// Returns true if permission is granted, false otherwise
   ///
@@ -493,45 +504,53 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
   Future<bool> _requestWifiScanPermission() async {
     try {
       if (Platform.isIOS) {
-        // iOS requires location permission for WiFi scanning
-        final status = await Permission.locationWhenInUse.status;
-        if (status.isPermanentlyDenied) {
-          return false;
-        }
-        if (status.isGranted) {
-          return true;
-        }
-        final result = await Permission.locationWhenInUse.request();
-        return result.isGranted;
+        return await _requestIosWifiScanPermission();
       } else if (Platform.isAndroid) {
-        // Android 13+ can use NEARBY_WIFI_DEVICES, older needs location
-        final nearbyStatus = await Permission.nearbyWifiDevices.status;
-        if (nearbyStatus.isGranted) {
-          return true;
-        }
-        if (!nearbyStatus.isPermanentlyDenied) {
-          final nearbyResult = await Permission.nearbyWifiDevices.request();
-          if (nearbyResult.isGranted) {
-            return true;
-          }
-        }
-
-        // Fall back to location permission for older Android
-        final locationStatus = await Permission.locationWhenInUse.status;
-        if (locationStatus.isPermanentlyDenied) {
-          return false;
-        }
-        if (locationStatus.isGranted) {
-          return true;
-        }
-        final locationResult = await Permission.locationWhenInUse.request();
-        return locationResult.isGranted;
+        return await _requestAndroidWifiScanPermission();
       }
       // Desktop platforms don't need permission
       return true;
     } catch (e) {
       return false;
     }
+  }
+
+  Future<bool> _requestIosWifiScanPermission() async {
+    // iOS requires location permission for WiFi scanning
+    final status = await Permission.locationWhenInUse.status;
+    if (status.isPermanentlyDenied) {
+      return false;
+    }
+    if (status.isGranted) {
+      return true;
+    }
+    final result = await Permission.locationWhenInUse.request();
+    return result.isGranted;
+  }
+
+  Future<bool> _requestAndroidWifiScanPermission() async {
+    // Android 13+ can use NEARBY_WIFI_DEVICES, older needs location
+    final nearbyStatus = await Permission.nearbyWifiDevices.status;
+    if (nearbyStatus.isGranted) {
+      return true;
+    }
+    if (!nearbyStatus.isPermanentlyDenied) {
+      final nearbyResult = await Permission.nearbyWifiDevices.request();
+      if (nearbyResult.isGranted) {
+        return true;
+      }
+    }
+
+    // Fall back to location permission for older Android
+    final locationStatus = await Permission.locationWhenInUse.status;
+    if (locationStatus.isPermanentlyDenied) {
+      return false;
+    }
+    if (locationStatus.isGranted) {
+      return true;
+    }
+    final locationResult = await Permission.locationWhenInUse.request();
+    return locationResult.isGranted;
   }
 
   // Convert WiFi frequency (MHz) to channel number
@@ -701,95 +720,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                 ),
               ),
 
-            if (_isScanning)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            else if (_networks == null || _networks!.isEmpty)
-              Card(
-                color: _iosScanUnavailable ? Colors.blue.shade50 : null,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Icon(
-                        _iosScanUnavailable
-                            ? Icons.info_outline
-                            : Icons.wifi_find,
-                        size: 48,
-                        color: _iosScanUnavailable
-                            ? Colors.blue.shade400
-                            : Colors.grey[400],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _iosScanUnavailable
-                            ? context.l10n.detailIosManualOnly
-                            : _networks == null
-                            ? context.l10n.detailTapRefreshScan
-                            : context.l10n.detailEnterNetworkBelow,
-                        style: TextStyle(
-                          color: _iosScanUnavailable
-                              ? Colors.blue.shade800
-                              : Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else
-              Card(
-                clipBehavior: Clip.antiAlias,
-                child: ConstrainedBox(
-                  // Show max 3 networks (~180px), rest are scrollable
-                  constraints: const BoxConstraints(maxHeight: 180),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: _networks!.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      final network = _networks![index];
-                      return ListTile(
-                        dense: true,
-                        visualDensity: VisualDensity.compact,
-                        leading: Icon(
-                          _getSignalIcon(network.signalStrength),
-                          color: _getSignalColor(network.signalStrength),
-                          size: 20,
-                        ),
-                        title: Text(
-                          network.ssid,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        subtitle: Text(
-                          context.l10n.detailNetworkSecurityChannel(
-                            network.authMode,
-                            network.channel,
-                          ),
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 11,
-                          ),
-                        ),
-                        trailing: network.authMode != 'OPEN'
-                            ? const Icon(Icons.lock, size: 14)
-                            : null,
-                        onTap: () {
-                          _ssidController.text = network.ssid;
-                          // Clear any previous error when selecting a network
-                          setState(() => _error = null);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ),
+            _buildNetworksSection(context),
 
             const SizedBox(height: 24),
 
@@ -850,45 +781,7 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
               ),
 
             // Status display
-            if (_status != null && _error == null)
-              Card(
-                color: _status == WifiSetupStatus.connected
-                    ? Colors.green.shade50
-                    : Colors.orange.shade50,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      if (_isConnecting)
-                        const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      else
-                        Icon(
-                          _status == WifiSetupStatus.connected
-                              ? Icons.check_circle
-                              : Icons.warning_amber_rounded,
-                          color: _status == WifiSetupStatus.connected
-                              ? Colors.green.shade700
-                              : Colors.orange.shade700,
-                        ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _getStatusMessage(_status!),
-                          style: TextStyle(
-                            color: _status == WifiSetupStatus.connected
-                                ? Colors.green.shade900
-                                : Colors.orange.shade900,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            if (_status != null && _error == null) _buildStatusCard(context),
 
             const SizedBox(height: 24),
 
@@ -907,6 +800,139 @@ class _WifiSetupScreenState extends State<_WifiSetupScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : Text(context.l10n.pairingConnect),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNetworksSection(BuildContext context) {
+    if (_isScanning) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (_networks == null || _networks!.isEmpty) {
+      return _buildNoNetworksCard(context);
+    }
+    return _buildNetworksListCard(context);
+  }
+
+  Widget _buildNoNetworksCard(BuildContext context) {
+    return Card(
+      color: _iosScanUnavailable ? Colors.blue.shade50 : null,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Icon(
+              _iosScanUnavailable ? Icons.info_outline : Icons.wifi_find,
+              size: 48,
+              color: _iosScanUnavailable
+                  ? Colors.blue.shade400
+                  : Colors.grey[400],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _iosScanUnavailable
+                  ? context.l10n.detailIosManualOnly
+                  : _networks == null
+                  ? context.l10n.detailTapRefreshScan
+                  : context.l10n.detailEnterNetworkBelow,
+              style: TextStyle(
+                color: _iosScanUnavailable
+                    ? Colors.blue.shade800
+                    : Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNetworksListCard(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        // Show max 3 networks (~180px), rest are scrollable
+        constraints: const BoxConstraints(maxHeight: 180),
+        child: ListView.separated(
+          shrinkWrap: true,
+          itemCount: _networks!.length,
+          separatorBuilder: (context, index) => const Divider(height: 1),
+          itemBuilder: (context, index) {
+            final network = _networks![index];
+            return ListTile(
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              leading: Icon(
+                _getSignalIcon(network.signalStrength),
+                color: _getSignalColor(network.signalStrength),
+                size: 20,
+              ),
+              title: Text(network.ssid, style: const TextStyle(fontSize: 14)),
+              subtitle: Text(
+                context.l10n.detailNetworkSecurityChannel(
+                  network.authMode,
+                  network.channel,
+                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 11),
+              ),
+              trailing: network.authMode != 'OPEN'
+                  ? const Icon(Icons.lock, size: 14)
+                  : null,
+              onTap: () {
+                _ssidController.text = network.ssid;
+                // Clear any previous error when selecting a network
+                setState(() => _error = null);
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusCard(BuildContext context) {
+    return Card(
+      color: _status == WifiSetupStatus.connected
+          ? Colors.green.shade50
+          : Colors.orange.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            if (_isConnecting)
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              Icon(
+                _status == WifiSetupStatus.connected
+                    ? Icons.check_circle
+                    : Icons.warning_amber_rounded,
+                color: _status == WifiSetupStatus.connected
+                    ? Colors.green.shade700
+                    : Colors.orange.shade700,
+              ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                _getStatusMessage(_status!),
+                style: TextStyle(
+                  color: _status == WifiSetupStatus.connected
+                      ? Colors.green.shade900
+                      : Colors.orange.shade900,
+                ),
               ),
             ),
           ],

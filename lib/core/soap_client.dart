@@ -20,10 +20,18 @@ typedef MockHttpHandler = Future<HttpResponse> Function(
   String body,
 );
 
+/// Per-call overrides of [SoapClient]'s instance-level timeout/maxRetries
+class SoapCallOptions {
+  final Duration? requestTimeout;
+  final int? maxRetriesOverride;
+
+  const SoapCallOptions({this.requestTimeout, this.maxRetriesOverride});
+}
+
 /// SOAP client for communicating with Wemo devices
 class SoapClient {
   final HttpClient? _client;
-  final MockHttpHandler? _mockHandler;
+  final MockHttpHandler? mockHandler;
   Duration _timeout;
   final int maxRetries;
   final Duration retryDelay;
@@ -31,25 +39,22 @@ class SoapClient {
   /// Create a SoapClient for production use
   SoapClient({
     HttpClient? client,
-    Duration timeout = WemoConstants.requestTimeout,
+    this._timeout = WemoConstants.requestTimeout,
     this.maxRetries = WemoConstants.maxRetries,
     this.retryDelay = const Duration(milliseconds: 500),
   })  : _client = client ?? HttpClient(),
-        _mockHandler = null,
-        _timeout = timeout {
+        mockHandler = null {
     // Configure the HTTP client for better connection handling
     _updateClientTimeout();
   }
 
   /// Create a SoapClient with a mock handler for testing
   SoapClient.forTesting({
-    required MockHttpHandler mockHandler,
-    Duration timeout = WemoConstants.requestTimeout,
+    required MockHttpHandler this.mockHandler,
+    this._timeout = WemoConstants.requestTimeout,
     this.maxRetries = 1,
     this.retryDelay = Duration.zero,
-  })  : _client = null,
-        _mockHandler = mockHandler,
-        _timeout = timeout;
+  }) : _client = null;
 
   Duration get timeout => _timeout;
 
@@ -86,8 +91,7 @@ class SoapClient {
 
   /// Send a SOAP request to a Wemo device with retry logic
   ///
-  /// [requestTimeout] overrides the instance-level timeout for this call only.
-  /// [maxRetriesOverride] overrides the instance-level maxRetries for this call only.
+  /// [options] overrides the instance-level timeout/maxRetries for this call only.
   Future<Map<String, String>> call({
     required String host,
     required int port,
@@ -95,8 +99,7 @@ class SoapClient {
     required String action,
     required String serviceType,
     Map<String, String>? arguments,
-    Duration? requestTimeout,
-    int? maxRetriesOverride,
+    SoapCallOptions? options,
   }) async {
     final url = Uri.parse('http://$host:$port${WemoConstants.controlPath}/$serviceName');
     final envelope = buildSoapEnvelope(
@@ -105,49 +108,63 @@ class SoapClient {
       arguments: arguments,
     );
 
-    final effectiveTimeout = requestTimeout ?? timeout;
-    final effectiveRetries = maxRetriesOverride ?? maxRetries;
+    return _callWithRetries(
+      url: url,
+      envelope: envelope,
+      action: action,
+      serviceType: serviceType,
+      timeout: options?.requestTimeout ?? timeout,
+      maxRetries: options?.maxRetriesOverride ?? maxRetries,
+    );
+  }
+
+  void _debugLog(String message) {
+    if (kDebugMode) debugPrint(message);
+  }
+
+  Future<Map<String, String>> _callWithRetries({
+    required Uri url,
+    required String envelope,
+    required String action,
+    required String serviceType,
+    required Duration timeout,
+    required int maxRetries,
+  }) async {
     Exception? lastException;
 
-    if (kDebugMode) {
-      debugPrint('[SoapClient] $action → $url (timeout=${effectiveTimeout.inSeconds}s, retries=$effectiveRetries)');
-    }
+    _debugLog('[SoapClient] $action → $url (timeout=${timeout.inSeconds}s, retries=$maxRetries)');
 
-    for (int attempt = 0; attempt < effectiveRetries; attempt++) {
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
       try {
         final result = await _performRequest(
           url: url,
           envelope: envelope,
           action: action,
           serviceType: serviceType,
-          timeout: effectiveTimeout,
+          timeout: timeout,
         );
-        if (kDebugMode) debugPrint('[SoapClient] $action success on attempt ${attempt + 1}');
+        _debugLog('[SoapClient] $action success on attempt ${attempt + 1}');
         return result;
       } on SoapException catch (e) {
         // Don't retry SOAP faults - these are application-level errors
-        if (kDebugMode) debugPrint('[SoapClient] $action SOAP fault (no retry): ${e.runtimeType}: $e');
+        _debugLog('[SoapClient] $action SOAP fault (no retry): ${e.runtimeType}: $e');
         rethrow;
       } catch (e) {
         lastException = e is Exception ? e : Exception(e.toString());
-        if (kDebugMode) {
-          debugPrint('[SoapClient] $action attempt ${attempt + 1}/$effectiveRetries failed: ${e.runtimeType}: $e');
-        }
+        _debugLog('[SoapClient] $action attempt ${attempt + 1}/$maxRetries failed: ${e.runtimeType}: $e');
         // Wait before retrying, but not on the last attempt
-        if (attempt < effectiveRetries - 1) {
+        if (attempt < maxRetries - 1) {
           await Future.delayed(retryDelay);
         }
       }
     }
 
-    if (kDebugMode) {
-      debugPrint('[SoapClient] $action exhausted all $effectiveRetries retries. Last error: $lastException');
-    }
+    _debugLog('[SoapClient] $action exhausted all $maxRetries retries. Last error: $lastException');
     throw NetworkException(
-      'Failed to call $action after $effectiveRetries attempts',
-      host: host,
-      port: port,
-      attemptCount: effectiveRetries,
+      'Failed to call $action after $maxRetries attempts',
+      host: url.host,
+      port: url.port,
+      attemptCount: maxRetries,
       cause: lastException,
     );
   }
@@ -167,8 +184,9 @@ class SoapClient {
     };
 
     // Use mock handler if available (for testing)
-    if (_mockHandler != null) {
-      final mockResponse = await _mockHandler(url, headers, envelope);
+    if (mockHandler != null) {
+      // mockHandler is public, so unlike a private field it isn't promoted by the null check
+      final mockResponse = await mockHandler!(url, headers, envelope);
       return _handleResponse(mockResponse.statusCode, mockResponse.body, action);
     }
 

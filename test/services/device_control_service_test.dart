@@ -25,8 +25,7 @@ class MockSoapClient extends SoapClient {
     required String action,
     required String serviceType,
     Map<String, String>? arguments,
-    Duration? requestTimeout,
-    int? maxRetriesOverride,
+    SoapCallOptions? options,
   }) {
     return handler(host, port, serviceName, action, serviceType, arguments);
   }

@@ -79,7 +79,16 @@ class PairingProvider extends ChangeNotifier {
   Future<void> _forceWifiUsage(bool useWifi) async {
     if (!Platform.isAndroid) return;
     try {
-      await WiFiForIoTPlugin.forceWifiUsage(useWifi);
+      // The native side only replies once ConnectivityManager reports a
+      // matching WiFi network via a callback; if that callback never fires
+      // (a transient timing/registration issue), the call never completes.
+      // Bound it so a stuck native call can't hang the whole pairing flow.
+      final result = await WiFiForIoTPlugin.forceWifiUsage(
+        useWifi,
+      ).timeout(const Duration(seconds: 5));
+      if (kDebugMode) {
+        debugPrint('[Pairing] forceWifiUsage($useWifi) -> $result');
+      }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('[Pairing] forceWifiUsage($useWifi) failed: $e');
@@ -184,26 +193,56 @@ class PairingProvider extends ChangeNotifier {
     await _discoverDeviceOnAp();
   }
 
+  /// Build the list of IPs to try for the device's setup AP.
+  ///
+  /// Prefers the WiFi gateway IP reported by the OS - since the device is
+  /// itself the access point, that's its real control address - then falls
+  /// back to the well-known default used by older Wemo hardware. Different
+  /// Wemo generations (e.g. the Mini) don't all default to the same IP, so
+  /// relying solely on the hardcoded address isn't reliable across models.
+  Future<List<String>> _buildApProbeCandidates() async {
+    final candidates = <String>[];
+    try {
+      final gatewayIp = await _wifiService.getWifiGatewayIP();
+      if (gatewayIp != null &&
+          gatewayIp.isNotEmpty &&
+          gatewayIp != '0.0.0.0') {
+        candidates.add(gatewayIp);
+      }
+    } catch (_) {
+      // Ignore - fall back to the default IP below.
+    }
+    if (!candidates.contains(WemoConstants.wemoApDefaultIp)) {
+      candidates.add(WemoConstants.wemoApDefaultIp);
+    }
+    return candidates;
+  }
+
   /// Discover device on the Wemo AP network
   Future<void> _discoverDeviceOnAp() async {
+    final candidateIps = await _buildApProbeCandidates();
     if (kDebugMode) {
       debugPrint(
-        '[Pairing] _discoverDeviceOnAp: probing ${WemoConstants.wemoApDefaultIp} ports ${WemoConstants.devicePorts}',
+        '[Pairing] _discoverDeviceOnAp: probing $candidateIps ports ${WemoConstants.devicePorts}',
       );
     }
     try {
-      // Probe the well-known WeMo AP IP only.
+      // Probe each candidate IP in turn until one responds.
       // Do NOT fall back to SSDP here — SSDP would find already-paired devices
       // on the home network when the phone hasn't actually switched to the
       // WeMo AP, leading to GetApList being sent to the wrong device.
-      final device = await _discoveryService.probeHost(
-        WemoConstants.wemoApDefaultIp,
-        ports: WemoConstants.devicePorts,
-      );
+      WemoDevice? device;
+      for (final ip in candidateIps) {
+        device = await _discoveryService.probeHost(
+          ip,
+          ports: WemoConstants.devicePorts,
+        );
+        if (device != null) break;
+      }
 
       if (kDebugMode) {
         debugPrint(
-          '[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at ${WemoConstants.wemoApDefaultIp}"}',
+          '[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at $candidateIps"}',
         );
       }
 
@@ -225,15 +264,13 @@ class PairingProvider extends ChangeNotifier {
         await _fetchAvailableNetworks();
       } else {
         if (kDebugMode) {
-          debugPrint(
-            '[Pairing] No device found at ${WemoConstants.wemoApDefaultIp}',
-          );
+          debugPrint('[Pairing] No device found at $candidateIps');
         }
         _state = _state.copyWith(
           isLoading: false,
           clearLoadingMessage: true,
           errorMessage: _l10n.pairingErrorDeviceAtDefaultIp(
-            WemoConstants.wemoApDefaultIp,
+            candidateIps.join(', '),
           ),
         );
         notifyListeners();

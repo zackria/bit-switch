@@ -58,21 +58,26 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             },
           ),
         ),
-        body: Consumer<PairingProvider>(
-          builder: (context, provider, child) {
-            return Column(
-              children: [
-                // Progress indicator
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: PairingStepIndicator(currentStep: provider.state.step),
-                ),
-                const Divider(),
-                // Step content
-                Expanded(child: _buildStepContent(context, provider)),
-              ],
-            );
-          },
+        body: SafeArea(
+          top: false,
+          child: Consumer<PairingProvider>(
+            builder: (context, provider, child) {
+              return Column(
+                children: [
+                  // Progress indicator
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: PairingStepIndicator(
+                      currentStep: provider.state.step,
+                    ),
+                  ),
+                  const Divider(),
+                  // Step content
+                  Expanded(child: _buildStepContent(context, provider)),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -345,10 +350,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             Expanded(
               child: Text(
                 context.l10n.pairingIosSetupLimitation,
-                style: TextStyle(
-                  color: Colors.orange.shade900,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.orange.shade900, fontSize: 12),
               ),
             ),
           ],

@@ -195,6 +195,51 @@ void main() {
         expect(provider.state.errorMessage, isNotNull);
       });
 
+      test(
+        'retryDiscovery probes the WiFi gateway IP first and finds the '
+        'device there without trying the default IP',
+        () async {
+          final deviceAtGateway = _device.copyWith(host: '10.22.22.5');
+          final discovery = _HostAwareDiscoveryService({
+            '10.22.22.5': deviceAtGateway,
+          });
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(
+              getGatewayIp: () async => '10.22.22.5',
+            ),
+            controlService: _FakeControlService(),
+            discoveryService: discovery,
+          );
+
+          await provider.retryDiscovery();
+
+          expect(discovery.probedHosts, ['10.22.22.5']);
+          expect(provider.state.device?.host, '10.22.22.5');
+        },
+      );
+
+      test(
+        'retryDiscovery falls back to the default AP IP when the gateway '
+        "IP doesn't respond (e.g. a Wemo model with a different default)",
+        () async {
+          final discovery = _HostAwareDiscoveryService({
+            '10.22.22.1': _device,
+          });
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(
+              getGatewayIp: () async => '10.22.22.5',
+            ),
+            controlService: _FakeControlService(),
+            discoveryService: discovery,
+          );
+
+          await provider.retryDiscovery();
+
+          expect(discovery.probedHosts, ['10.22.22.5', '10.22.22.1']);
+          expect(provider.state.device?.host, '10.22.22.1');
+        },
+      );
+
       test('tryManualIp device not found sets error containing ip', () async {
         final provider = PairingProvider(
           wifiService: _FakeWifiService(),
@@ -533,18 +578,27 @@ void main() {
 
 class _FakeWifiService extends WifiDetectionService {
   final Future<String?> Function()? _getSsid;
+  final Future<String?> Function()? _getGatewayIp;
   final Stream<String?>? _stream;
 
   _FakeWifiService({
     Future<String?> Function()? getSsid,
+    Future<String?> Function()? getGatewayIp,
     Stream<String?>? streamSsid,
   }) : _getSsid = getSsid,
+       _getGatewayIp = getGatewayIp,
        _stream = streamSsid,
        super();
 
   @override
   Future<String?> getCurrentSsid({bool requestPermission = true}) async {
     if (_getSsid != null) return _getSsid();
+    return null;
+  }
+
+  @override
+  Future<String?> getWifiGatewayIP() async {
+    if (_getGatewayIp != null) return _getGatewayIp();
     return null;
   }
 
@@ -577,6 +631,26 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
     void Function(String)? onDebugLog,
   }) {
     return discoverStream ?? const Stream.empty();
+  }
+}
+
+/// Discovery service whose [probeHost] returns a different (or no) result
+/// per host, and records every host probed, to verify the multi-IP
+/// candidate fallback in [PairingProvider._buildApProbeCandidates].
+class _HostAwareDiscoveryService extends DeviceDiscoveryService {
+  final Map<String, WemoDevice> resultsByHost;
+  final List<String> probedHosts = [];
+
+  _HostAwareDiscoveryService(this.resultsByHost);
+
+  @override
+  Future<WemoDevice?> probeHost(
+    String host, {
+    List<int>? ports,
+    Duration? timeout,
+  }) async {
+    probedHosts.add(host);
+    return resultsByHost[host];
   }
 }
 

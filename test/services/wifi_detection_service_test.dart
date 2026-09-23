@@ -100,6 +100,22 @@ void main() {
       });
     });
 
+    group('getWifiGatewayIP', () {
+      test('returns the gateway IP from the delegate', () async {
+        final withGateway = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(gatewayIp: '10.22.22.1'),
+        );
+        expect(await withGateway.getWifiGatewayIP(), '10.22.22.1');
+      });
+
+      test('returns null when the delegate throws', () async {
+        final throwing = WifiDetectionService(
+          wifiInfoDelegate: _FakeWifiInfoDelegate(throwError: true),
+        );
+        expect(await throwing.getWifiGatewayIP(), isNull);
+      });
+    });
+
     group('isWemoApNetwork', () {
       test('should return true for valid Wemo AP SSIDs', () {
         expect(service.isWemoApNetwork('WeMo.ABC123'), true);
@@ -465,9 +481,10 @@ void main() {
 
 class _FakeWifiInfoDelegate extends WifiInfoDelegate {
   final String? ssid;
+  final String? gatewayIp;
   final bool throwError;
 
-  _FakeWifiInfoDelegate({this.ssid, this.throwError = false});
+  _FakeWifiInfoDelegate({this.ssid, this.gatewayIp, this.throwError = false});
 
   @override
   Future<String?> getWifiName() async {
@@ -475,6 +492,14 @@ class _FakeWifiInfoDelegate extends WifiInfoDelegate {
       throw Exception('Simulated wifi info error');
     }
     return ssid;
+  }
+
+  @override
+  Future<String?> getWifiGatewayIP() async {
+    if (throwError) {
+      throw Exception('Simulated wifi info error');
+    }
+    return gatewayIp;
   }
 }
 

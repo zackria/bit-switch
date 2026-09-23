@@ -7,6 +7,7 @@ import '../core/constants.dart';
 
 abstract class WifiInfoDelegate {
   Future<String?> getWifiName();
+  Future<String?> getWifiGatewayIP();
 }
 
 class NetworkInfoDelegate implements WifiInfoDelegate {
@@ -17,6 +18,9 @@ class NetworkInfoDelegate implements WifiInfoDelegate {
 
   @override
   Future<String?> getWifiName() => _networkInfo.getWifiName();
+
+  @override
+  Future<String?> getWifiGatewayIP() => _networkInfo.getWifiGatewayIP();
 }
 
 class WifiPermissionDelegate {
@@ -214,6 +218,25 @@ class WifiDetectionService {
       return null;
     } catch (e) {
       _log('Error getting SSID: $e');
+      return null;
+    }
+  }
+
+  /// Get the gateway IP address of the current WiFi connection.
+  ///
+  /// When connected to a device's own setup AP (e.g. during pairing), the
+  /// device itself is the gateway, so this returns its actual control
+  /// address - more reliable than assuming a single fixed IP, since
+  /// different Wemo hardware generations default to different addresses
+  /// for their setup AP.
+  Future<String?> getWifiGatewayIP() async {
+    try {
+      _log('Calling NetworkInfo.getWifiGatewayIP()...');
+      final ip = await _wifiInfoDelegate.getWifiGatewayIP();
+      _log('getWifiGatewayIP() returned: $ip');
+      return ip;
+    } catch (e) {
+      _log('Error getting WiFi gateway IP: $e');
       return null;
     }
   }

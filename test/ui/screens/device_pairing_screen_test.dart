@@ -282,7 +282,9 @@ void main() {
       });
     });
 
-    testWidgets('Start Pairing button navigates to connectToAp', (tester) async {
+    testWidgets('Start Pairing button navigates to connectToAp', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();
         await _pumpAndStart(tester, provider);
@@ -294,6 +296,26 @@ void main() {
 
         expect(provider.state.step, PairingStep.connectToAp);
       });
+    });
+
+    testWidgets('keeps Start Pairing above the system navigation area', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1;
+      tester.view.padding = const FakeViewPadding(bottom: 48);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPadding);
+
+      final provider = _makeProvider();
+      await _pumpAndStart(tester, provider);
+
+      final button = find.widgetWithText(FilledButton, 'Start Pairing');
+      await tester.ensureVisible(button);
+      await tester.pump();
+
+      expect(tester.getBottomRight(button).dy, lessThanOrEqualTo(752));
     });
   });
 
@@ -307,16 +329,10 @@ void main() {
       });
     });
 
-    testWidgets('hides iOS setup limitation banner on Android', (
-      tester,
-    ) async {
+    testWidgets('hides iOS setup limitation banner on Android', (tester) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();
-        await _pumpAndStart(
-          tester,
-          provider,
-          platform: TargetPlatform.android,
-        );
+        await _pumpAndStart(tester, provider, platform: TargetPlatform.android);
 
         expect(find.textContaining('Wemo Mini'), findsNothing);
       });
@@ -337,7 +353,9 @@ void main() {
       });
     });
 
-    testWidgets('shows connected status when isOnWemoAp is true', (tester) async {
+    testWidgets('shows connected status when isOnWemoAp is true', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final wifi = _FakeWifiService(
           getSsid: () async => null,
@@ -383,7 +401,8 @@ void main() {
           discoveryService: _FakeDiscoveryService(probeResult: null),
         );
         await _pumpAndStart(tester, provider);
-        await provider.confirmConnectedToDeviceAp(); // fast — probe returns null
+        await provider
+            .confirmConnectedToDeviceAp(); // fast — probe returns null
         await tester.pump();
 
         // State is discoverDevice with errorMessage set
@@ -434,7 +453,9 @@ void main() {
       });
     });
 
-    testWidgets('shows loading indicator while looking for device', (tester) async {
+    testWidgets('shows loading indicator while looking for device', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final completer = Completer<WemoDevice?>();
         final provider = PairingProvider(
@@ -547,7 +568,9 @@ void main() {
       });
     });
 
-    testWidgets('shows error message alongside empty network list', (tester) async {
+    testWidgets('shows error message alongside empty network list', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final provider = PairingProvider(
           wifiService: _FakeWifiService(getSsid: () async => null),
@@ -567,7 +590,9 @@ void main() {
   });
 
   group('DevicePairingScreen — selectNetwork step interactions', () {
-    testWidgets('password field hidden when no network selected', (tester) async {
+    testWidgets('password field hidden when no network selected', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();
         await _pumpAndStart(tester, provider);
@@ -623,82 +648,93 @@ void main() {
       });
     });
 
-    testWidgets('network list, manual entry, Use This Network (needs discovery)', (tester) async {
-      await tester.runAsync(() async {
-        final provider = _makeProvider(probeResult: device, networks: networks);
-        await _pumpAndStart(tester, provider);
-        // confirmConnectedToDeviceAp causes 2s delay for _fetchAvailableNetworks
-        await provider.confirmConnectedToDeviceAp();
-        await tester.pump();
+    testWidgets(
+      'network list, manual entry, Use This Network (needs discovery)',
+      (tester) async {
+        await tester.runAsync(() async {
+          final provider = _makeProvider(
+            probeResult: device,
+            networks: networks,
+          );
+          await _pumpAndStart(tester, provider);
+          // confirmConnectedToDeviceAp causes 2s delay for _fetchAvailableNetworks
+          await provider.confirmConnectedToDeviceAp();
+          await tester.pump();
 
-        // State is now selectNetwork with device + networks
-        expect(find.text('Network A'), findsOneWidget);
-        expect(find.text('Network B'), findsOneWidget);
-        expect(find.text('Enter network manually'), findsOneWidget);
+          // State is now selectNetwork with device + networks
+          expect(find.text('Network A'), findsOneWidget);
+          expect(find.text('Network B'), findsOneWidget);
+          expect(find.text('Enter network manually'), findsOneWidget);
 
-        // Manual SSID: expand card
-        await tester.tap(find.text('Enter network manually'));
-        await tester.pump();
-        expect(find.text('Network Name (SSID)'), findsOneWidget);
+          // Manual SSID: expand card
+          await tester.tap(find.text('Enter network manually'));
+          await tester.pump();
+          expect(find.text('Network Name (SSID)'), findsOneWidget);
 
-        // Cancel hides card — scroll into view first
-        await tester.ensureVisible(find.text('Cancel'));
-        await tester.pump();
-        await tester.tap(find.text('Cancel'));
-        await tester.pump();
-        expect(find.text('Network Name (SSID)'), findsNothing);
-        expect(find.text('Enter network manually'), findsOneWidget);
+          // Cancel hides card — scroll into view first
+          await tester.ensureVisible(find.text('Cancel'));
+          await tester.pump();
+          await tester.tap(find.text('Cancel'));
+          await tester.pump();
+          expect(find.text('Network Name (SSID)'), findsNothing);
+          expect(find.text('Enter network manually'), findsOneWidget);
 
-        // Use This Network: expand again, enter SSID
-        await tester.tap(find.text('Enter network manually'));
-        await tester.pump();
-        await tester.enterText(
-          find.widgetWithText(TextField, 'Network Name (SSID)'),
-          'ManualNet',
-        );
-        await tester.pump();
-        // Trigger Consumer rebuild so the button picks up the new text
-        provider.setPassword('');
-        await tester.pump();
+          // Use This Network: expand again, enter SSID
+          await tester.tap(find.text('Enter network manually'));
+          await tester.pump();
+          await tester.enterText(
+            find.widgetWithText(TextField, 'Network Name (SSID)'),
+            'ManualNet',
+          );
+          await tester.pump();
+          // Trigger Consumer rebuild so the button picks up the new text
+          provider.setPassword('');
+          await tester.pump();
 
-        await tester.ensureVisible(find.text('Use This Network'));
-        await tester.pump();
-        await tester.tap(find.text('Use This Network'));
-        await tester.pump();
-        expect(provider.state.selectedSsid, 'ManualNet');
-      });
-    });
+          await tester.ensureVisible(find.text('Use This Network'));
+          await tester.pump();
+          await tester.tap(find.text('Use This Network'));
+          await tester.pump();
+          expect(provider.state.selectedSsid, 'ManualNet');
+        });
+      },
+    );
 
-    testWidgets('Connect button enabled and tapping it invokes configureNetwork', (tester) async {
-      await tester.runAsync(() async {
-        final provider = _makeProvider();
-        await _pumpAndStart(tester, provider);
-        provider.goToStep(PairingStep.selectNetwork);
-        provider.selectNetwork('HomeNet');
-        provider.setPassword('secret');
-        await tester.pump();
+    testWidgets(
+      'Connect button enabled and tapping it invokes configureNetwork',
+      (tester) async {
+        await tester.runAsync(() async {
+          final provider = _makeProvider();
+          await _pumpAndStart(tester, provider);
+          provider.goToStep(PairingStep.selectNetwork);
+          provider.selectNetwork('HomeNet');
+          provider.setPassword('secret');
+          await tester.pump();
 
-        final button = tester.widget<FilledButton>(
-          find.ancestor(
-            of: find.text('Connect'),
-            matching: find.byType(FilledButton),
-          ),
-        );
-        expect(button.onPressed, isNotNull);
+          final button = tester.widget<FilledButton>(
+            find.ancestor(
+              of: find.text('Connect'),
+              matching: find.byType(FilledButton),
+            ),
+          );
+          expect(button.onPressed, isNotNull);
 
-        await tester.tap(find.text('Connect'));
-        await tester.pump();
+          await tester.tap(find.text('Connect'));
+          await tester.pump();
 
-        // No device was ever discovered, so configureNetwork() takes its
-        // early-return error path instead of trying to contact a device.
-        expect(
-          provider.state.errorMessage,
-          'Please select a network and enter the password.',
-        );
-      });
-    });
+          // No device was ever discovered, so configureNetwork() takes its
+          // early-return error path instead of trying to contact a device.
+          expect(
+            provider.state.errorMessage,
+            'Please select a network and enter the password.',
+          );
+        });
+      },
+    );
 
-    testWidgets('shows loading indicator while fetching available networks', (tester) async {
+    testWidgets('shows loading indicator while fetching available networks', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final provider = _makeProvider(probeResult: device, networks: networks);
         await _pumpAndStart(tester, provider);
@@ -736,11 +772,7 @@ void main() {
     testWidgets('hides iOS scan limitation banner on Android', (tester) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();
-        await _pumpAndStart(
-          tester,
-          provider,
-          platform: TargetPlatform.android,
-        );
+        await _pumpAndStart(tester, provider, platform: TargetPlatform.android);
         provider.goToStep(PairingStep.selectNetwork);
         await tester.pump();
 
@@ -750,7 +782,9 @@ void main() {
   });
 
   group('DevicePairingScreen — configuring step', () {
-    testWidgets('shows CircularProgressIndicator and loading text', (tester) async {
+    testWidgets('shows CircularProgressIndicator and loading text', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();
         await _pumpAndStart(tester, provider);
@@ -828,20 +862,26 @@ void main() {
       });
     });
 
-    testWidgets('shows device info card with connected SSID when device is set', (tester) async {
-      await tester.runAsync(() async {
-        final provider = _makeProvider(probeResult: device, networks: networks);
-        await _pumpAndStart(tester, provider);
-        await provider.confirmConnectedToDeviceAp();
-        provider.selectNetwork('Network A');
-        provider.goToStep(PairingStep.success);
-        await tester.pump();
+    testWidgets(
+      'shows device info card with connected SSID when device is set',
+      (tester) async {
+        await tester.runAsync(() async {
+          final provider = _makeProvider(
+            probeResult: device,
+            networks: networks,
+          );
+          await _pumpAndStart(tester, provider);
+          await provider.confirmConnectedToDeviceAp();
+          provider.selectNetwork('Network A');
+          provider.goToStep(PairingStep.success);
+          await tester.pump();
 
-        expect(find.text('WeMo Switch'), findsOneWidget);
-        expect(find.text('Connected to Network A'), findsOneWidget);
-        expect(find.byIcon(Icons.check_circle), findsOneWidget);
-      });
-    });
+          expect(find.text('WeMo Switch'), findsOneWidget);
+          expect(find.text('Connected to Network A'), findsOneWidget);
+          expect(find.byIcon(Icons.check_circle), findsOneWidget);
+        });
+      },
+    );
   });
 
   group('DevicePairingScreen — error step (canRetry: true)', () {
@@ -885,7 +925,9 @@ void main() {
       });
     });
 
-    testWidgets('Cancel button pops route and resets provider to intro', (tester) async {
+    testWidgets('Cancel button pops route and resets provider to intro', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();
         await tester.pumpWidget(

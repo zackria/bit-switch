@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Control local per a WeMo
+
+Promotional Text
+Controla localment els dispositius WeMo antics: detecta'ls, activa'ls i configura la Wi-Fi amb seguretat, sense núvol.
+
+Keywords
+wifi,interruptor,wemo,casa intel·ligent,local,control,dispositius,automatització
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch permet controlar de manera local, ràpida, privada i fiable els dispositius WeMo antics, sense núvol. Detecta dispositius a la xarxa local, controla interruptors i reguladors, consulta el consum energètic dels endolls Insight, rep l'estat dels sensors de moviment i configura la Wi-Fi de forma segura amb credencials xifrades mitjançant AES.
+
+Compatibilitat completa: interruptors, reguladors, interruptors de llum, endolls energètics Insight, sensors de moviment, endolls d'exterior, dispositius Maker i ponts.
+Detecció fiable: SSDP/UPnP amb M-SEARCH per localitzar dispositius a la xarxa.
+Configuració segura: la configuració de Wi-Fi integrada xifra les contrasenyes amb AES-128-CBC per protegir les credencials.
+Control fiable: gestió millorada de GetBinaryState / SetBinaryState amb informació clara de l'estat i els errors.
+Facilitat d'ús: diàleg de Wi-Fi simplificat, opció de mostrar la contrasenya i indicadors de connexió i encaixada.
+Aparença: mode fosc i temes refinats per a una interfície moderna i llegible.
+
+Per què Bit Switch
+
+Funcionament local: la detecció i el control tenen lloc a la teva xarxa, sense utilitzar el núvol.
+Privadesa: la configuració usa xifratge AES i mai no envia les credencials a serveis externs.
+Pràctic: funciona amb molts dispositius Belkin WeMo antics que encara s'utilitzen.
+
+Novetats
+
+Detecció SSDP/UPnP millorada.
+Configuració de Wi-Fi millorada amb xifratge de contrasenyes AES-128-CBC.
+Procés més clar, millors missatges d'error i opció de mostrar la contrasenya.
+Gestió millorada de les crides GetBinaryState / SetBinaryState.
+Mode fosc i temes refinats.
+
+Compatibilitat i privadesa
+
+Els dispositius i el telèfon han d'estar a la mateixa xarxa Wi-Fi.
+L'encaminador ha de permetre la multidifusió UDP per a la detecció SSDP.
+L'escaneig de Wi-Fi requereix permís d'ubicació; es demana durant l'ús i només s'empra per escanejar i configurar.
+No cal cap compte al núvol; el control només es fa a la xarxa local. Consulta la política de privadesa al lloc web d'assistència.

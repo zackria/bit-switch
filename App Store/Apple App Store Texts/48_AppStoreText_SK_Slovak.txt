@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Miestne ovládanie WeMo
+
+Promotional Text
+Ovládajte staršie zariadenia WeMo miestne: vyhľadajte ich, prepínajte a bezpečne nastavte Wi-Fi bez cloudu.
+
+Keywords
+wifi,spínač,wemo,inteligentná domácnosť,miestne,ovládanie,zariadenia,automatizácia
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch prináša rýchle, súkromné a spoľahlivé miestne ovládanie starších zariadení WeMo bez cloudu. Vyhľadajte zariadenia v miestnej sieti, ovládajte spínače a stmievače, sledujte spotrebu energie zásuviek Insight, prijímajte stav snímačov pohybu a bezpečne nastavte Wi-Fi pomocou prihlasovacích údajov šifrovaných cez AES.
+
+Úplná podpora: spínače, stmievače, vypínače svetiel, energetické zásuvky Insight, snímače pohybu, vonkajšie zásuvky, zariadenia Maker a mosty.
+Spoľahlivé vyhľadávanie: SSDP/UPnP s M-SEARCH na účinné zisťovanie zariadení v sieti.
+Bezpečné nastavenie: vstavané nastavenie Wi-Fi so šifrovaním hesla AES-128-CBC chráni prihlasovacie údaje počas konfigurácie.
+Spoľahlivé ovládanie: vylepšené spracovanie GetBinaryState / SetBinaryState s jasným stavom a hlásením chýb.
+Jednoduché používanie: prehľadné okno nastavenia Wi-Fi, zobrazenie hesla a indikátory pripojenia a nadviazania spojenia.
+Vzhľad: tmavý režim a vyladené motívy pre moderné, čitateľné rozhranie.
+
+Prečo Bit Switch
+
+Miestne fungovanie: vyhľadávanie a ovládanie prebieha vo vašej sieti, bez potreby cloudu.
+Ochrana súkromia: nastavenie používa šifrovanie AES a údaje sa nikdy neposielajú externým službám.
+Praktickosť: funguje s mnohými staršími zariadeniami Belkin WeMo, ktoré sa stále používajú.
+
+Novinky
+
+Vylepšené vyhľadávanie SSDP/UPnP.
+Lepšie nastavenie Wi-Fi so šifrovaním hesiel AES-128-CBC.
+Jasnejší postup, lepšie chybové hlásenia a zobrazenie hesla.
+Vylepšené spracovanie volaní GetBinaryState / SetBinaryState.
+Tmavý režim a vyladené motívy.
+
+Kompatibilita a súkromie
+
+Zariadenia a telefón musia byť pripojené k rovnakej sieti Wi-Fi.
+Smerovač musí povoľovať UDP multicast na vyhľadávanie SSDP.
+Vyhľadávanie Wi-Fi vyžaduje povolenie polohy; žiada sa počas používania a používa sa iba na vyhľadávanie a nastavenie.
+Cloudový účet nie je potrebný; ovládanie prebieha iba v miestnej sieti. Podrobnosti nájdete v zásadách ochrany súkromia na stránke podpory.

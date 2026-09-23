@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Lokalno upravljanje za WeMo
+
+Promotional Text
+Lokalno upravljajte starijim WeMo uređajima: pronađite ih, uključite ili isključite i sigurno postavite Wi-Fi bez oblaka.
+
+Keywords
+wifi,prekidač,wemo,pametni dom,lokalno,upravljanje,uređaji,automatizacija
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch omogućuje brzo, privatno i pouzdano lokalno upravljanje starijim WeMo uređajima bez oblaka. Pronađite uređaje na lokalnoj mreži, upravljajte prekidačima i prigušivačima, pregledajte potrošnju energije utičnica Insight, primajte stanje senzora pokreta i sigurno postavite Wi-Fi s vjerodajnicama šifriranima pomoću AES-a.
+
+Potpuna podrška: prekidači, prigušivači, prekidači za svjetlo, energetske utičnice Insight, senzori pokreta, vanjske utičnice, uređaji Maker i mostovi.
+Pouzdano otkrivanje: SSDP/UPnP uz M-SEARCH za učinkovito pronalaženje uređaja na mreži.
+Sigurno postavljanje: ugrađena postavka Wi-Fi mreže s AES-128-CBC šifriranjem lozinke štiti vjerodajnice tijekom konfiguracije.
+Pouzdano upravljanje: poboljšana obrada GetBinaryState / SetBinaryState uz jasan prikaz stanja i pogrešaka.
+Jednostavna uporaba: pojednostavljen dijaloški okvir za Wi-Fi, prikaz lozinke te pokazatelji veze i rukovanja.
+Izgled: tamni način rada i dotjerane teme za moderno, čitljivo sučelje.
+
+Zašto Bit Switch
+
+Lokalni rad: otkrivanje i upravljanje odvijaju se na vašoj mreži, bez potrebe za oblakom.
+Privatnost: postavljanje koristi AES šifriranje, a vjerodajnice se nikad ne šalju vanjskim uslugama.
+Praktičnost: radi s brojnim starijim uređajima Belkin WeMo koji su još u uporabi.
+
+Novosti
+
+Poboljšano SSDP/UPnP otkrivanje.
+Poboljšano postavljanje Wi-Fi mreže uz AES-128-CBC šifriranje lozinki.
+Jasniji postupak, bolje poruke o pogreškama i prikaz lozinke.
+Poboljšana obrada poziva GetBinaryState / SetBinaryState.
+Tamni način rada i dotjerane teme.
+
+Kompatibilnost i privatnost
+
+Uređaji i telefon moraju biti na istoj Wi-Fi mreži.
+Usmjerivač mora dopuštati UDP multicast za SSDP otkrivanje.
+Skeniranje Wi-Fi mreža zahtijeva dopuštenje za lokaciju; traži se tijekom uporabe i koristi samo za skeniranje i postavljanje.
+Račun u oblaku nije potreban; upravljanje se odvija samo na lokalnoj mreži. Pojedinosti potražite u pravilima privatnosti na web-mjestu za podršku.

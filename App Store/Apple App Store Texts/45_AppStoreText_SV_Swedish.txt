@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Lokal styrning av WeMo
+
+Promotional Text
+Styr äldre WeMo-enheter lokalt: hitta och slå på eller av dem och konfigurera Wi-Fi säkert, utan molnet.
+
+Keywords
+wifi,brytare,wemo,smarta hem,lokal,styrning,enheter,automatisering
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch ger snabb, privat och tillförlitlig lokal styrning av äldre WeMo-enheter utan molnet. Hitta enheter i det lokala nätverket, styr brytare och dimrar, visa energiförbrukning från Insight-uttag, ta emot status från rörelsesensorer och konfigurera Wi-Fi säkert med AES-krypterade inloggningsuppgifter.
+
+Fullständigt enhetsstöd: brytare, dimrar, ljusbrytare, Insight-energiuttag, rörelsesensorer, utomhusuttag, Maker-enheter och bryggor.
+Tillförlitlig identifiering: SSDP/UPnP med M-SEARCH för säker upptäckt i nätverket.
+Säker konfiguration: inbyggd Wi-Fi-konfiguration med AES-128-CBC-kryptering av lösenord skyddar uppgifterna under inställningen.
+Pålitlig styrning: förbättrad hantering av GetBinaryState / SetBinaryState med tydlig status- och felrapportering.
+Enkel användning: förenklad Wi-Fi-dialog, visning av lösenord samt indikatorer för anslutning och handskakning.
+Utseende: mörkt läge och finslipade teman för ett modernt, lättläst gränssnitt.
+
+Varför Bit Switch
+
+Lokalt först: identifiering och styrning sker i ditt nätverk utan att molnet behövs.
+Integritet: konfigurationen använder AES-kryptering och uppgifterna skickas aldrig till externa tjänster.
+Praktiskt: fungerar med många äldre Belkin WeMo-enheter som fortfarande används.
+
+Nyheter
+
+Förbättrad SSDP/UPnP-identifiering.
+Bättre Wi-Fi-konfiguration med AES-128-CBC-kryptering av lösenord.
+Tydligare flöde, bättre felmeddelanden och visning av lösenord.
+Förbättrad hantering av GetBinaryState / SetBinaryState-anrop.
+Mörkt läge och finslipade teman.
+
+Kompatibilitet och integritet
+
+Enheterna och telefonen måste vara anslutna till samma Wi-Fi-nätverk.
+Routern måste tillåta UDP-multicast för SSDP-identifiering.
+Wi-Fi-skanning kräver platsbehörighet. Den begärs under användning och används endast för skanning och konfiguration.
+Inget molnkonto krävs; styrning sker endast i det lokala nätverket. Mer information finns i integritetspolicyn på supportwebbplatsen.

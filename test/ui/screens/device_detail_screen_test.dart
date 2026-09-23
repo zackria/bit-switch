@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bit_switch/ui/screens/device_detail_screen.dart';
 import 'package:bit_switch/ui/widgets/power_button.dart';
 import 'package:bit_switch/providers/device_provider.dart';
@@ -108,6 +109,13 @@ void main() {
     late DeviceProvider deviceProvider;
 
     setUp(() {
+      // DeviceProvider.discoverDevices persists a known-device list via
+      // SharedPreferences. Without a mock, that platform channel call can
+      // hang indefinitely inside tester.runAsync() (which runs on the real
+      // event loop, not the fake test clock), taking down every subsequent
+      // test in this file with "Reentrant call to runAsync() denied".
+      SharedPreferences.setMockInitialValues({});
+
       const channel = MethodChannel('wifi_scan');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
         channel,

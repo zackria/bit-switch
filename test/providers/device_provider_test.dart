@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bit_switch/providers/device_provider.dart';
 import 'package:bit_switch/services/device_control_service.dart';
 import 'package:bit_switch/services/device_discovery_service.dart';
@@ -72,6 +73,12 @@ class MockDiscoveryService extends DeviceDiscoveryService {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   group('DeviceProvider', () {
     const device = WemoDevice(
       id: 'test-id',

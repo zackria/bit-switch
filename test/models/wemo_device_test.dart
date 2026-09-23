@@ -109,6 +109,28 @@ void main() {
       expect(device.toString(), contains('Smart Switch'));
       expect(device.toString(), contains('192.168.1.100:49153'));
     });
+
+    test('toJson/fromJson should round-trip all fields', () {
+      final full = device.copyWith(
+        manufacturer: 'Belkin',
+        model: 'F7C027',
+        serialNumber: 'SN123',
+        firmwareVersion: '1.0.0',
+        macAddress: 'AA:BB:CC:DD:EE:FF',
+        udn: 'uuid:Socket-1_0-12345',
+      );
+
+      final restored = WemoDevice.fromJson(full.toJson());
+
+      expect(restored, full);
+      expect(restored.manufacturer, 'Belkin');
+      expect(restored.udn, 'uuid:Socket-1_0-12345');
+    });
+
+    test('toJson/fromJson should round-trip null optional fields', () {
+      final restored = WemoDevice.fromJson(device.toJson());
+      expect(restored, device);
+    });
   });
 
   group('WemoDeviceTypeExtension', () {

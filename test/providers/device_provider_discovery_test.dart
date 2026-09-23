@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bit_switch/providers/device_provider.dart';
 import 'package:bit_switch/services/device_discovery_service.dart';
 import 'package:bit_switch/services/device_control_service.dart';
@@ -8,6 +9,12 @@ import 'package:bit_switch/models/wemo_device.dart';
 import 'package:bit_switch/core/exceptions.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   group('DeviceProvider discovery and probe', () {
     test(
       'probeDeviceByIp succeeds when TCP port open and probeHost returns device',
@@ -192,6 +199,110 @@ void main() {
         expect(provider.isDiscovering, false);
       },
     );
+
+    test(
+      'discoverDevices recovers a previously known device missed by SSDP '
+      'via a direct probe of its last-known address',
+      () async {
+        final deviceA = const WemoDevice(
+          id: 'a',
+          name: 'A',
+          host: '10.0.0.1',
+          port: 49153,
+          type: WemoDeviceType.wemoSwitch,
+        );
+        final deviceB = const WemoDevice(
+          id: 'b',
+          name: 'B',
+          host: '10.0.0.2',
+          port: 49153,
+          type: WemoDeviceType.wemoSwitch,
+        );
+
+        // First scan (e.g. a previous app session): SSDP finds both
+        // devices, seeding the persisted known-device list.
+        final firstProvider = DeviceProvider(
+          discoveryService: _KnownDeviceFallbackDiscoveryService(
+            discoverStreamBuilder: () =>
+                Stream.fromIterable([deviceA, deviceB]),
+          ),
+          controlService: _FakeControlService(),
+        );
+        await firstProvider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+        expect(
+          firstProvider.devices.map((d) => d.id),
+          containsAll(['a', 'b']),
+        );
+
+        // Let the fire-and-forget persistence write land.
+        await Future.delayed(const Duration(milliseconds: 20));
+
+        // Second scan (fresh provider, simulating a new app launch): SSDP
+        // only finds device A this time - device B's UDP response was
+        // lost - but device B is still reachable directly.
+        final secondProvider = DeviceProvider(
+          discoveryService: _KnownDeviceFallbackDiscoveryService(
+            discoverStreamBuilder: () => Stream.fromIterable([deviceA]),
+            probeResultsByHost: {deviceB.host: deviceB},
+          ),
+          controlService: _FakeControlService(),
+        );
+        await secondProvider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        expect(
+          secondProvider.devices.map((d) => d.id),
+          containsAll(['a', 'b']),
+        );
+      },
+    );
+
+    test(
+      'discoverDevices does not add a known device that no longer responds '
+      'to a direct probe',
+      () async {
+        final deviceA = const WemoDevice(
+          id: 'a',
+          name: 'A',
+          host: '10.0.0.1',
+          port: 49153,
+          type: WemoDeviceType.wemoSwitch,
+        );
+
+        final firstProvider = DeviceProvider(
+          discoveryService: _KnownDeviceFallbackDiscoveryService(
+            discoverStreamBuilder: () => Stream.fromIterable([deviceA]),
+          ),
+          controlService: _FakeControlService(),
+        );
+        await firstProvider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+        await Future.delayed(const Duration(milliseconds: 20));
+
+        final secondProvider = DeviceProvider(
+          discoveryService: _KnownDeviceFallbackDiscoveryService(
+            discoverStreamBuilder: () => const Stream.empty(),
+          ),
+          controlService: _FakeControlService(),
+        );
+        secondProvider.setDebugMode(true);
+        await secondProvider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        expect(secondProvider.devices, isEmpty);
+        expect(
+          secondProvider.debugLog.any(
+            (line) => line.contains('did not respond to direct probe'),
+          ),
+          true,
+        );
+      },
+    );
   });
 }
 
@@ -221,6 +332,36 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
 }
 
 class _FakeControlService extends DeviceControlService {}
+
+/// A discovery service that yields a fresh SSDP stream per call (built by
+/// [discoverStreamBuilder]) and resolves [probeHost] per-host from
+/// [probeResultsByHost], used to simulate a device being found by SSDP on
+/// one scan and only reachable via direct probe on the next.
+class _KnownDeviceFallbackDiscoveryService extends DeviceDiscoveryService {
+  final Stream<WemoDevice> Function() discoverStreamBuilder;
+  final Map<String, WemoDevice> probeResultsByHost;
+
+  _KnownDeviceFallbackDiscoveryService({
+    required this.discoverStreamBuilder,
+    this.probeResultsByHost = const {},
+  });
+
+  @override
+  Stream<WemoDevice> discoverDevices({
+    Duration timeout = const Duration(seconds: 5),
+    void Function(String)? onDebugLog,
+  }) {
+    return discoverStreamBuilder();
+  }
+
+  @override
+  Future<WemoDevice?> probeHost(
+    String host, {
+    List<int> ports = const [49153],
+  }) async {
+    return probeResultsByHost[host];
+  }
+}
 
 /// A discovery service whose stream stays open for a short delay before
 /// completing with no devices, used to exercise the "already discovering"

@@ -582,9 +582,27 @@ class DeviceProvider extends ChangeNotifier {
           }
         });
 
-    await for (final device in discoveryStream) {
-      _log('Found device: ${device.name} at ${device.host}:${device.port}');
-      _addDiscoveredDevice(device);
+    try {
+      await for (final device in discoveryStream) {
+        _log('Found device: ${device.name} at ${device.host}:${device.port}');
+        _addDiscoveredDevice(device);
+      }
+    } on DiscoveryException {
+      // A stream error ends the `await for` loop outright, even if it
+      // fired after we already found devices this scan (e.g. a late,
+      // transient socket hiccup). Don't let that wipe out real results
+      // or surface a scary top-level error when we have something to
+      // show - just stop the SSDP phase here. If we found nothing at
+      // all, this is a genuine failure and the caller still needs to
+      // know (e.g. to trigger the iOS subnet-scan fallback).
+      if (_devices.isNotEmpty) {
+        _log(
+          'SSDP stream ended with an error after finding devices - '
+          'treating as a partial result rather than a fatal error.',
+        );
+      } else {
+        rethrow;
+      }
     }
 
     _log('SSDP discovery phase complete: ${_devices.length} devices');

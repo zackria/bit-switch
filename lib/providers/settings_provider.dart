@@ -10,8 +10,8 @@ class SettingsProvider extends ChangeNotifier {
 
   bool _autoRefreshEnabled = false;
   int _autoRefreshIntervalSeconds = 30;
-  int _discoveryTimeoutSeconds = 15;
-  int _requestTimeoutSeconds = 3;
+  int _discoveryTimeoutSeconds = 30;
+  int _requestTimeoutSeconds = 10;
   bool _showDebugOption = false;
   bool _isLoaded = false;
   late final Future<void> _loadFuture;
@@ -34,8 +34,8 @@ class SettingsProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _autoRefreshEnabled = prefs.getBool(_autoRefreshEnabledKey) ?? false;
       _autoRefreshIntervalSeconds = prefs.getInt(_autoRefreshIntervalKey) ?? 30;
-      _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 15;
-      _requestTimeoutSeconds = prefs.getInt(_requestTimeoutKey) ?? 3;
+      _discoveryTimeoutSeconds = prefs.getInt(_discoveryTimeoutKey) ?? 30;
+      _requestTimeoutSeconds = prefs.getInt(_requestTimeoutKey) ?? 10;
       _showDebugOption = prefs.getBool(_showDebugOptionKey) ?? false;
     } catch (e) {
       if (kDebugMode) debugPrint('[SettingsProvider] Failed to load: $e');

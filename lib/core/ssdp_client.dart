@@ -328,7 +328,17 @@ MX: $mx\r
     // read event may not fire until further data arrives.
     while (true) {
       if (controller.isClosed) return;
-      final datagram = socket?.receive();
+      Datagram? datagram;
+      try {
+        datagram = socket?.receive();
+      } catch (e) {
+        // A transient receive() failure (e.g. a stray ICMP error surfacing
+        // for an unrelated packet) shouldn't abort the whole discovery
+        // attempt. Stop draining for this event; the next read event (or
+        // the overall timeout) takes it from here.
+        log('receive() failed, stopping drain for this event: $e');
+        return;
+      }
       if (datagram == null) return;
 
       counters.responseCount++;

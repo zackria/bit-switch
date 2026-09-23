@@ -16,7 +16,8 @@ void main() {
 
       expect(provider.autoRefreshEnabled, false);
       expect(provider.autoRefreshIntervalSeconds, 30);
-      expect(provider.discoveryTimeoutSeconds, 15);
+      expect(provider.discoveryTimeoutSeconds, 30);
+      expect(provider.requestTimeoutSeconds, 10);
       expect(provider.isLoaded, true);
     });
 

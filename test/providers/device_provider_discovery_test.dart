@@ -114,6 +114,74 @@ void main() {
     );
 
     test(
+      'discoverDevices keeps devices found before a late stream error '
+      'instead of surfacing a fatal error',
+      () async {
+        final deviceA = const WemoDevice(
+          id: 'a',
+          name: 'A',
+          host: '10.0.0.1',
+          port: 49153,
+          type: WemoDeviceType.wemoSwitch,
+        );
+        final deviceB = const WemoDevice(
+          id: 'b',
+          name: 'B',
+          host: '10.0.0.2',
+          port: 49153,
+          type: WemoDeviceType.wemoSwitch,
+        );
+
+        Stream<WemoDevice> yieldsThenErrors() async* {
+          yield deviceA;
+          yield deviceB;
+          throw DiscoveryException('late socket hiccup');
+        }
+
+        final discovery = _FakeDiscoveryService(
+          discoverStream: yieldsThenErrors(),
+        );
+        final provider = DeviceProvider(
+          discoveryService: discovery,
+          controlService: _FakeControlService(),
+        );
+
+        await provider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        expect(provider.error, isNull);
+        expect(provider.devices.map((d) => d.id), containsAll(['a', 'b']));
+      },
+    );
+
+    test(
+      'discoverDevices still surfaces an error when the stream fails '
+      'before finding anything',
+      () async {
+        Stream<WemoDevice> errorsImmediately() async* {
+          throw DiscoveryException('nothing found');
+        }
+
+        final discovery = _FakeDiscoveryService(
+          discoverStream: errorsImmediately(),
+        );
+        final provider = DeviceProvider(
+          discoveryService: discovery,
+          controlService: _FakeControlService(),
+        );
+
+        await provider.discoverDevices(
+          timeout: const Duration(milliseconds: 200),
+        );
+
+        expect(provider.error, isNotNull);
+        expect(provider.error, contains('nothing found'));
+        expect(provider.devices, isEmpty);
+      },
+    );
+
+    test(
       'probeDeviceByIp logs "no device" when TCP succeeds but probeHost '
       'finds nothing',
       () async {

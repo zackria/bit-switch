@@ -94,20 +94,15 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // DEBUG: dump widget tree to help diagnose missing widgets in CI/tests
-        debugDumpApp();
-
-        // DEBUG: print all Text widget contents
-        final allTextWidgets = find.byType(Text);
-        final texts = tester.widgetList(allTextWidgets).map((w) {
-          final t = w as Text;
-          return t.data ?? (t.textSpan?.toPlainText() ?? '<rich>');
-        }).toList();
-        print('DEBUG TEXTS: $texts');
-
         expect(find.text('Discovery Timeout'), findsOneWidget);
         expect(find.text('Auto-refresh'), findsOneWidget);
         expect(find.text('About Bit Switch'), findsOneWidget);
+
+        // "Network Diagnostics" sits further down the list than fits in the
+        // default test viewport now that the language selector pushed it
+        // down - scroll it into view before checking for it.
+        await tester.drag(find.byType(ListView), const Offset(0, -300));
+        await tester.pumpAndSettle();
         expect(find.text('Network Diagnostics'), findsOneWidget);
       });
     });
@@ -301,6 +296,10 @@ void main() {
         );
         await tester.pumpAndSettle();
       });
+
+      // Scroll down to bring "Network Diagnostics" into the viewport.
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Network Diagnostics'));
       await tester.pumpAndSettle();

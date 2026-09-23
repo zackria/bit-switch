@@ -610,7 +610,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
-              children: [2, 3, 5, 8, 10].map((seconds) {
+              children: [2, 3, 5, 8, 10, 15, 20, 25, 30].map((seconds) {
                 return ChoiceChip(
                   label: Text(context.l10n.commonSecondsShort(seconds)),
                   selected: seconds == settings.requestTimeoutSeconds,

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/wemo_device.dart';
 import '../models/device_state.dart';
 import '../services/device_discovery_service.dart';
@@ -20,6 +22,19 @@ class DeviceProvider extends ChangeNotifier {
 
   /// Map of device ID to current state
   final Map<String, DeviceState> _deviceStates = {};
+
+  /// Map of device ID to the last-known address of every device this app
+  /// has ever successfully discovered, persisted across app restarts.
+  ///
+  /// SSDP multicast is lossy over WiFi, so a given scan can miss a device
+  /// it found before. When that happens, [_probeMissingKnownDevices] probes
+  /// these last-known addresses directly instead of relying on multicast
+  /// alone.
+  final Map<String, WemoDevice> _knownDevices = {};
+
+  static const _knownDevicesPrefsKey = 'known_devices_v1';
+
+  bool _knownDevicesLoaded = false;
 
   /// Whether discovery is in progress
   bool _isDiscovering = false;
@@ -170,6 +185,99 @@ class DeviceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Record a discovered device: add it to the active list, remember its
+  /// address for future known-device fallback probing, refresh its state,
+  /// and persist the updated known-device list to disk.
+  void _addDiscoveredDevice(WemoDevice device) {
+    _devices[device.id] = device;
+    _knownDevices[device.id] = device;
+    notifyListeners();
+    unawaited(_refreshDeviceState(device));
+    unawaited(_saveKnownDevices());
+  }
+
+  /// Load the persisted known-device list, once per provider lifetime.
+  ///
+  /// Failures (no storage available, corrupt data) are logged and ignored -
+  /// the known-device fallback is a best-effort enhancement, not something
+  /// discovery should ever fail over.
+  Future<void> _ensureKnownDevicesLoaded() async {
+    if (_knownDevicesLoaded) return;
+    _knownDevicesLoaded = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_knownDevicesPrefsKey);
+      if (raw == null) return;
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      for (final item in decoded) {
+        final device = WemoDevice.fromJson(item as Map<String, dynamic>);
+        _knownDevices[device.id] = device;
+      }
+      _log(
+        'Loaded ${_knownDevices.length} known device(s) from previous sessions',
+      );
+    } catch (e) {
+      _log('Failed to load known devices: $e');
+    }
+  }
+
+  /// Persist the current known-device list to disk.
+  Future<void> _saveKnownDevices() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = jsonEncode(
+        _knownDevices.values.map((d) => d.toJson()).toList(),
+      );
+      await prefs.setString(_knownDevicesPrefsKey, encoded);
+    } catch (e) {
+      _log('Failed to save known devices: $e');
+    }
+  }
+
+  /// Probe the last-known address of any previously discovered device that
+  /// this scan didn't find.
+  ///
+  /// SSDP relies on UDP multicast, which is best-effort and can silently
+  /// drop a device's response on any given scan even when the device is
+  /// online. Rather than waiting on another multicast round, reach the
+  /// device directly at the address it was found at before.
+  Future<void> _probeMissingKnownDevices() async {
+    final missing = _knownDevices.values
+        .where((known) => !_devices.containsKey(known.id))
+        .toList();
+    if (missing.isEmpty) return;
+
+    _log(
+      '${missing.length} known device(s) not found this scan - probing '
+      'last-known address directly...',
+    );
+
+    await Future.wait(
+      missing.map((known) async {
+        try {
+          final device = await _discoveryService.probeHost(
+            known.host,
+            ports: [known.port],
+          );
+          if (device != null) {
+            _log(
+              'Recovered known device via direct probe: ${device.name} at '
+              '${device.host}:${device.port}',
+            );
+            _addDiscoveredDevice(device);
+          } else {
+            _log(
+              'Known device ${known.name} at ${known.host}:${known.port} '
+              'did not respond to direct probe',
+            );
+          }
+        } catch (e) {
+          _log('Direct probe failed for known device ${known.name}: $e');
+        }
+      }),
+    );
+  }
+
   /// Probe a specific IP address directly (bypasses SSDP multicast)
   Future<void> probeDeviceByIp(String host, {int port = 49153}) async {
     _log('=== Direct Probe: $host:$port ===');
@@ -197,12 +305,8 @@ class DeviceProvider extends ChangeNotifier {
         _log('Device found: ${device.name}');
         _log('Type: ${device.type}');
         _log('Model: ${device.model}');
-        _devices[device.id] = device;
-        notifyListeners();
+        _addDiscoveredDevice(device);
         _log('>>> Device added successfully! <<<');
-
-        // Fetch state
-        unawaited(_refreshDeviceState(device));
       } else {
         _log('No Wemo device at this address');
       }
@@ -224,9 +328,7 @@ class DeviceProvider extends ChangeNotifier {
     try {
       await _scanSubnetInternal(getInterfaces: getInterfaces).forEach((device) {
         _log('Found: ${device.name} at ${device.host}');
-        _devices[device.id] = device;
-        notifyListeners();
-        unawaited(_refreshDeviceState(device));
+        _addDiscoveredDevice(device);
       });
     } catch (e) {
       _log('Scan error: $e');
@@ -368,6 +470,8 @@ class DeviceProvider extends ChangeNotifier {
     _log('Starting device discovery (timeout: ${timeout.inSeconds}s)');
     notifyListeners();
 
+    await _ensureKnownDevicesLoaded();
+
     try {
       // Add an overall timeout that's slightly longer than the discovery timeout
       // This ensures the UI never spins forever even if something hangs
@@ -395,6 +499,11 @@ class DeviceProvider extends ChangeNotifier {
       _log('Unexpected error: $e');
       _error = ErrorHandler.getUserFriendlyMessage(e);
     } finally {
+      // Recover any previously known device this scan missed (SSDP
+      // multicast is lossy) by probing its last-known address directly.
+      // Runs even after an error/timeout above, since a direct probe
+      // doesn't depend on multicast working at all.
+      await _probeMissingKnownDevices();
       _isDiscovering = false;
       notifyListeners();
     }
@@ -475,11 +584,7 @@ class DeviceProvider extends ChangeNotifier {
 
     await for (final device in discoveryStream) {
       _log('Found device: ${device.name} at ${device.host}:${device.port}');
-      _devices[device.id] = device;
-      notifyListeners();
-
-      // Fetch initial state for the device (don't await - do in background)
-      unawaited(_refreshDeviceState(device));
+      _addDiscoveredDevice(device);
     }
 
     _log('SSDP discovery phase complete: ${_devices.length} devices');
@@ -489,9 +594,7 @@ class DeviceProvider extends ChangeNotifier {
   Future<void> _runSubnetScanFallback() async {
     await for (final device in _scanSubnetInternal()) {
       _log('Subnet scan found: ${device.name} at ${device.host}');
-      _devices[device.id] = device;
-      notifyListeners();
-      unawaited(_refreshDeviceState(device));
+      _addDiscoveredDevice(device);
     }
     _log('Subnet scan complete: ${_devices.length} devices total');
   }

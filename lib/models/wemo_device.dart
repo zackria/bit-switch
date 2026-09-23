@@ -178,4 +178,32 @@ class WemoDevice {
 
   @override
   String toString() => 'WemoDevice(name: $name, type: ${type.displayName}, host: $host:$port)';
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'host': host,
+        'port': port,
+        'type': type.name,
+        'manufacturer': manufacturer,
+        'model': model,
+        'serialNumber': serialNumber,
+        'firmwareVersion': firmwareVersion,
+        'macAddress': macAddress,
+        'udn': udn,
+      };
+
+  factory WemoDevice.fromJson(Map<String, dynamic> json) => WemoDevice(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        host: json['host'] as String,
+        port: json['port'] as int,
+        type: WemoDeviceType.values.byName(json['type'] as String),
+        manufacturer: json['manufacturer'] as String?,
+        model: json['model'] as String?,
+        serialNumber: json['serialNumber'] as String?,
+        firmwareVersion: json['firmwareVersion'] as String?,
+        macAddress: json['macAddress'] as String?,
+        udn: json['udn'] as String?,
+      );
 }

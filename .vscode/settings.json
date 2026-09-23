@@ -7,5 +7,6 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "zackria",
         "projectKey": "zackria_bit-switch"
-    }
+    },
+    "arb-editor.suppressedWarnings": ["missing_metadata_for_key"]
 }

@@ -38,24 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadWifiName();
   }
 
-  Future<void> _startInitialDiscovery() async {
-    final provider = context.read<DeviceProvider>();
-    final settings = context.read<SettingsProvider>();
-
-    await settings.ensureLoaded();
-
-    // Initialize the request timeout from settings
-    provider.controlService.setRequestTimeout(
-      Duration(seconds: settings.requestTimeoutSeconds),
-    );
-
-    unawaited(
-      provider.discoverDevices(
-        timeout: Duration(seconds: settings.discoveryTimeoutSeconds),
-      ),
-    );
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

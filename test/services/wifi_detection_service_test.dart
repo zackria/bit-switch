@@ -64,19 +64,19 @@ void main() {
     group('getCurrentSsid', () {
       test('returns either null or a String', () async {
         final ssid = await service.getCurrentSsid();
-        expect(ssid == null || ssid is String, true);
+        expect(ssid, anyOf(isNull, isA<String>()));
       });
 
       test('handles requestPermission parameter', () async {
         // Should not throw when requestPermission is false
         final ssid = await service.getCurrentSsid(requestPermission: false);
-        expect(ssid == null || ssid is String, true);
+        expect(ssid, anyOf(isNull, isA<String>()));
       });
 
       test('handles requestPermission=true parameter', () async {
         // Should not throw when requestPermission is true
         final ssid = await service.getCurrentSsid(requestPermission: true);
-        expect(ssid == null || ssid is String, true);
+        expect(ssid, anyOf(isNull, isA<String>()));
       });
 
       test('cleans SSID by removing quotes', () async {

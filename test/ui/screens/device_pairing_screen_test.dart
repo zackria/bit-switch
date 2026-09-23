@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -17,19 +16,14 @@ import 'package:bit_switch/ui/screens/device_pairing_screen.dart';
 // ---------------------------------------------------------------------------
 
 class _FakeWifiService extends WifiDetectionService {
-  final Future<String?> Function()? _getSsid;
-  final Stream<String?>? _stream;
+  final Future<String?> Function()? getSsid;
+  final Stream<String?>? streamSsid;
 
-  _FakeWifiService({
-    Future<String?> Function()? getSsid,
-    Stream<String?>? streamSsid,
-  })  : _getSsid = getSsid,
-        _stream = streamSsid,
-        super();
+  _FakeWifiService({this.getSsid, this.streamSsid}) : super();
 
   @override
   Future<String?> getCurrentSsid({bool requestPermission = true}) async {
-    if (_getSsid != null) return _getSsid();
+    if (getSsid != null) return getSsid!();
     return null;
   }
 
@@ -37,7 +31,7 @@ class _FakeWifiService extends WifiDetectionService {
   Stream<String?> watchSsidChanges({
     Duration interval = const Duration(seconds: 2),
   }) {
-    return _stream ?? const Stream.empty();
+    return streamSsid ?? const Stream.empty();
   }
 }
 
@@ -67,12 +61,8 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
 
 class _FakeControlService extends DeviceControlService {
   final List<WifiNetwork> networks;
-  final WifiSetupStatus wifiStatus;
 
-  _FakeControlService({
-    this.networks = const [],
-    this.wifiStatus = WifiSetupStatus.connecting,
-  });
+  _FakeControlService({this.networks = const []});
 
   @override
   Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async {
@@ -90,7 +80,7 @@ class _FakeControlService extends DeviceControlService {
 
   @override
   Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
-    return wifiStatus;
+    return WifiSetupStatus.connecting;
   }
 
   @override
@@ -203,7 +193,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   // Shared device and networks for selectNetwork tests
-  const _device = WemoDevice(
+  const device = WemoDevice(
     id: '1',
     name: 'WeMo Switch',
     host: '10.22.22.1',
@@ -213,7 +203,7 @@ void main() {
     serialNumber: '12345',
   );
 
-  final _networks = [
+  final networks = [
     WifiNetwork(
       ssid: 'Network A',
       channel: 1,
@@ -536,7 +526,7 @@ void main() {
         final provider = PairingProvider(
           wifiService: _FakeWifiService(getSsid: () async => null),
           controlService: _ThrowingControlService(),
-          discoveryService: _FakeDiscoveryService(probeResult: _device),
+          discoveryService: _FakeDiscoveryService(probeResult: device),
         );
         await _pumpAndStart(tester, provider);
         // confirmConnectedToDeviceAp discovers the device, then
@@ -609,7 +599,7 @@ void main() {
 
     testWidgets('network list, manual entry, Use This Network (needs discovery)', (tester) async {
       await tester.runAsync(() async {
-        final provider = _makeProvider(probeResult: _device, networks: _networks);
+        final provider = _makeProvider(probeResult: device, networks: networks);
         await _pumpAndStart(tester, provider);
         // confirmConnectedToDeviceAp causes 2s delay for _fetchAvailableNetworks
         await provider.confirmConnectedToDeviceAp();
@@ -684,7 +674,7 @@ void main() {
 
     testWidgets('shows loading indicator while fetching available networks', (tester) async {
       await tester.runAsync(() async {
-        final provider = _makeProvider(probeResult: _device, networks: _networks);
+        final provider = _makeProvider(probeResult: device, networks: networks);
         await _pumpAndStart(tester, provider);
 
         // confirmConnectedToDeviceAp discovers the device almost immediately,
@@ -814,7 +804,7 @@ void main() {
 
     testWidgets('shows device info card with connected SSID when device is set', (tester) async {
       await tester.runAsync(() async {
-        final provider = _makeProvider(probeResult: _device, networks: _networks);
+        final provider = _makeProvider(probeResult: device, networks: networks);
         await _pumpAndStart(tester, provider);
         await provider.confirmConnectedToDeviceAp();
         provider.selectNetwork('Network A');

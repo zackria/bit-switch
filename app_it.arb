@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Seleziona la tua rete domestica WiFi:",
   "pairingRefreshNetworks": "Aggiorna le reti",
   "pairingIosScanLimitation": "iOS vieta severamente alle app di terze parti di eseguire la scansione delle reti Wi-Fi vicine. Potrebbe essere necessario inserire manualmente la rete SSID.",
+  "pairingIosSetupLimitation": "iOS potrebbe bloccare la configurazione Wi-Fi per alcuni modelli (es. Wemo Mini) a causa delle restrizioni di Apple sulle reti per accessori. Se la configurazione non viene completata, usa una volta un dispositivo Android per collegarlo al tuo Wi-Fi, poi controllalo qui come al solito.",
   "pairingNoNetworks": "Nessuna rete trovata",
   "pairingScanAgain": "Scansione di nuovo",
   "pairingWifiPassword": "WiFi Parola d'ordine",

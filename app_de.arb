@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Wählen Sie Ihr WiFi-Heimnetzwerk aus:",
   "pairingRefreshNetworks": "Netzwerke aktualisieren",
   "pairingIosScanLimitation": "iOS verbietet Drittanbieter-Apps strikt, nach Wi-Fi-Netzwerken in der Nähe zu suchen. Möglicherweise müssen Sie das Netzwerk SSID manuell eingeben.",
+  "pairingIosSetupLimitation": "iOS kann die WLAN-Einrichtung bei manchen Modellen (z. B. Wemo Mini) aufgrund von Apples Einschraenkungen fuer Zubehoernetzwerke blockieren. Falls die Einrichtung nicht abgeschlossen wird, verbinden Sie das Geraet einmalig ueber ein Android-Geraet mit Ihrem WLAN und steuern Sie es danach hier wie gewohnt.",
   "pairingNoNetworks": "Keine Netzwerke gefunden",
   "pairingScanAgain": "Erneut scannen",
   "pairingWifiPassword": "WiFi Passwort",

@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Выберите домашнюю сеть WiFi:",
   "pairingRefreshNetworks": "Обновить сети",
   "pairingIosScanLimitation": "iOS строго запрещает сторонним приложениям сканировать близлежащие сети Wi-Fi. Возможно, вам придется войти в сеть SSID вручную.",
+  "pairingIosSetupLimitation": "iOS может блокировать настройку Wi-Fi для некоторых моделей (например, Wemo Mini) из-за ограничений Apple на сети аксессуаров. Если настройка не завершается, один раз используйте устройство на Android, чтобы подключить его к вашей Wi-Fi, а затем управляйте им здесь как обычно.",
   "pairingNoNetworks": "Сети не найдены",
   "pairingScanAgain": "Сканировать еще раз",
   "pairingWifiPassword": "WiFi Пароль",

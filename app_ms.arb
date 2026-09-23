@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Pilih rangkaian WiFi rumah anda:",
   "pairingRefreshNetworks": "Muat semula rangkaian",
   "pairingIosScanLimitation": "iOS melarang keras apl pihak ketiga daripada mengimbas rangkaian Wi-Fi berdekatan. Anda mungkin perlu memasukkan rangkaian SSID secara manual.",
+  "pairingIosSetupLimitation": "iOS mungkin menyekat persediaan Wi-Fi untuk sesetengah model (cth. Wemo Mini) disebabkan sekatan rangkaian aksesori Apple. Jika persediaan tidak selesai, gunakan peranti Android sekali untuk menyambungkannya ke Wi-Fi anda, kemudian kawal di sini seperti biasa.",
   "pairingNoNetworks": "Tiada rangkaian ditemui",
   "pairingScanAgain": "Imbas Lagi",
   "pairingWifiPassword": "Kata laluan WiFi",

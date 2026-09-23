@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "നിങ്ങളുടെ ഹോം WiFi നെറ്റ്‌വർക്ക് തിരഞ്ഞെടുക്കുക:",
   "pairingRefreshNetworks": "നെറ്റ്‌വർക്കുകൾ പുതുക്കുക",
   "pairingIosScanLimitation": "അടുത്തുള്ള Wi-Fi നെറ്റ്‌വർക്കുകൾക്കായി മൂന്നാം കക്ഷി ആപ്പുകൾ സ്കാൻ ചെയ്യുന്നതിൽ നിന്ന് iOS കർശനമായി വിലക്കുന്നു. നിങ്ങൾ SSID നെറ്റ്‌വർക്ക് സ്വമേധയാ നൽകേണ്ടി വന്നേക്കാം.",
+  "pairingIosSetupLimitation": "Applinte accessory-network nayanthranangal karanam chila modelukalkku (uda. Wemo Mini) iOS il Wi-Fi setup thadayappedam. Setup poornnamakunnilenkil, athine ningalude Wi-Fi umayi bandhippikkan oru thavana oru Android upakaranam upayogikkuka, thudarnnu ivide pathivupole niyanthrikkuka.",
   "pairingNoNetworks": "നെറ്റ്‌വർക്കുകളൊന്നും കണ്ടെത്തിയില്ല",
   "pairingScanAgain": "വീണ്ടും സ്കാൻ ചെയ്യുക",
   "pairingWifiPassword": "WiFi പാസ്‌വേഡ്",

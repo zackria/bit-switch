@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "ଆପଣଙ୍କର ଘର WiFi ନେଟୱାର୍କ ଚୟନ କରନ୍ତୁ:",
   "pairingRefreshNetworks": "ନେଟୱାର୍କ ସତେଜ କରନ୍ତୁ |",
   "pairingIosScanLimitation": "ଆଇଓଏସ୍ ନିକଟସ୍ଥ Wi-Fi ନେଟୱାର୍କ ପାଇଁ ସ୍କାନ କରିବାକୁ ତୃତୀୟ-ପକ୍ଷ ଆପକୁ କଠୋର ଭାବରେ ବାରଣ କରିଛି | ଆପଣ ନେଟୱର୍କ SSID କୁ ହସ୍ତକୃତ ଭାବରେ ପ୍ରବେଶ କରିବାକୁ ଆବଶ୍ୟକ କରିପାରନ୍ତି |",
+  "pairingIosSetupLimitation": "Appleর accessory-network protibandhaka karanaru iOS kichi model (jemiti Wemo Mini) pain Wi-Fi setup ku abarodha karipare. Yadi setup sampurna nahue, ehaku apankara Wi-Fi sahita jodibaku thare eka Android device byabahar karantu, tapare ethare sadharana bhabare niyantran karantu.",
   "pairingNoNetworks": "କ network ଣସି ନେଟୱାର୍କ ମିଳିଲା ନାହିଁ |",
   "pairingScanAgain": "ପୁନର୍ବାର ସ୍କାନ୍ କରନ୍ତୁ |",
   "pairingWifiPassword": "WiFi ପାସୱାର୍ଡ |",

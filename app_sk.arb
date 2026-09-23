@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Vyberte svoju domácu sieť WiFi:",
   "pairingRefreshNetworks": "Obnoviť siete",
   "pairingIosScanLimitation": "iOS prísne zakazuje aplikáciám tretích strán skenovať blízke siete Wi-Fi. Možno budete musieť zadať sieť SSID manuálne.",
+  "pairingIosSetupLimitation": "iOS moze blokovat nastavenie Wi-Fi pre niektore modely (napr. Wemo Mini) kvoli obmedzeniam siete prislusenstva od Applu. Ak sa nastavenie nedokonci, pouzite raz zariadenie s Androidom na pripojenie k Wi-Fi a potom ho ovladajte tu ako zvycajne.",
   "pairingNoNetworks": "Nenašli sa žiadne siete",
   "pairingScanAgain": "Skenovať znova",
   "pairingWifiPassword": "Heslo WiFi",

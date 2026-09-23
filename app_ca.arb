@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Seleccioneu la vostra xarxa domèstica WiFi:",
   "pairingRefreshNetworks": "Actualitzar xarxes",
   "pairingIosScanLimitation": "iOS prohibeix estrictament que les aplicacions de tercers escanegin les xarxes Wi-Fi properes. És possible que hàgiu d'introduir manualment la xarxa SSID.",
+  "pairingIosSetupLimitation": "iOS pot bloquejar la configuracio de Wi-Fi per a alguns models (p. ex. Wemo Mini) a causa de les restriccions de xarxa d'accessoris d'Apple. Si la configuracio no es completa, feu servir un dispositiu Android un cop per connectar-lo a la vostra Wi-Fi i, despres, controleu-lo aqui com de costum",
   "pairingNoNetworks": "No s'han trobat xarxes",
   "pairingScanAgain": "Escaneja de nou",
   "pairingWifiPassword": "Contrasenya WiFi",

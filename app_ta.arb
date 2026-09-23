@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "உங்கள் வீட்டு WiFi நெட்வொர்க்கைத் தேர்ந்தெடுக்கவும்:",
   "pairingRefreshNetworks": "நெட்வொர்க்குகளைப் புதுப்பிக்கவும்",
   "pairingIosScanLimitation": "அருகிலுள்ள Wi-Fi நெட்வொர்க்குகளை ஸ்கேன் செய்வதிலிருந்து மூன்றாம் தரப்பு பயன்பாடுகளை iOS கண்டிப்பாக தடை செய்கிறது. நீங்கள் SSID நெட்வொர்க்கை கைமுறையாக உள்ளிட வேண்டும்.",
+  "pairingIosSetupLimitation": "Apple in thunaikkaruvi-network kattupadugal karanamaga, chila modelkalukku (e.ka. Wemo Mini) iOS Wi-Fi amaippai thadukkalam. Amaippu mudivadaiyavillai enil, athai ungal Wi-Fi udan inaikka oru murai Android sadhanathai payanpaduthavum, pinnar inge vazhakkam pol kattupadutha vum.",
   "pairingNoNetworks": "நெட்வொர்க்குகள் இல்லை",
   "pairingScanAgain": "மீண்டும் ஸ்கேன் செய்யவும்",
   "pairingWifiPassword": "WiFi கடவுச்சொல்",

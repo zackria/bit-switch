@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Chagua mtandao wako wa nyumbani wa WiFi:",
   "pairingRefreshNetworks": "Onyesha upya mitandao",
   "pairingIosScanLimitation": "iOS inakataza kabisa programu za wahusika wengine kuchanganua mitandao ya karibu ya Wi-Fi. Huenda ukahitaji kuingiza mtandao SSID wewe mwenyewe.",
+  "pairingIosSetupLimitation": "iOS inaweza kuzuia usanidi wa Wi-Fi kwa baadhi ya miundo (mfano Wemo Mini) kutokana na vikwazo vya mtandao wa vifaa vya Apple. Ikiwa usanidi haukamiliki, tumia kifaa cha Android mara moja kukiunganisha kwenye Wi-Fi yako, kisha kidhibiti hapa kama kawaida.",
   "pairingNoNetworks": "Hakuna mitandao iliyopatikana",
   "pairingScanAgain": "Changanua Tena",
   "pairingWifiPassword": "Nenosiri la WiFi",

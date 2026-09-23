@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Válassza ki otthoni WiFi hálózatát:",
   "pairingRefreshNetworks": "Hálózatok frissítése",
   "pairingIosScanLimitation": "Az iOS szigorúan tiltja, hogy harmadik féltől származó alkalmazások keressenek közeli Wi-Fi hálózatokat. You may need to enter the network SSID manually.",
+  "pairingIosSetupLimitation": "Az iOS bizonyos modelleknel (pl. Wemo Mini) letilthatja a Wi-Fi beallitast az Apple kiegeszitohalozati korlatozasai miatt. Ha a beallitas nem fejezodik be, hasznaljon egyszer egy Android-eszkozt, hogy csatlakoztassa a Wi-Fi halozatahoz, majd innentol itt vezerelje szokas szerint.",
   "pairingNoNetworks": "No networks found",
   "pairingScanAgain": "Scan Again",
   "pairingWifiPassword": "WiFi Jelszó",

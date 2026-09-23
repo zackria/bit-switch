@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "选择您的家庭 WiFi 网络：",
   "pairingRefreshNetworks": "刷新网络",
   "pairingIosScanLimitation": "iOS严格禁止第三方应用程序扫描附近的Wi-Fi网络。您可能需要手动输入网络SSID。",
+  "pairingIosSetupLimitation": "由于Apple的配件网络限制，iOS可能会阻止某些型号(例如Wemo Mini)的Wi-Fi设置。如果设置未完成，请先使用Android设备将其连接到您的Wi-Fi，然后在此处照常控制。",
   "pairingNoNetworks": "未找到网络",
   "pairingScanAgain": "再次扫描",
   "pairingWifiPassword": "WiFi 密码",

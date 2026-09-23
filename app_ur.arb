@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "اپنا گھر WiFi نیٹ ورک منتخب کریں:",
   "pairingRefreshNetworks": "نیٹ ورکس کو ریفریش کریں۔",
   "pairingIosScanLimitation": "iOS تیسرے فریق ایپس کو قریبی Wi-Fi نیٹ ورکس کے لیے اسکین کرنے سے سختی سے منع کرتا ہے۔ آپ کو نیٹ ورک SSID دستی طور پر داخل کرنے کی ضرورت پڑ سکتی ہے۔",
+  "pairingIosSetupLimitation": "Apple ki accessory network pabandiyon ki wajah se iOS kuch models (maslan Wemo Mini) ke liye Wi-Fi setup ko block kar sakta hai. Agar setup mukammal na ho to ise apne Wi-Fi se jorne ke liye aik bar Android device istemal karein, phir ise yahan mamool ke mutabiq control karein.",
   "pairingNoNetworks": "کوئی نیٹ ورک نہیں ملا",
   "pairingScanAgain": "دوبارہ اسکین کریں۔",
   "pairingWifiPassword": "WiFi پاس ورڈ",

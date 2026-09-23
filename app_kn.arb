@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "ನಿಮ್ಮ ಮನೆಯ WiFi ನೆಟ್‌ವರ್ಕ್ ಆಯ್ಕೆಮಾಡಿ:",
   "pairingRefreshNetworks": "ನೆಟ್‌ವರ್ಕ್‌ಗಳನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ",
   "pairingIosScanLimitation": "ಹತ್ತಿರದ Wi-Fi ನೆಟ್‌ವರ್ಕ್‌ಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡುವುದರಿಂದ ಮೂರನೇ ವ್ಯಕ್ತಿಯ ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು iOS ಕಟ್ಟುನಿಟ್ಟಾಗಿ ನಿಷೇಧಿಸುತ್ತದೆ. ನೀವು SSID ನೆಟ್ವರ್ಕ್ ಅನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಬೇಕಾಗಬಹುದು.",
+  "pairingIosSetupLimitation": "Apple na akseseri-network nirbandhagalinda iOS kelavu maadarigalige (uda. Wemo Mini) Wi-Fi setup annu nirbandhisabahudu. Setup poornagollade iddare, adannu nimma Wi-Fi ge samparkisalu ommo Android saadhanavannu balasi, nantara illi endinantee niyantrisi.",
   "pairingNoNetworks": "ಯಾವುದೇ ನೆಟ್‌ವರ್ಕ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "pairingScanAgain": "ಮತ್ತೊಮ್ಮೆ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
   "pairingWifiPassword": "WiFi ಪಾಸ್‌ವರ್ಡ್",

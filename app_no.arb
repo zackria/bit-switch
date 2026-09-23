@@ -224,6 +224,7 @@
   "pairingSelectHomeWifi": "Velg ditt hjemmenettverk for WiFi:",
   "pairingRefreshNetworks": "Oppdater nettverk",
   "pairingIosScanLimitation": "iOS forbyr strengt tredjepartsapper å skanne etter Wi-Fi-nettverk i nærheten. Du må kanskje gå inn i nettverket SSID manuelt.",
+  "pairingIosSetupLimitation": "iOS kan blokkere Wi-Fi-oppsett for enkelte modeller (f.eks. Wemo Mini) pa grunn av Apples begrensninger for tilbehorsnettverk. Hvis oppsettet ikke fullfores, bruk en Android-enhet en gang for a koble den til Wi-Fi-en din, og styr den deretter herfra som vanlig.",
   "pairingNoNetworks": "Ingen nettverk funnet",
   "pairingScanAgain": "Skann på nytt",
   "pairingWifiPassword": "WiFi Passord",

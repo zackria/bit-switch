@@ -320,8 +320,14 @@ MX: $mx\r
     required void Function(String) log,
   }) {
     if (controller.isClosed) return;
+    if (event != RawSocketEvent.read) return;
 
-    if (event == RawSocketEvent.read) {
+    // A single read event does not guarantee exactly one queued datagram —
+    // when several devices respond in a burst, more than one packet can be
+    // waiting in the OS socket buffer. Drain all of them now, since another
+    // read event may not fire until further data arrives.
+    while (true) {
+      if (controller.isClosed) return;
       final datagram = socket?.receive();
       if (datagram == null) return;
 
@@ -333,7 +339,7 @@ MX: $mx\r
       final response = parseResponse(datagram.data, datagram.address);
       if (response == null) {
         log('  → Non-Wemo response (filtered)');
-        return;
+        continue;
       }
 
       // Deduplicate by both location URL and host:port
@@ -341,7 +347,7 @@ MX: $mx\r
       if (seenLocations.contains(response.location) ||
           seenHostPorts.contains(hostPortKey)) {
         log('  → Duplicate (${response.host}:${response.port})');
-        return;
+        continue;
       }
 
       counters.validCount++;

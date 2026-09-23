@@ -106,6 +106,12 @@ void main() {
 
       final state5 = PairingState.initial(); // null SSID
       expect(state5.isOnWemoAp, false);
+
+      // Wemo Mini uses lowercase "Wemo" and multiple dot-separated segments.
+      final state6 = PairingState.initial().copyWith(
+        currentSsid: 'Wemo.Mini.61C',
+      );
+      expect(state6.isOnWemoAp, true);
     });
 
     test('isOnHomeNetwork should detect home network', () {

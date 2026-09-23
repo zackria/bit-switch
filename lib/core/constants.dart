@@ -60,7 +60,10 @@ class WemoConstants {
 
   // Pairing mode constants
   static const String wemoApDefaultIp = '10.22.22.1';
-  static final RegExp wemoApSsidPattern = RegExp(r'^WeMo\.\w+$');
+  static final RegExp wemoApSsidPattern = RegExp(
+    r'^wemo\..+$',
+    caseSensitive: false,
+  );
   static const Duration pairingDiscoveryTimeout = Duration(seconds: 15);
   static const Duration wifiSetupTimeout = Duration(seconds: 60);
   static const Duration ssidPollInterval = Duration(seconds: 2);

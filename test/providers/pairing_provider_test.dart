@@ -20,6 +20,22 @@ void main() {
       expect(provider.state.currentSsid, 'HomeNet');
     });
 
+    test(
+      'startPairing does not record the device AP as homeNetworkSsid when '
+      'a previous attempt left the phone already connected to it',
+      () async {
+        final wifi = _FakeWifiService(
+          getSsid: () async => 'Wemo.Mini.61C',
+        );
+        final provider = PairingProvider(wifiService: wifi);
+
+        await provider.startPairing();
+
+        expect(provider.state.homeNetworkSsid, isNull);
+        expect(provider.state.currentSsid, 'Wemo.Mini.61C');
+      },
+    );
+
     test('navigation steps next/goTo/previous behave correctly', () {
       final provider = PairingProvider(
         wifiService: _FakeWifiService(),

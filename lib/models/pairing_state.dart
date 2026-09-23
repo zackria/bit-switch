@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'wemo_device.dart';
+import '../core/constants.dart';
 import '../services/device_control_service.dart';
 
 /// Enum representing the steps in the device pairing wizard
@@ -140,7 +141,7 @@ class PairingState {
   /// Check if we're on a Wemo AP network
   bool get isOnWemoAp {
     if (currentSsid == null) return false;
-    return RegExp(r'^WeMo\.\w+$').hasMatch(currentSsid!);
+    return WemoConstants.wemoApSsidPattern.hasMatch(currentSsid!);
   }
 
   /// Check if we're on the original home network

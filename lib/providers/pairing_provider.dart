@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:wifi_iot/wifi_iot.dart' show WiFiForIoTPlugin;
 import '../core/constants.dart';
 import '../models/pairing_state.dart';
 import '../models/wemo_device.dart';
@@ -42,8 +44,15 @@ class PairingProvider extends ChangeNotifier {
     // Remember the current home network SSID before user switches to device AP
     final currentSsid = await _wifiService.getCurrentSsid();
 
+    // If a previous attempt was interrupted without reconnecting home, the
+    // phone may already be on the device's own setup AP when this wizard
+    // starts. Don't record that AP as "home" - confirmConnectedToDeviceAp()
+    // would then see currentSsid == homeNetworkSsid forever and refuse to
+    // proceed no matter what network the phone is actually on.
+    final alreadyOnDeviceAp = _wifiService.isWemoApNetwork(currentSsid);
+
     _state = PairingState.initial().copyWith(
-      homeNetworkSsid: currentSsid,
+      homeNetworkSsid: alreadyOnDeviceAp ? null : currentSsid,
       currentSsid: currentSsid,
     );
     notifyListeners();
@@ -53,8 +62,29 @@ class PairingProvider extends ChangeNotifier {
   void reset() {
     _stopSsidWatch();
     _stopConfigPolling();
+    unawaited(_forceWifiUsage(false));
     _state = PairingState.initial();
     notifyListeners();
+  }
+
+  /// Route this app's network traffic over the currently connected WiFi
+  /// network, even though it has no internet access (Android only).
+  ///
+  /// The device's setup AP (e.g. "WeMo.XXXXX") never has internet access,
+  /// so Android will otherwise keep routing app traffic over cellular data
+  /// (or nowhere) despite the phone showing as connected to that SSID -
+  /// which makes every HTTP/SOAP call to the device silently fail even
+  /// though the WiFi connection itself succeeded. iOS has no equivalent
+  /// concept and the plugin is a no-op there.
+  Future<void> _forceWifiUsage(bool useWifi) async {
+    if (!Platform.isAndroid) return;
+    try {
+      await WiFiForIoTPlugin.forceWifiUsage(useWifi);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[Pairing] forceWifiUsage($useWifi) failed: $e');
+      }
+    }
   }
 
   /// Move to the next step
@@ -145,6 +175,10 @@ class PairingProvider extends ChangeNotifier {
       loadingMessage: _l10n.pairingLoadingLooking,
     );
     notifyListeners();
+
+    // The device's setup AP has no internet access, so Android needs to be
+    // told explicitly to route our traffic over it (see _forceWifiUsage).
+    await _forceWifiUsage(true);
 
     // Try to discover device on the AP network
     await _discoverDeviceOnAp();
@@ -514,6 +548,10 @@ class PairingProvider extends ChangeNotifier {
   Future<void> confirmReconnectedToHome() async {
     _stopSsidWatch();
 
+    // Back on the home network now - stop forcing traffic over what was the
+    // device's setup AP so normal app networking resumes as usual.
+    await _forceWifiUsage(false);
+
     _state = _state.copyWith(
       step: PairingStep.finalize,
       isLoading: true,
@@ -640,6 +678,7 @@ class PairingProvider extends ChangeNotifier {
   void dispose() {
     _stopSsidWatch();
     _stopConfigPolling();
+    unawaited(_forceWifiUsage(false));
     _controlService.dispose();
     _discoveryService.dispose();
     super.dispose();

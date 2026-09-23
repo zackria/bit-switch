@@ -109,6 +109,13 @@ void main() {
         expect(service.isWemoApNetwork('WeMo.Test_Device'), true);
       });
 
+      test('should be case-insensitive and allow multi-segment suffixes '
+          '(e.g. the Wemo Mini\'s "Wemo.Mini.61C" naming)', () {
+        expect(service.isWemoApNetwork('wemo.ABC'), true);
+        expect(service.isWemoApNetwork('WEMO.ABC'), true);
+        expect(service.isWemoApNetwork('Wemo.Mini.61C'), true);
+      });
+
       test('should return false for non-Wemo SSIDs', () {
         expect(service.isWemoApNetwork('HomeNetwork'), false);
         expect(
@@ -116,8 +123,6 @@ void main() {
           false,
         ); // Missing dot and suffix
         expect(service.isWemoApNetwork('WeMo.'), false); // Missing suffix
-        expect(service.isWemoApNetwork('wemo.ABC'), false); // Wrong case
-        expect(service.isWemoApNetwork('WEMO.ABC'), false); // Wrong case
         expect(service.isWemoApNetwork(''), false);
         expect(service.isWemoApNetwork(null), false);
       });

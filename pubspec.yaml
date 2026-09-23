@@ -66,6 +66,10 @@ dependencies:
   crypto: ^3.0.7
   rxdart: ^0.28.0
 
+  # Binds app traffic to a WiFi network without internet access (Android),
+  # needed while connected to a device's own setup AP during pairing.
+  wifi_iot: ^0.4.0
+
   # Open system settings
   app_settings: ^9.0.0
 

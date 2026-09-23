@@ -14,4 +14,10 @@ void main() {
     expect(WemoConstants.wemoApSsidPattern.hasMatch('WeMo.CoffeeMaker'), isTrue);
     expect(WemoConstants.wemoApSsidPattern.hasMatch('NotWeMo'), isFalse);
   });
+
+  test('wemoApSsidPattern should be case-insensitive and allow '
+      'multi-segment suffixes (e.g. the Wemo Mini)', () {
+    expect(WemoConstants.wemoApSsidPattern.hasMatch('Wemo.Mini.61C'), isTrue);
+    expect(WemoConstants.wemoApSsidPattern.hasMatch('WEMO.Socket.ABC'), isTrue);
+  });
 }

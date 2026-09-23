@@ -808,6 +808,10 @@ class AppLocalizationsHi extends AppLocalizations {
       'iOS तृतीय-पक्ष ऐप्स को नजदीकी Wi-Fi नेटवर्क को स्कैन करने से सख्ती से प्रतिबंधित करता है। आपको नेटवर्क SSID को मैन्युअल रूप से दर्ज करने की आवश्यकता हो सकती है।';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Apple ke accessory-network pratibandhon ke karan iOS kuchh models (jaise Wemo Mini) ke liye Wi-Fi setup ko block kar sakta hai. Yadi setup poora nahin hota hai, to ise apne Wi-Fi se jodne ke liye ek baar Android device ka upyog karein, phir ise yahan hamesha ki tarah niyantrit karein.';
+
+  @override
   String get pairingNoNetworks => 'कोई नेटवर्क नहीं मिला';
 
   @override

@@ -804,6 +804,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'iOS, üçüncü taraf uygulamaların yakındaki Wi-Fi ağlarını taramasını kesinlikle yasaklar. SSID ağına manuel olarak girmeniz gerekebilir.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS, Apple\'in aksesuar agi kisitlamalari nedeniyle bazi modellerde (or. Wemo Mini) Wi-Fi kurulumunu engelleyebilir. Kurulum tamamlanmazsa, cihazi Wi-Fi\'nize baglamak icin bir kez Android cihaz kullanin, ardindan buradan her zamanki gibi kontrol edin.';
+
+  @override
   String get pairingNoNetworks => 'Ağ bulunamadı';
 
   @override

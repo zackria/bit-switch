@@ -810,6 +810,10 @@ class AppLocalizationsId extends AppLocalizations {
       'iOS dengan tegas melarang aplikasi pihak ketiga memindai jaringan Wi-Fi terdekat. Anda mungkin perlu memasukkan jaringan SSID secara manual.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS dapat memblokir penyiapan Wi-Fi untuk beberapa model (misalnya Wemo Mini) karena pembatasan jaringan aksesori dari Apple. Jika penyiapan tidak selesai, gunakan perangkat Android sekali untuk menghubungkannya ke Wi-Fi Anda, lalu kendalikan di sini seperti biasa.';
+
+  @override
   String get pairingNoNetworks => 'Tidak ada jaringan yang ditemukan';
 
   @override

@@ -297,6 +297,32 @@ void main() {
     });
   });
 
+  group('DevicePairingScreen — intro step iOS setup limitation banner', () {
+    testWidgets('shows iOS setup limitation banner on iOS', (tester) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider, platform: TargetPlatform.iOS);
+
+        expect(find.textContaining('Wemo Mini'), findsOneWidget);
+      });
+    });
+
+    testWidgets('hides iOS setup limitation banner on Android', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(
+          tester,
+          provider,
+          platform: TargetPlatform.android,
+        );
+
+        expect(find.textContaining('Wemo Mini'), findsNothing);
+      });
+    });
+  });
+
   group('DevicePairingScreen — connectToAp step', () {
     testWidgets('shows required buttons', (tester) async {
       await tester.runAsync(() async {

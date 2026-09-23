@@ -1531,6 +1531,12 @@ abstract class AppLocalizations {
   /// **'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. You may need to enter the network SSID manually.'**
   String get pairingIosScanLimitation;
 
+  /// No description provided for @pairingIosSetupLimitation.
+  ///
+  /// In en, this message translates to:
+  /// **'iOS may block Wi-Fi setup for some models (e.g. Wemo Mini) due to Apple\'s accessory-network restrictions. If setup doesn\'t complete, use an Android device once to join it to your Wi-Fi, then control it here as usual.'**
+  String get pairingIosSetupLimitation;
+
   /// No description provided for @pairingNoNetworks.
   ///
   /// In en, this message translates to:

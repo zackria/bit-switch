@@ -816,6 +816,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'iOS prohíbe estrictamente que aplicaciones de terceros busquen redes Wi-Fi cercanas. Es posible que deba ingresar la red SSID manualmente.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS puede bloquear la configuracion de Wi-Fi en algunos modelos (p. ej., Wemo Mini) debido a las restricciones de red de accesorios de Apple. Si la configuracion no se completa, usa un dispositivo Android una vez para conectarlo a tu Wi-Fi y luego controlalo aqui con normalidad.';
+
+  @override
   String get pairingNoNetworks => 'No se encontraron redes';
 
   @override
@@ -1973,6 +1977,10 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get pairingIosScanLimitation =>
       'iOS prohíbe estrictamente que aplicaciones de terceros busquen redes Wi-Fi cercanas. Es posible que deba ingresar la red SSID manualmente.';
+
+  @override
+  String get pairingIosSetupLimitation =>
+      'iOS puede bloquear la configuracion de Wi-Fi en algunos modelos (por ejemplo, Wemo Mini) debido a las restricciones de red de accesorios de Apple. Si la configuracion no se completa, usa un dispositivo Android una vez para conectarlo a tu Wi-Fi y luego controlalo aqui normalmente.';
 
   @override
   String get pairingNoNetworks => 'No se encontraron redes';

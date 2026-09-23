@@ -830,6 +830,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'iOS vieta severamente alle app di terze parti di eseguire la scansione delle reti Wi-Fi vicine. Potrebbe essere necessario inserire manualmente la rete SSID.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS potrebbe bloccare la configurazione Wi-Fi per alcuni modelli (es. Wemo Mini) a causa delle restrizioni di Apple sulle reti per accessori. Se la configurazione non viene completata, usa una volta un dispositivo Android per collegarlo al tuo Wi-Fi, poi controllalo qui come al solito.';
+
+  @override
   String get pairingNoNetworks => 'Nessuna rete trovata';
 
   @override

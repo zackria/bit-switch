@@ -809,6 +809,10 @@ class AppLocalizationsFi extends AppLocalizations {
       'iOS kieltää tiukasti kolmansien osapuolien sovelluksia etsimästä lähellä olevia Wi-Fi-verkkoja. Sinun on ehkä syötettävä verkko SSID manuaalisesti.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS saattaa estaa Wi-Fi-asetuksen joissakin malleissa (esim. Wemo Mini) Applen lisalaiteverkkorajoitusten vuoksi. Jos asetusta ei saada valmiiksi, kayta kerran Android-laitetta yhdistaaksesi sen Wi-Fi-verkkoosi ja hallitse sita sen jalkeen taalla normaalisti.';
+
+  @override
   String get pairingNoNetworks => 'Verkkoja ei löytynyt';
 
   @override

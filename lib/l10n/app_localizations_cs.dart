@@ -809,6 +809,10 @@ class AppLocalizationsCs extends AppLocalizations {
       'iOS přísně zakazuje aplikacím třetích stran vyhledávat blízké sítě Wi-Fi. Možná budete muset zadat síť SSID ručně.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS muze u nekterych modelu (napr. Wemo Mini) blokovat nastaveni Wi-Fi kvuli omezenim site prislusenstvi od Applu. Pokud se nastaveni nedokonci, pouzijte jednou zarizeni s Androidem k pripojeni k Wi-Fi a pote zarizeni ovladejte zde jako obvykle.';
+
+  @override
   String get pairingNoNetworks => 'Nebyly nalezeny žádné sítě';
 
   @override

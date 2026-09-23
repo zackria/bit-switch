@@ -773,6 +773,10 @@ class AppLocalizationsKo extends AppLocalizations {
       'iOS는 타사 앱이 근처 Wi-Fi 네트워크를 검색하는 것을 엄격히 금지합니다. 네트워크 SSID를 수동으로 입력해야 할 수도 있습니다.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Apple의 액세서리 네트워크 제한으로 인해 iOS에서는 일부 모델(예: Wemo Mini)의 Wi-Fi 설정이 차단될 수 있습니다. 설정이 완료되지 않으면 Android 기기를 한 번 사용해 Wi-Fi에 연결한 다음 여기서 평소처럼 제어하세요.';
+
+  @override
   String get pairingNoNetworks => '네트워크를 찾을 수 없습니다.';
 
   @override

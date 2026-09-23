@@ -804,6 +804,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'iOS strictly prohibits third-party apps from scanning for nearby Wi-Fi networks. You may need to enter the network SSID manually.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS may block Wi-Fi setup for some models (e.g. Wemo Mini) due to Apple\'s accessory-network restrictions. If setup doesn\'t complete, use an Android device once to join it to your Wi-Fi, then control it here as usual.';
+
+  @override
   String get pairingNoNetworks => 'No networks found';
 
   @override

@@ -809,6 +809,10 @@ class AppLocalizationsTe extends AppLocalizations {
       'iOS సమీపంలోని Wi-Fi నెట్‌వర్క్‌ల కోసం స్కాన్ చేయకుండా థర్డ్-పార్టీ యాప్‌లను ఖచ్చితంగా నిషేధిస్తుంది. మీరు SSID నెట్‌వర్క్‌ను మాన్యువల్‌గా నమోదు చేయాల్సి రావచ్చు.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Apple yokka accessory-network parimithula karananga konni modelku (uda. Wemo Mini) iOS Wi-Fi setup ni nirodhinchavachu. Setup poorthi kakapothe, danini mee Wi-Fi ki connect cheyadaniki okasari Android parikaranni upayoginchandi, appudu ikkada mamuluga niyantrinchandi.';
+
+  @override
   String get pairingNoNetworks => 'నెట్‌వర్క్‌లు ఏవీ కనుగొనబడలేదు';
 
   @override

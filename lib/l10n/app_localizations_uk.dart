@@ -806,6 +806,10 @@ class AppLocalizationsUk extends AppLocalizations {
       'iOS суворо забороняє стороннім програмам сканувати найближчі мережі Wi-Fi. Можливо, вам доведеться ввести мережу SSID вручну.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS може блокувати налаштування Wi-Fi для деяких моделей (напр. Wemo Mini) через обмеження Apple на мережі аксесуарів. Якщо налаштування не завершується, один раз скористайтеся пристроєм Android, щоб підключити його до Wi-Fi, а потім керуйте ним тут як зазвичай.';
+
+  @override
   String get pairingNoNetworks => 'Мереж не знайдено';
 
   @override

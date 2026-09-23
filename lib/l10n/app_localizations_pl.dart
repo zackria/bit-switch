@@ -813,6 +813,10 @@ class AppLocalizationsPl extends AppLocalizations {
       'iOS surowo zabrania aplikacjom innych firm skanowania w poszukiwaniu pobliskich sieci Wi-Fi. Może być konieczne ręczne wprowadzenie sieci SSID.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS moze blokowac konfiguracje Wi-Fi dla niektorych modeli (np. Wemo Mini) z powodu ograniczen sieci akcesoriow Apple. Jesli konfiguracja sie nie powiedzie, uzyj raz urzadzenia z Androidem, aby polaczyc je z Wi-Fi, a nastepnie steruj nim tutaj jak zwykle.';
+
+  @override
   String get pairingNoNetworks => 'Nie znaleziono sieci';
 
   @override

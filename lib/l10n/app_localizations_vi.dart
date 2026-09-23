@@ -806,6 +806,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'iOS nghiêm cấm các ứng dụng của bên thứ ba quét các mạng Wi-Fi gần đó. Bạn có thể cần phải nhập mạng SSID theo cách thủ công.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS co the chan thiet lap Wi-Fi doi voi mot so dong may (vi du: Wemo Mini) do han che mang phu kien cua Apple. Neu thiet lap khong hoan tat, hay dung mot thiet bi Android mot lan de ket noi no voi Wi-Fi cua ban, sau do dieu khien tai day nhu binh thuong.';
+
+  @override
   String get pairingNoNetworks => 'Không tìm thấy mạng nào';
 
   @override

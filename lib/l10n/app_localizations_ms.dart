@@ -812,6 +812,10 @@ class AppLocalizationsMs extends AppLocalizations {
       'iOS melarang keras apl pihak ketiga daripada mengimbas rangkaian Wi-Fi berdekatan. Anda mungkin perlu memasukkan rangkaian SSID secara manual.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS mungkin menyekat persediaan Wi-Fi untuk sesetengah model (cth. Wemo Mini) disebabkan sekatan rangkaian aksesori Apple. Jika persediaan tidak selesai, gunakan peranti Android sekali untuk menyambungkannya ke Wi-Fi anda, kemudian kawal di sini seperti biasa.';
+
+  @override
   String get pairingNoNetworks => 'Tiada rangkaian ditemui';
 
   @override

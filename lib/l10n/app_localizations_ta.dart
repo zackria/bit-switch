@@ -814,6 +814,10 @@ class AppLocalizationsTa extends AppLocalizations {
       'அருகிலுள்ள Wi-Fi நெட்வொர்க்குகளை ஸ்கேன் செய்வதிலிருந்து மூன்றாம் தரப்பு பயன்பாடுகளை iOS கண்டிப்பாக தடை செய்கிறது. நீங்கள் SSID நெட்வொர்க்கை கைமுறையாக உள்ளிட வேண்டும்.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Apple in thunaikkaruvi-network kattupadugal karanamaga, chila modelkalukku (e.ka. Wemo Mini) iOS Wi-Fi amaippai thadukkalam. Amaippu mudivadaiyavillai enil, athai ungal Wi-Fi udan inaikka oru murai Android sadhanathai payanpaduthavum, pinnar inge vazhakkam pol kattupadutha vum.';
+
+  @override
   String get pairingNoNetworks => 'நெட்வொர்க்குகள் இல்லை';
 
   @override

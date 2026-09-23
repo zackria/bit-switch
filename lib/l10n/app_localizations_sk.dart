@@ -812,6 +812,10 @@ class AppLocalizationsSk extends AppLocalizations {
       'iOS prísne zakazuje aplikáciám tretích strán skenovať blízke siete Wi-Fi. Možno budete musieť zadať sieť SSID manuálne.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS moze blokovat nastavenie Wi-Fi pre niektore modely (napr. Wemo Mini) kvoli obmedzeniam siete prislusenstva od Applu. Ak sa nastavenie nedokonci, pouzite raz zariadenie s Androidom na pripojenie k Wi-Fi a potom ho ovladajte tu ako zvycajne.';
+
+  @override
   String get pairingNoNetworks => 'Nenašli sa žiadne siete';
 
   @override

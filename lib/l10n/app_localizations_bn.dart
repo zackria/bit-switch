@@ -811,6 +811,10 @@ class AppLocalizationsBn extends AppLocalizations {
       'iOS কাছাকাছি Wi-Fi নেটওয়ার্কগুলির জন্য স্ক্যান করা থেকে তৃতীয় পক্ষের অ্যাপগুলিকে কঠোরভাবে নিষিদ্ধ করে৷ আপনাকে ম্যানুয়ালি নেটওয়ার্ক SSID প্রবেশ করতে হতে পারে৷';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'অ্যাপলের অ্যাক্সেসরি-নেটওয়ার্ক বিধিনিষেধের কারণে কিছু মডেলের (যেমন Wemo Mini) জন্য iOS Wi-Fi সেটআপ ব্লক করতে পারে। সেটআপ সম্পূর্ণ না হলে, একবার Android ডিভাইস ব্যবহার করে এটিকে আপনার Wi-Fi-তে যুক্ত করুন, তারপর এখানে যথারীতি নিয়ন্ত্রণ করুন।';
+
+  @override
   String get pairingNoNetworks => 'কোন নেটওয়ার্ক পাওয়া যায়নি';
 
   @override

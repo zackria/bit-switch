@@ -806,6 +806,10 @@ class AppLocalizationsHu extends AppLocalizations {
       'Az iOS szigorúan tiltja, hogy harmadik féltől származó alkalmazások keressenek közeli Wi-Fi hálózatokat. You may need to enter the network SSID manually.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Az iOS bizonyos modelleknel (pl. Wemo Mini) letilthatja a Wi-Fi beallitast az Apple kiegeszitohalozati korlatozasai miatt. Ha a beallitas nem fejezodik be, hasznaljon egyszer egy Android-eszkozt, hogy csatlakoztassa a Wi-Fi halozatahoz, majd innentol itt vezerelje szokas szerint.';
+
+  @override
   String get pairingNoNetworks => 'No networks found';
 
   @override

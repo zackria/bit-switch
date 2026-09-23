@@ -756,6 +756,10 @@ class AppLocalizationsZh extends AppLocalizations {
       'iOS严格禁止第三方应用程序扫描附近的Wi-Fi网络。您可能需要手动输入网络SSID。';
 
   @override
+  String get pairingIosSetupLimitation =>
+      '由于Apple的配件网络限制，iOS可能会阻止某些型号(例如Wemo Mini)的Wi-Fi设置。如果设置未完成，请先使用Android设备将其连接到您的Wi-Fi，然后在此处照常控制。';
+
+  @override
   String get pairingNoNetworks => '未找到网络';
 
   @override
@@ -1833,6 +1837,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
       'iOS严格禁止第三方应用程序扫描附近的Wi-Fi网络。您可能需要手动输入网络SSID。';
 
   @override
+  String get pairingIosSetupLimitation =>
+      '由于Apple的配件网络限制，iOS可能会阻止某些型号(例如Wemo Mini)的Wi-Fi设置。如果设置未完成，请先使用Android设备将其连接到您的Wi-Fi，然后在此处照常控制。';
+
+  @override
   String get pairingNoNetworks => '未找到网络';
 
   @override
@@ -2907,6 +2915,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get pairingIosScanLimitation =>
       'iOS嚴格禁止第三方應用程式掃描附近的Wi-Fi網路。您可能需要手動輸入網路SSID。';
+
+  @override
+  String get pairingIosSetupLimitation =>
+      '由於 Apple 的配件網路限制，iOS 可能會封鎖某些型號(例如 Wemo Mini)的 Wi-Fi 設定。如果設定未完成，請先使用 Android 裝置將其連接到您的 Wi-Fi，然後在此處照常控制。';
 
   @override
   String get pairingNoNetworks => '未找到網絡';

@@ -306,6 +306,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             ),
           ),
 
+          if (Theme.of(context).platform == TargetPlatform.iOS) ...[
+            const SizedBox(height: 16),
+            _buildIosSetupLimitationBanner(context),
+          ],
+
           const SizedBox(height: 32),
 
           // Start button
@@ -318,6 +323,36 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Warns iOS users up front that some models (e.g. Wemo Mini) use Apple's
+  /// Wireless Accessory Configuration for WiFi setup, which a third-party
+  /// app cannot complete without an MFi entitlement - the setup network join
+  /// itself will fail on iOS for those models.
+  Widget _buildIosSetupLimitationBanner(BuildContext context) {
+    return Card(
+      color: Colors.orange.shade50,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange.shade800),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                context.l10n.pairingIosSetupLimitation,
+                style: TextStyle(
+                  color: Colors.orange.shade900,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

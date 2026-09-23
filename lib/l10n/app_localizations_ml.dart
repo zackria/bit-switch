@@ -818,6 +818,10 @@ class AppLocalizationsMl extends AppLocalizations {
       'അടുത്തുള്ള Wi-Fi നെറ്റ്‌വർക്കുകൾക്കായി മൂന്നാം കക്ഷി ആപ്പുകൾ സ്കാൻ ചെയ്യുന്നതിൽ നിന്ന് iOS കർശനമായി വിലക്കുന്നു. നിങ്ങൾ SSID നെറ്റ്‌വർക്ക് സ്വമേധയാ നൽകേണ്ടി വന്നേക്കാം.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Applinte accessory-network nayanthranangal karanam chila modelukalkku (uda. Wemo Mini) iOS il Wi-Fi setup thadayappedam. Setup poornnamakunnilenkil, athine ningalude Wi-Fi umayi bandhippikkan oru thavana oru Android upakaranam upayogikkuka, thudarnnu ivide pathivupole niyanthrikkuka.';
+
+  @override
   String get pairingNoNetworks => 'നെറ്റ്‌വർക്കുകളൊന്നും കണ്ടെത്തിയില്ല';
 
   @override

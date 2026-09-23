@@ -818,6 +818,10 @@ class AppLocalizationsRo extends AppLocalizations {
       'iOS interzice strict scanarea aplicațiilor terță parte pentru rețelele Wi-Fi din apropiere. Poate fi necesar să introduceți manual în rețea SSID.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS poate bloca configurarea Wi-Fi pentru unele modele (de ex. Wemo Mini) din cauza restrictiilor Apple privind retelele de accesorii. Daca configurarea nu se finalizeaza, foloseste o data un dispozitiv Android pentru a-l conecta la Wi-Fi, apoi controleaza-l aici ca de obicei.';
+
+  @override
   String get pairingNoNetworks => 'Nu au fost găsite rețele';
 
   @override

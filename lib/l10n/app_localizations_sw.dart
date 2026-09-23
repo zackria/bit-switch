@@ -811,6 +811,10 @@ class AppLocalizationsSw extends AppLocalizations {
       'iOS inakataza kabisa programu za wahusika wengine kuchanganua mitandao ya karibu ya Wi-Fi. Huenda ukahitaji kuingiza mtandao SSID wewe mwenyewe.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS inaweza kuzuia usanidi wa Wi-Fi kwa baadhi ya miundo (mfano Wemo Mini) kutokana na vikwazo vya mtandao wa vifaa vya Apple. Ikiwa usanidi haukamiliki, tumia kifaa cha Android mara moja kukiunganisha kwenye Wi-Fi yako, kisha kidhibiti hapa kama kawaida.';
+
+  @override
   String get pairingNoNetworks => 'Hakuna mitandao iliyopatikana';
 
   @override

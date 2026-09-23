@@ -805,6 +805,10 @@ class AppLocalizationsPa extends AppLocalizations {
       'iOS ਤੀਜੀ-ਧਿਰ ਦੀਆਂ ਐਪਾਂ ਨੂੰ ਨੇੜਲੇ Wi-Fi ਨੈੱਟਵਰਕਾਂ ਲਈ ਸਕੈਨ ਕਰਨ ਤੋਂ ਸਖ਼ਤੀ ਨਾਲ ਵਰਜਦਾ ਹੈ। ਤੁਹਾਨੂੰ ਨੈੱਟਵਰਕ SSID ਨੂੰ ਹੱਥੀਂ ਦਾਖਲ ਕਰਨ ਦੀ ਲੋੜ ਹੋ ਸਕਦੀ ਹੈ।';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Apple diyan accessory-network pabandiyan karan iOS kujh modelan (jiven Wemo Mini) layi Wi-Fi setup nu block kar sakda hai. Je setup poora nahin hunda, tan isnu apne Wi-Fi naal jorhan layi ikk vaar Android device varto, phir isnu ithe aam wang control karo.';
+
+  @override
   String get pairingNoNetworks => 'ਕੋਈ ਨੈੱਟਵਰਕ ਨਹੀਂ ਮਿਲਿਆ';
 
   @override

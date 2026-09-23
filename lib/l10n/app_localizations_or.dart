@@ -811,6 +811,10 @@ class AppLocalizationsOr extends AppLocalizations {
       'ଆଇଓଏସ୍ ନିକଟସ୍ଥ Wi-Fi ନେଟୱାର୍କ ପାଇଁ ସ୍କାନ କରିବାକୁ ତୃତୀୟ-ପକ୍ଷ ଆପକୁ କଠୋର ଭାବରେ ବାରଣ କରିଛି | ଆପଣ ନେଟୱର୍କ SSID କୁ ହସ୍ତକୃତ ଭାବରେ ପ୍ରବେଶ କରିବାକୁ ଆବଶ୍ୟକ କରିପାରନ୍ତି |';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Appleর accessory-network protibandhaka karanaru iOS kichi model (jemiti Wemo Mini) pain Wi-Fi setup ku abarodha karipare. Yadi setup sampurna nahue, ehaku apankara Wi-Fi sahita jodibaku thare eka Android device byabahar karantu, tapare ethare sadharana bhabare niyantran karantu.';
+
+  @override
   String get pairingNoNetworks => 'କ network ଣସି ନେଟୱାର୍କ ମିଳିଲା ନାହିଁ |';
 
   @override

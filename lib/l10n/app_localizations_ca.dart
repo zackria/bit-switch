@@ -818,6 +818,10 @@ class AppLocalizationsCa extends AppLocalizations {
       'iOS prohibeix estrictament que les aplicacions de tercers escanegin les xarxes Wi-Fi properes. És possible que hàgiu d\'introduir manualment la xarxa SSID.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS pot bloquejar la configuracio de Wi-Fi per a alguns models (p. ex. Wemo Mini) a causa de les restriccions de xarxa d\'accessoris d\'Apple. Si la configuracio no es completa, feu servir un dispositiu Android un cop per connectar-lo a la vostra Wi-Fi i, despres, controleu-lo aqui com de costum';
+
+  @override
   String get pairingNoNetworks => 'No s\'han trobat xarxes';
 
   @override

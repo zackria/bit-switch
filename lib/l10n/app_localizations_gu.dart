@@ -802,6 +802,10 @@ class AppLocalizationsGu extends AppLocalizations {
       'iOS તૃતીય-પક્ષ એપ્લિકેશન્સને નજીકના Wi-Fi નેટવર્ક્સ માટે સ્કેન કરવાથી સખત રીતે પ્રતિબંધિત કરે છે. તમારે નેટવર્ક SSID મેન્યુઅલી દાખલ કરવાની જરૂર પડી શકે છે.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Appleના એક્સેસરી-નેટવર્ક પ્રતિબંધોને કારણે iOS કેટલાક મોડેલો (દા.ત. Wemo Mini) માટે Wi-Fi સેટઅપને અવરોધિત કરી શકે છે. જો સેટઅપ પૂર્ણ ન થાય, તો તેને તમારા Wi-Fi સાથે જોડવા માટે એકવાર Android ડિવાઇસનો ઉપયોગ કરો, પછી તેને અહીં હંમેશની જેમ નિયંત્રિત કરો.';
+
+  @override
   String get pairingNoNetworks => 'કોઈ નેટવર્ક મળ્યું નથી';
 
   @override

@@ -811,6 +811,10 @@ class AppLocalizationsSl extends AppLocalizations {
       'iOS aplikacijam tretjih oseb strogo prepoveduje iskanje bližnjih omrežij Wi-Fi. Morda boste morali ročno vnesti omrežje SSID.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS lahko pri nekaterih modelih (npr. Wemo Mini) blokira nastavitev Wi-Fi zaradi Applovih omejitev omrezja za dodatno opremo. Ce nastavitev ni dokoncana, enkrat uporabite napravo Android za povezavo z vasim Wi-Fi, nato pa ga upravljajte tukaj kot obicajno.';
+
+  @override
   String get pairingNoNetworks => 'Ni omrežij';
 
   @override

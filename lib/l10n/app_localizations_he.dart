@@ -789,6 +789,10 @@ class AppLocalizationsHe extends AppLocalizations {
       'iOS אוסר בהחלט על אפליקציות צד שלישי לסרוק אחר רשתות Wi-Fi קרובות. ייתכן שיהיה עליך להיכנס לרשת SSID באופן ידני.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS עשוי לחסום את הגדרת ה-Wi-Fi עבור דגמים מסוימים (למשל Wemo Mini) בגלל הגבלות רשת האביזרים של Apple. אם ההגדרה לא מסתיימת, השתמשו במכשיר Android פעם אחת כדי לחבר אותו ל-Wi-Fi שלכם, ולאחר מכן שלטו בו כאן כרגיל.';
+
+  @override
   String get pairingNoNetworks => 'לא נמצאו רשתות';
 
   @override

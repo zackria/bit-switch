@@ -808,6 +808,10 @@ class AppLocalizationsHr extends AppLocalizations {
       'iOS strogo zabranjuje aplikacijama trećih strana skeniranje obližnjih Wi-Fi mreža. Možda ćete morati ručno unijeti mrežu SSID.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'iOS moze blokirati postavljanje Wi-Fi veze za neke modele (npr. Wemo Mini) zbog Appleovih ogranicenja mreze za dodatnu opremu. Ako postavljanje ne uspije, upotrijebite jednom Android uredaj da ga povezete s Wi-Fi mrezom, a zatim njime upravljajte ovdje kao i inace.';
+
+  @override
   String get pairingNoNetworks => 'Nema pronađenih mreža';
 
   @override

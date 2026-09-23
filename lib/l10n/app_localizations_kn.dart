@@ -813,6 +813,10 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಹತ್ತಿರದ Wi-Fi ನೆಟ್‌ವರ್ಕ್‌ಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡುವುದರಿಂದ ಮೂರನೇ ವ್ಯಕ್ತಿಯ ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು iOS ಕಟ್ಟುನಿಟ್ಟಾಗಿ ನಿಷೇಧಿಸುತ್ತದೆ. ನೀವು SSID ನೆಟ್ವರ್ಕ್ ಅನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಬೇಕಾಗಬಹುದು.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'Apple na akseseri-network nirbandhagalinda iOS kelavu maadarigalige (uda. Wemo Mini) Wi-Fi setup annu nirbandhisabahudu. Setup poornagollade iddare, adannu nimma Wi-Fi ge samparkisalu ommo Android saadhanavannu balasi, nantara illi endinantee niyantrisi.';
+
+  @override
   String get pairingNoNetworks => 'ಯಾವುದೇ ನೆಟ್‌ವರ್ಕ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override

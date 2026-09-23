@@ -798,6 +798,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'يحظر iOS بشكل صارم على تطبيقات الطرف الثالث البحث عن شبكات Wi-Fi القريبة. قد تحتاج إلى إدخال الشبكة SSID يدويًا.';
 
   @override
+  String get pairingIosSetupLimitation =>
+      'قد يمنع iOS إعداد Wi-Fi لبعض الطرازات (مثل Wemo Mini) بسبب قيود شبكة الملحقات من Apple. إذا لم يكتمل الإعداد، استخدم جهاز Android مرة واحدة لتوصيله بشبكة Wi-Fi الخاصة بك، ثم تحكم به هنا كالمعتاد.';
+
+  @override
   String get pairingNoNetworks => 'لم يتم العثور على شبكات';
 
   @override

@@ -1,4 +1,5 @@
 {
+    "dart.flutterSdkPath": "/opt/homebrew/share/flutter",
     "chat.tools.terminal.autoApprove": {
         "flutter": true
     },

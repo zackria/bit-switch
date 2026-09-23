@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Udhibiti wa vifaa vya WeMo
+
+Promotional Text
+Dhibiti vifaa vya zamani vya WeMo moja kwa moja: vitambue, viwashe au kuvizima, na uweke Wi‑Fi kwa usalama bila kutumia wingu.
+
+Keywords
+wifi,swichi,wemo,udhibiti,nyumbani,kipunguza,mwendo,nishati,mtandao
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch hutoa udhibiti wa haraka, wa faragha na wa kuaminika wa vifaa vya zamani vya WeMo kwenye mtandao wako wa ndani—bila kuhitaji wingu. Tambua vifaa, dhibiti swichi na vipunguza mwanga, angalia matumizi ya nishati ya plagi za Insight, pokea hali ya vitambuzi vya mwendo, na uweke Wi‑Fi kwa usalama kwa vitambulisho vilivyosimbwa kwa AES.
+
+Inatumia swichi, vipunguza mwanga, swichi za taa, plagi za nishati za Insight, vitambuzi vya mwendo, plagi za nje, vifaa vya Maker na madaraja. Utambuzi wa SSDP/UPnP wenye M-SEARCH husaidia kupata vifaa kwa uthabiti. Usanidi wa Wi‑Fi hutumia usimbaji wa nenosiri wa AES-128-CBC. Ushughulikiaji ulioboreshwa wa GetBinaryState na SetBinaryState hutoa hali na hitilafu zilizo wazi.
+
+Kiolesura kilichorahisishwa kina ufichuaji wa nenosiri, viashiria vya muunganisho na handshake, hali nyeusi na mandhari zinazosomeka.
+
+Kwa nini Bit Switch
+
+Utambuzi na udhibiti hufanyika kwenye mtandao wako pekee. Vitambulisho havitumwi kwa huduma za nje, na huhitaji akaunti ya wingu. Inafanya kazi na aina nyingi za vifaa vya zamani vya Belkin WeMo.
+
+Upatanifu na Faragha
+
+Simu na vifaa lazima viwe kwenye mtandao mmoja wa Wi‑Fi. Ruta lazima iruhusu UDP multicast kwa utambuzi wa SSDP. Uchanganuzi wa Wi‑Fi unahitaji ruhusa ya eneo, ambayo huombwa wakati wa matumizi na hutumika tu kuchanganua na kusanidi vifaa.

@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: Kontrol lokal untuk WeMo
+
+Promotional Text
+Kontrol perangkat WeMo lama secara lokal: temukan, nyalakan atau matikan, dan siapkan Wi‑Fi dengan aman.
+
+Keywords
+wifi,sakelar,wemo,kontrol lokal,steker,rumah pintar,jaringan,privasi
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch memberikan kontrol lokal yang cepat, privat, dan andal untuk perangkat WeMo lama tanpa memerlukan cloud. Temukan perangkat di jaringan lokal, kontrol sakelar dan peredup, lihat penggunaan energi dari steker Insight, terima status sensor gerak, dan siapkan Wi‑Fi secara aman menggunakan kredensial terenkripsi AES.
+
+Dukungan perangkat lengkap: sakelar, peredup, sakelar lampu, steker energi Insight, sensor gerak, steker luar ruangan, perangkat Maker, dan bridge.
+Penemuan tangguh: SSDP/UPnP dengan M‑SEARCH untuk mendeteksi perangkat di jaringan secara andal.
+Penyiapan aman: penyiapan Wi‑Fi bawaan dengan enkripsi kata sandi AES-128-CBC.
+Kontrol andal: penanganan GetBinaryState / SetBinaryState yang lebih baik dengan laporan status dan galat yang jelas.
+Mudah digunakan: dialog Wi‑Fi yang ringkas, tombol untuk menampilkan kata sandi, dan indikator koneksi.
+Tampilan: mode gelap dan tema yang disempurnakan untuk antarmuka modern dan mudah dibaca.
+
+Mengapa Bit Switch
+
+Mengutamakan lokal: penemuan dan kontrol berlangsung di jaringan Anda tanpa menggunakan cloud.
+Menjaga privasi: kredensial dienkripsi dengan AES dan tidak pernah dikirim ke layanan eksternal.
+Praktis: berfungsi dengan berbagai perangkat keras Belkin WeMo lama.
+
+Yang Baru
+
+Penemuan SSDP/UPnP yang lebih andal.
+Alur penyiapan Wi‑Fi lebih baik dengan enkripsi AES-128-CBC.
+Alur lebih jelas, pesan galat lebih baik, dan tombol untuk menampilkan kata sandi.
+Penanganan GetBinaryState / SetBinaryState yang lebih baik.
+Penyempurnaan mode gelap dan tema.
+
+Kompatibilitas & Privasi
+
+Perangkat dan ponsel harus berada di jaringan Wi‑Fi yang sama. Router harus mengizinkan multicast UDP untuk penemuan SSDP. Pemindaian Wi‑Fi memerlukan izin lokasi; izin diminta saat aplikasi berjalan dan hanya digunakan untuk pemindaian serta penyiapan. Tidak perlu akun cloud; kontrol hanya dilakukan melalui jaringan lokal. Lihat kebijakan privasi di situs dukungan untuk detail.

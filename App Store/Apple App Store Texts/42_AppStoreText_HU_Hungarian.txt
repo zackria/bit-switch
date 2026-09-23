@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Helyi WeMo-vezérlés
+
+Promotional Text
+Vezéreld helyben a régebbi WeMo eszközöket: keresd meg, kapcsold és állítsd be biztonságosan a Wi-Fi-t felhő nélkül.
+
+Keywords
+wifi,kapcsoló,wemo,okosotthon,helyi,vezérlés,eszközök,automatizálás
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+A Bit Switch gyors, privát és megbízható helyi vezérlést kínál régebbi WeMo eszközökhöz, felhő nélkül. Fedezd fel a helyi hálózat eszközeit, vezéreld a kapcsolókat és fényerő-szabályozókat, tekintsd meg az Insight aljzatok energiafogyasztását, ellenőrizd a mozgásérzékelők állapotát, és állítsd be biztonságosan a Wi-Fi-t AES-titkosítású hitelesítő adatokkal.
+
+Teljes eszköztámogatás: kapcsolók, fényerő-szabályozók, villanykapcsolók, Insight energiafigyelő aljzatok, mozgásérzékelők, kültéri aljzatok, Maker eszközök és hidak.
+Megbízható felderítés: SSDP/UPnP M-SEARCH funkcióval a hálózati eszközök biztos észleléséhez.
+Biztonságos beállítás: a beépített Wi-Fi-beállítás AES-128-CBC jelszótitkosítással védi a hitelesítő adatokat.
+Megbízható vezérlés: továbbfejlesztett GetBinaryState / SetBinaryState kezelés, egyértelmű állapot- és hibajelzéssel.
+Egyszerű használat: átlátható Wi-Fi-beállítás, jelszómegjelenítés, valamint kapcsolat- és kézfogásjelzők.
+Megjelenés: sötét mód és finomított témák a modern, jól olvasható felületért.
+
+Miért a Bit Switch?
+
+Helyi működés: a felderítés és vezérlés a saját hálózatodon történik, felhő használata nélkül.
+Adatvédelem: a beállítás AES-titkosítást használ, és nem küld hitelesítő adatokat külső szolgáltatásoknak.
+Praktikus: számos, még használatban lévő régebbi Belkin WeMo eszközzel működik.
+
+Újdonságok
+
+Megbízhatóbb SSDP/UPnP-felderítés.
+Továbbfejlesztett Wi-Fi-beállítás AES-128-CBC jelszótitkosítással.
+Átláthatóbb folyamat, jobb hibaüzenetek és jelszómegjelenítés.
+A GetBinaryState / SetBinaryState hívások jobb kezelése.
+Sötét mód és finomított témák.
+
+Kompatibilitás és adatvédelem
+
+Az eszközöknek és a telefonnak ugyanahhoz a Wi-Fi-hálózathoz kell kapcsolódniuk.
+Az útválasztónak engedélyeznie kell az UDP multicastot az SSDP-felderítéshez.
+A Wi-Fi-keresés helyhozzáférést igényel; az engedélyt futás közben kérjük, és csak keresésre, illetve beállításra használjuk.
+Felhőfiók nem szükséges; a vezérlés kizárólag a helyi hálózaton történik. Részletekért lásd a támogatási webhely adatvédelmi tájékoztatóját.

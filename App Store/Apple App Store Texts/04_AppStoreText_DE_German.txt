@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: Lokale Steuerung für WeMo
+
+Promotional Text
+Ältere WeMo-Geräte lokal steuern: erkennen, schalten und WLAN sicher einrichten.
+
+Keywords
+wifi,schalter,wemo,lokal,steckdose,smart home,netzwerk,datenschutz
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch ermöglicht die schnelle, private und zuverlässige lokale Steuerung älterer WeMo-Geräte – ganz ohne Cloud. Finde Geräte im lokalen Netzwerk, steuere Schalter und Dimmer, sieh den Energieverbrauch von Insight-Steckdosen, empfange den Status von Bewegungssensoren und richte WLAN sicher mit AES-verschlüsselten Zugangsdaten ein.
+
+Umfassende Geräteunterstützung: Schalter, Dimmer, Lichtschalter, Insight-Energiesteckdosen, Bewegungssensoren, Außensteckdosen, Maker-Geräte und Bridges.
+Robuste Erkennung: SSDP/UPnP mit M‑SEARCH für zuverlässige Erkennung im Netzwerk.
+Sichere Einrichtung: integrierte WLAN-Konfiguration mit AES-128-CBC-Verschlüsselung des Passworts.
+Zuverlässige Steuerung: verbesserte Verarbeitung von GetBinaryState / SetBinaryState mit klaren Status- und Fehlermeldungen.
+Bedienkomfort: übersichtlicher WLAN-Dialog, Passwortanzeige und Verbindungsanzeigen.
+Darstellung: Dunkelmodus und optimierte Designs für eine moderne, gut lesbare Oberfläche.
+
+Warum Bit Switch?
+
+Lokal zuerst: Erkennung und Steuerung erfolgen in deinem Netzwerk, ohne Cloud.
+Datenschutz: Zugangsdaten werden mit AES verschlüsselt und nie an externe Dienste gesendet.
+Praktisch: unterstützt viele ältere Belkin WeMo-Geräte.
+
+Neuigkeiten
+
+Zuverlässigere SSDP/UPnP-Erkennung.
+Verbesserte WLAN-Einrichtung mit AES-128-CBC-Verschlüsselung.
+Klarerer Ablauf, bessere Fehlermeldungen und Passwortanzeige.
+Verbesserte GetBinaryState / SetBinaryState-Verarbeitung.
+Dunkelmodus und verfeinerte Designs.
+
+Kompatibilität und Datenschutz
+
+Geräte und Smartphone müssen sich im selben WLAN befinden. Der Router muss UDP-Multicast für SSDP zulassen. Das WLAN-Scannen erfordert die Standortberechtigung; sie wird zur Laufzeit angefordert und nur zur Erkennung und Einrichtung verwendet. Kein Cloud-Konto erforderlich, nur lokale Netzwerksteuerung. Details stehen in der Datenschutzrichtlinie auf der Support-Website.

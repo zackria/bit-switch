@@ -1,0 +1,1026 @@
+{
+  "en-US": {
+    "name": "Bit Switch",
+    "subtitle": "Legacy Control for WeMo",
+    "promotional_text": "Control legacy WeMo devices locally: discover, toggle, monitor energy and motion, and securely provision Wi-Fi—no cloud required.",
+    "keywords": [
+      "wifi",
+      "switch",
+      "wemo",
+      "legacy",
+      "local",
+      "smart home",
+      "dimmer",
+      "insight",
+      "motion",
+      "upnp"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch provides fast, private, and reliable local control for legacy WeMo devices — no cloud required. Discover devices on your local network, control switches and dimmers, view energy usage from Insight plugs, receive motion sensor state, and provision Wi‑Fi securely using AES-encrypted credentials for device setup.\n\nFull device support: switches, dimmers, light switches, Insight energy plugs, motion sensors, outdoor plugs, Maker devices, and bridges.\nRobust discovery: SSDP/UPnP discovery with M‑SEARCH reliable on-network detection.\nSecure provisioning: built-in Wi‑Fi setup with AES-128-CBC password encryption to keep credentials private during device configuration.\nReliable control: improved GetBinaryState / SetBinaryState handling with clear status and error reporting.\nUsability: streamlined Wi‑Fi setup dialog, password visibility toggle, and status indicators for connection and handshake.\nAppearance: supports dark mode and refined themes for a modern, readable UI.\n\nWhy Bit Switch\n\nLocal-first: device discovery and control happen on your network — no cloud required or used for device control.\nPrivacy-focused: provisioning uses AES encryption; credentials are never sent to external services.\nPractical: works with a wide range of legacy Belkin WeMo hardware still in the wild.\n\nWhat's New\n\nImproved SSDP/UPnP discovery for more reliable on-network detection.\nEnhanced Wi‑Fi provisioning flow with AES-128-CBC encryption of passwords.\nUI improvements: clearer Wi‑Fi setup flow, better error messages, and password visibility toggle.\nBetter state handling for GetBinaryState / SetBinaryState calls.\nDark mode and theme refinements.\n\nCompatibility & Privacy\n\nDevices and phone must be on the same Wi‑Fi network.\nRouter must allow UDP multicast for SSDP discovery.\nWi‑Fi scanning requires location permission; permissions are requested at runtime and used only for scanning and provisioning.\nNo cloud account required; local network control only. See our privacy policy on the support site for details."
+  },
+  "es-ES": {
+    "name": "Bit Switch",
+    "subtitle": "Control local para WeMo",
+    "promotional_text": "Controla WeMo antiguos de forma local: descubre dispositivos, actívalos y configura el Wi‑Fi.",
+    "keywords": [
+      "wifi",
+      "interruptor",
+      "wemo",
+      "control local",
+      "enchufe",
+      "domótica",
+      "red",
+      "privacidad"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ofrece un control local rápido, privado y fiable para dispositivos WeMo antiguos, sin necesidad de la nube. Descubre dispositivos en tu red local, controla interruptores y reguladores, consulta el consumo de los enchufes Insight, recibe el estado de sensores de movimiento y configura el Wi‑Fi de forma segura con credenciales cifradas mediante AES.\n\nCompatibilidad completa: interruptores, reguladores, interruptores de luz, enchufes Insight con medición de energía, sensores de movimiento, enchufes exteriores, dispositivos Maker y puentes.\nDetección robusta: SSDP/UPnP con M‑SEARCH para encontrar dispositivos de forma fiable en la red.\nConfiguración segura: Wi‑Fi integrado con cifrado de contraseñas AES-128-CBC.\nControl fiable: mejor gestión de GetBinaryState / SetBinaryState, con estados y errores claros.\nFacilidad de uso: diálogo de Wi‑Fi simplificado, opción para mostrar la contraseña e indicadores de conexión.\nApariencia: modo oscuro y temas refinados para una interfaz moderna y legible.\n\nPor qué Bit Switch\n\nLocal ante todo: la detección y el control ocurren en tu red; no se usa la nube.\nPrivacidad: las credenciales se cifran con AES y nunca se envían a servicios externos.\nPráctico: compatible con una amplia gama de dispositivos Belkin WeMo antiguos.\n\nNovedades\n\nDetección SSDP/UPnP más fiable.\nConfiguración Wi‑Fi mejorada con cifrado AES-128-CBC.\nFlujo más claro, mejores mensajes de error y opción para mostrar la contraseña.\nMejor gestión de GetBinaryState / SetBinaryState.\nModo oscuro y temas mejorados.\n\nCompatibilidad y privacidad\n\nEl teléfono y los dispositivos deben estar en la misma red Wi‑Fi. El router debe permitir multidifusión UDP para SSDP. El análisis Wi‑Fi requiere permiso de ubicación, solicitado en tiempo de ejecución y usado solo para detectar y configurar. No se necesita una cuenta en la nube; el control es exclusivamente local. Consulta la política de privacidad en el sitio de soporte."
+  },
+  "fr-FR": {
+    "name": "Bit Switch",
+    "subtitle": "Contrôle local pour WeMo",
+    "promotional_text": "Contrôlez vos anciens appareils WeMo en local : détection, commande et configuration Wi‑Fi.",
+    "keywords": [
+      "wifi",
+      "interrupteur",
+      "wemo",
+      "contrôle local",
+      "prise",
+      "domotique",
+      "réseau",
+      "vie privée"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch offre un contrôle local rapide, privé et fiable des anciens appareils WeMo, sans cloud. Détectez les appareils sur votre réseau local, commandez interrupteurs et variateurs, consultez la consommation des prises Insight, recevez l’état des détecteurs de mouvement et configurez le Wi‑Fi en toute sécurité grâce au chiffrement AES des identifiants.\n\nCompatibilité complète : interrupteurs, variateurs, interrupteurs muraux, prises Insight avec suivi énergétique, détecteurs de mouvement, prises extérieures, appareils Maker et ponts.\nDétection robuste : SSDP/UPnP avec M‑SEARCH pour une détection fiable sur le réseau.\nConfiguration sécurisée : assistant Wi‑Fi intégré avec chiffrement AES-128-CBC du mot de passe.\nContrôle fiable : meilleure gestion de GetBinaryState / SetBinaryState, avec états et erreurs clairs.\nSimplicité : dialogue Wi‑Fi épuré, affichage facultatif du mot de passe et indicateurs de connexion.\nApparence : mode sombre et thèmes soignés pour une interface moderne et lisible.\n\nPourquoi Bit Switch\n\nPriorité au local : détection et contrôle s’effectuent sur votre réseau, sans cloud.\nRespect de la vie privée : les identifiants sont chiffrés par AES et ne quittent jamais votre réseau.\nPratique : fonctionne avec de nombreux anciens appareils Belkin WeMo.\n\nNouveautés\n\nDétection SSDP/UPnP plus fiable.\nConfiguration Wi‑Fi améliorée avec chiffrement AES-128-CBC.\nParcours plus clair, meilleurs messages d’erreur et affichage du mot de passe.\nMeilleure gestion de GetBinaryState / SetBinaryState.\nMode sombre et thèmes affinés.\n\nCompatibilité et confidentialité\n\nLe téléphone et les appareils doivent être sur le même réseau Wi‑Fi. Le routeur doit autoriser la multidiffusion UDP pour SSDP. L’analyse Wi‑Fi requiert l’autorisation de localisation, demandée à l’utilisation et réservée à la détection et à la configuration. Aucun compte cloud n’est requis : le contrôle reste local. Consultez notre politique de confidentialité sur le site d’assistance."
+  },
+  "de-DE": {
+    "name": "Bit Switch",
+    "subtitle": "Lokale Steuerung für WeMo",
+    "promotional_text": "Ältere WeMo-Geräte lokal steuern: erkennen, schalten und WLAN sicher einrichten.",
+    "keywords": [
+      "wifi",
+      "schalter",
+      "wemo",
+      "lokal",
+      "steckdose",
+      "smart home",
+      "netzwerk",
+      "datenschutz"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ermöglicht die schnelle, private und zuverlässige lokale Steuerung älterer WeMo-Geräte – ganz ohne Cloud. Finde Geräte im lokalen Netzwerk, steuere Schalter und Dimmer, sieh den Energieverbrauch von Insight-Steckdosen, empfange den Status von Bewegungssensoren und richte WLAN sicher mit AES-verschlüsselten Zugangsdaten ein.\n\nUmfassende Geräteunterstützung: Schalter, Dimmer, Lichtschalter, Insight-Energiesteckdosen, Bewegungssensoren, Außensteckdosen, Maker-Geräte und Bridges.\nRobuste Erkennung: SSDP/UPnP mit M‑SEARCH für zuverlässige Erkennung im Netzwerk.\nSichere Einrichtung: integrierte WLAN-Konfiguration mit AES-128-CBC-Verschlüsselung des Passworts.\nZuverlässige Steuerung: verbesserte Verarbeitung von GetBinaryState / SetBinaryState mit klaren Status- und Fehlermeldungen.\nBedienkomfort: übersichtlicher WLAN-Dialog, Passwortanzeige und Verbindungsanzeigen.\nDarstellung: Dunkelmodus und optimierte Designs für eine moderne, gut lesbare Oberfläche.\n\nWarum Bit Switch?\n\nLokal zuerst: Erkennung und Steuerung erfolgen in deinem Netzwerk, ohne Cloud.\nDatenschutz: Zugangsdaten werden mit AES verschlüsselt und nie an externe Dienste gesendet.\nPraktisch: unterstützt viele ältere Belkin WeMo-Geräte.\n\nNeuigkeiten\n\nZuverlässigere SSDP/UPnP-Erkennung.\nVerbesserte WLAN-Einrichtung mit AES-128-CBC-Verschlüsselung.\nKlarerer Ablauf, bessere Fehlermeldungen und Passwortanzeige.\nVerbesserte GetBinaryState / SetBinaryState-Verarbeitung.\nDunkelmodus und verfeinerte Designs.\n\nKompatibilität und Datenschutz\n\nGeräte und Smartphone müssen sich im selben WLAN befinden. Der Router muss UDP-Multicast für SSDP zulassen. Das WLAN-Scannen erfordert die Standortberechtigung; sie wird zur Laufzeit angefordert und nur zur Erkennung und Einrichtung verwendet. Kein Cloud-Konto erforderlich, nur lokale Netzwerksteuerung. Details stehen in der Datenschutzrichtlinie auf der Support-Website."
+  },
+  "ar-SA": {
+    "name": "Bit Switch",
+    "subtitle": "تحكم محلي لأجهزة WeMo",
+    "promotional_text": "تحكم محليًا بأجهزة WeMo القديمة: اكتشفها وشغّلها وأعد شبكة Wi‑Fi بأمان.",
+    "keywords": [
+      "واي فاي",
+      "مفتاح",
+      "وِيمو",
+      "تحكم محلي",
+      "مقبس",
+      "منزل ذكي",
+      "شبكة",
+      "خصوصية"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "يوفر Bit Switch تحكمًا محليًا سريعًا وخاصًا وموثوقًا بأجهزة WeMo القديمة من دون سحابة. اكتشف الأجهزة على شبكتك المحلية، وتحكم بالمفاتيح ومخففات الإضاءة، واعرض استهلاك مقابس Insight للطاقة، وتلقَّ حالة مستشعرات الحركة، وأعد Wi‑Fi بأمان باستخدام بيانات اعتماد مشفرة بتقنية AES.\n\nدعم شامل: المفاتيح، ومخففات الإضاءة، ومفاتيح الإنارة، ومقابس Insight لقياس الطاقة، ومستشعرات الحركة، والمقابس الخارجية، وأجهزة Maker، والجسور.\nاكتشاف قوي: SSDP/UPnP مع M‑SEARCH لاكتشاف موثوق داخل الشبكة.\nإعداد آمن: إعداد Wi‑Fi مدمج مع تشفير كلمة المرور بتقنية AES-128-CBC.\nتحكم موثوق: معالجة محسنة لـ GetBinaryState / SetBinaryState مع عرض واضح للحالة والأخطاء.\nسهولة الاستخدام: نافذة Wi‑Fi مبسطة، وخيار إظهار كلمة المرور، ومؤشرات للاتصال والمصافحة.\nالمظهر: وضع داكن وسمات محسنة لواجهة حديثة وسهلة القراءة.\n\nلماذا Bit Switch؟\n\nمحلي أولًا: يتم الاكتشاف والتحكم داخل شبكتك من دون استخدام السحابة.\nالخصوصية: تُشفر بيانات الاعتماد بتقنية AES ولا تُرسل إلى خدمات خارجية.\nعملي: يعمل مع مجموعة واسعة من أجهزة Belkin WeMo القديمة.\n\nما الجديد\n\nاكتشاف SSDP/UPnP أكثر موثوقية.\nإعداد Wi‑Fi محسن مع تشفير AES-128-CBC لكلمات المرور.\nخطوات أوضح ورسائل أخطاء أفضل وخيار إظهار كلمة المرور.\nمعالجة أفضل لاستدعاءات GetBinaryState / SetBinaryState.\nتحسينات للوضع الداكن والسمات.\n\nالتوافق والخصوصية\n\nيجب أن يكون الهاتف والأجهزة على شبكة Wi‑Fi نفسها. يجب أن يسمح الموجّه ببث UDP المتعدد لاكتشاف SSDP. يتطلب مسح Wi‑Fi إذن الموقع، ويُطلب وقت التشغيل ويُستخدم فقط للمسح والإعداد. لا حاجة إلى حساب سحابي؛ التحكم محلي فقط. راجع سياسة الخصوصية على موقع الدعم للتفاصيل."
+  },
+  "zh-Hans": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo 设备本地控制",
+    "promotional_text": "在本地控制旧款 WeMo：发现设备、切换状态并安全配置 Wi‑Fi。",
+    "keywords": [
+      "无线网络",
+      "开关",
+      "wemo",
+      "本地控制",
+      "插座",
+      "智能家居",
+      "网络",
+      "隐私"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch 可快速、私密且可靠地在本地控制旧款 WeMo 设备，无需云服务。发现本地网络中的设备，控制开关和调光器，查看 Insight 插座的能耗，获取运动传感器状态，并使用 AES 加密凭据安全配置 Wi‑Fi。\n\n全面的设备支持：开关、调光器、墙壁开关、Insight 能耗插座、运动传感器、户外插座、Maker 设备和网桥。\n可靠发现：通过带 M‑SEARCH 的 SSDP/UPnP，在网络内可靠发现设备。\n安全配置：内置 Wi‑Fi 设置，采用 AES-128-CBC 密码加密。\n可靠控制：改进 GetBinaryState / SetBinaryState 处理，清晰显示状态和错误。\n易于使用：精简的 Wi‑Fi 设置对话框、密码显示开关以及连接和握手状态指示器。\n外观：支持深色模式和优化主题，界面现代且易读。\n\n为什么选择 Bit Switch\n\n本地优先：设备发现和控制均在你的网络中进行，不使用云服务。\n注重隐私：凭据经 AES 加密，绝不会发送到外部服务。\n实用兼容：支持多种仍在使用的旧款 Belkin WeMo 硬件。\n\n新增功能\n\n改进 SSDP/UPnP 发现，提高网络内检测可靠性。\n增强 Wi‑Fi 配置流程，使用 AES-128-CBC 加密密码。\n更清晰的流程、更好的错误消息和密码显示开关。\n改进 GetBinaryState / SetBinaryState 状态处理。\n优化深色模式和主题。\n\n兼容性与隐私\n\n设备和手机必须连接同一 Wi‑Fi 网络。路由器必须允许用于 SSDP 发现的 UDP 多播。Wi‑Fi 扫描需要位置权限；权限在运行时请求，且仅用于扫描和配置。无需云账户，仅在本地网络中控制。详情请参阅支持网站上的隐私政策。"
+  },
+  "hi": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo का लोकल नियंत्रण",
+    "promotional_text": "पुराने WeMo को लोकल रूप से नियंत्रित करें: डिवाइस खोजें, चालू-बंद करें और Wi‑Fi सुरक्षित ढंग से सेट करें।",
+    "keywords": [
+      "वाईफाई",
+      "स्विच",
+      "wemo",
+      "लोकल नियंत्रण",
+      "प्लग",
+      "स्मार्ट होम",
+      "नेटवर्क",
+      "गोपनीयता"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch पुराने WeMo डिवाइसों का तेज़, निजी और भरोसेमंद लोकल नियंत्रण देता है—क्लाउड की ज़रूरत नहीं। अपने लोकल नेटवर्क पर डिवाइस खोजें, स्विच और डिमर नियंत्रित करें, Insight प्लग की ऊर्जा खपत देखें, मोशन सेंसर की स्थिति पाएँ और AES-एन्क्रिप्टेड क्रेडेंशियल से Wi‑Fi सुरक्षित ढंग से सेट करें।\n\nपूरा डिवाइस समर्थन: स्विच, डिमर, लाइट स्विच, Insight ऊर्जा प्लग, मोशन सेंसर, आउटडोर प्लग, Maker डिवाइस और ब्रिज।\nमज़बूत खोज: नेटवर्क पर भरोसेमंद पहचान के लिए M‑SEARCH सहित SSDP/UPnP।\nसुरक्षित सेटअप: AES-128-CBC पासवर्ड एन्क्रिप्शन के साथ बिल्ट-इन Wi‑Fi सेटअप।\nभरोसेमंद नियंत्रण: स्पष्ट स्थिति और त्रुटि रिपोर्टिंग सहित बेहतर GetBinaryState / SetBinaryState प्रबंधन।\nआसान उपयोग: सरल Wi‑Fi संवाद, पासवर्ड दिखाने का विकल्प और कनेक्शन संकेतक।\nरूप-रंग: आधुनिक, साफ़ इंटरफ़ेस के लिए डार्क मोड और बेहतर थीम।\n\nBit Switch क्यों\n\nलोकल-फर्स्ट: खोज और नियंत्रण आपके नेटवर्क पर होते हैं; क्लाउड का उपयोग नहीं होता।\nगोपनीयता-केंद्रित: क्रेडेंशियल AES से एन्क्रिप्ट होते हैं और बाहरी सेवाओं को नहीं भेजे जाते।\nव्यावहारिक: पुराने Belkin WeMo हार्डवेयर की विस्तृत श्रृंखला के साथ काम करता है।\n\nनया क्या है\n\nअधिक भरोसेमंद SSDP/UPnP खोज।\nAES-128-CBC पासवर्ड एन्क्रिप्शन के साथ बेहतर Wi‑Fi सेटअप।\nस्पष्ट प्रक्रिया, बेहतर त्रुटि संदेश और पासवर्ड दिखाने का विकल्प।\nबेहतर GetBinaryState / SetBinaryState प्रबंधन।\nडार्क मोड और थीम में सुधार।\n\nसंगतता और गोपनीयता\n\nडिवाइस और फ़ोन एक ही Wi‑Fi नेटवर्क पर होने चाहिए। राउटर को SSDP खोज के लिए UDP मल्टीकास्ट की अनुमति देनी चाहिए। Wi‑Fi स्कैन के लिए स्थान अनुमति चाहिए; यह रनटाइम पर माँगी जाती है और केवल स्कैन तथा सेटअप में उपयोग होती है। क्लाउड खाता आवश्यक नहीं; नियंत्रण केवल लोकल नेटवर्क पर होता है। विवरण के लिए सहायता साइट पर गोपनीयता नीति देखें।"
+  },
+  "ur-PK": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo کا مقامی کنٹرول",
+    "promotional_text": "پرانے WeMo کو مقامی طور پر کنٹرول کریں: ڈیوائس تلاش، آن یا آف اور محفوظ Wi‑Fi سیٹ اپ۔",
+    "keywords": [
+      "وائی فائی",
+      "سوئچ",
+      "wemo",
+      "مقامی کنٹرول",
+      "پلگ",
+      "سمارٹ ہوم",
+      "نیٹ ورک",
+      "رازداری"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch پرانے WeMo ڈیوائسز کا تیز، نجی اور قابل اعتماد مقامی کنٹرول فراہم کرتا ہے، کسی کلاؤڈ کی ضرورت نہیں۔ مقامی نیٹ ورک پر ڈیوائسز تلاش کریں، سوئچ اور ڈمر کنٹرول کریں، Insight پلگ کی توانائی کا استعمال دیکھیں، موشن سینسر کی حالت پائیں، اور AES سے خفیہ کردہ اسناد کے ذریعے Wi‑Fi محفوظ انداز میں سیٹ کریں۔\n\nمکمل ڈیوائس سپورٹ: سوئچ، ڈمر، لائٹ سوئچ، Insight انرجی پلگ، موشن سینسر، آؤٹ ڈور پلگ، Maker ڈیوائسز اور برجز۔\nمضبوط تلاش: نیٹ ورک پر قابل اعتماد شناخت کے لیے M‑SEARCH کے ساتھ SSDP/UPnP۔\nمحفوظ سیٹ اپ: AES-128-CBC پاس ورڈ خفیہ کاری کے ساتھ بلٹ اِن Wi‑Fi سیٹ اپ۔\nقابل اعتماد کنٹرول: واضح حالت اور خرابی کی رپورٹنگ کے ساتھ بہتر GetBinaryState / SetBinaryState ہینڈلنگ۔\nآسان استعمال: سادہ Wi‑Fi ڈائیلاگ، پاس ورڈ دکھانے کا اختیار اور کنکشن اشارے۔\nظاہری شکل: جدید اور واضح انٹرفیس کے لیے ڈارک موڈ اور بہتر تھیمز۔\n\nBit Switch کیوں؟\n\nمقامی ترجیح: تلاش اور کنٹرول آپ کے نیٹ ورک پر ہوتے ہیں، کلاؤڈ استعمال نہیں ہوتا۔\nرازداری: اسناد AES سے خفیہ ہوتی ہیں اور بیرونی سروسز کو نہیں بھیجی جاتیں۔\nعملی: پرانے Belkin WeMo ہارڈویئر کی وسیع رینج کے ساتھ کام کرتا ہے۔\n\nنیا کیا ہے\n\nزیادہ قابل اعتماد SSDP/UPnP تلاش۔\nAES-128-CBC پاس ورڈ خفیہ کاری کے ساتھ بہتر Wi‑Fi سیٹ اپ۔\nواضح مراحل، بہتر خرابی کے پیغامات اور پاس ورڈ دکھانے کا اختیار۔\nبہتر GetBinaryState / SetBinaryState ہینڈلنگ۔\nڈارک موڈ اور تھیم میں بہتری۔\n\nمطابقت اور رازداری\n\nڈیوائسز اور فون ایک ہی Wi‑Fi نیٹ ورک پر ہونے چاہئیں۔ راؤٹر کو SSDP تلاش کے لیے UDP ملٹی کاسٹ کی اجازت دینی چاہیے۔ Wi‑Fi اسکین کے لیے مقام کی اجازت درکار ہے؛ یہ استعمال کے وقت مانگی جاتی ہے اور صرف تلاش اور سیٹ اپ کے لیے استعمال ہوتی ہے۔ کلاؤڈ اکاؤنٹ درکار نہیں؛ کنٹرول صرف مقامی نیٹ ورک پر ہے۔ تفصیل کے لیے سپورٹ سائٹ پر رازداری کی پالیسی دیکھیں۔"
+  },
+  "ja": {
+    "name": "Bit Switch",
+    "subtitle": "WeMoをローカル操作",
+    "promotional_text": "旧型WeMoをローカルで操作。デバイスの検出、オン・オフ、Wi‑Fi設定を安全に行えます。",
+    "keywords": [
+      "WiFi",
+      "スイッチ",
+      "WeMo",
+      "ローカル操作",
+      "プラグ",
+      "スマートホーム",
+      "ネットワーク",
+      "プライバシー"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switchは、旧型WeMoデバイスをクラウドなしで高速、安全、確実にローカル操作できるアプリです。ローカルネットワーク上のデバイスを検出し、スイッチや調光器を操作。Insightプラグの消費電力やモーションセンサーの状態を確認し、AESで暗号化した認証情報を使ってWi‑Fiを安全に設定できます。\n\n幅広い対応機器：スイッチ、調光器、照明スイッチ、Insight電力計測プラグ、モーションセンサー、屋外プラグ、Makerデバイス、ブリッジ。\n確実な検出：M‑SEARCH対応のSSDP/UPnPにより、ネットワーク内の機器を確実に検出します。\n安全な設定：AES-128-CBCによるパスワード暗号化を備えたWi‑Fi設定。\n安定した操作：GetBinaryState / SetBinaryStateの処理を改善し、状態とエラーを明確に表示します。\n使いやすさ：簡潔なWi‑Fi設定画面、パスワード表示切替、接続状態の表示。\n外観：ダークモードと洗練されたテーマによる、モダンで読みやすい画面。\n\nBit Switchを選ぶ理由\n\nローカル優先：検出と操作はネットワーク内で完結し、クラウドを使用しません。\nプライバシー重視：認証情報はAESで暗号化され、外部サービスへ送信されません。\n実用的：現在も利用されている幅広い旧型Belkin WeMo機器に対応します。\n\n新機能\n\nSSDP/UPnP検出の信頼性を向上。\nAES-128-CBC暗号化によるWi‑Fi設定を改善。\nより明確な手順、エラー表示、パスワード表示切替。\nGetBinaryState / SetBinaryStateの状態処理を改善。\nダークモードとテーマを改良。\n\n互換性とプライバシー\n\nデバイスとスマートフォンは同じWi‑Fiネットワークに接続してください。SSDP検出には、ルーターでUDPマルチキャストを許可する必要があります。Wi‑Fiスキャンには位置情報の許可が必要です。許可は実行時に求められ、検出と設定だけに使用されます。クラウドアカウントは不要で、操作はローカルネットワーク内で完結します。詳細はサポートサイトのプライバシーポリシーをご覧ください。"
+  },
+  "ru": {
+    "name": "Bit Switch",
+    "subtitle": "Локальное управление WeMo",
+    "promotional_text": "Управляйте старыми WeMo локально: находите устройства, переключайте их и безопасно настраивайте Wi‑Fi.",
+    "keywords": [
+      "вайфай",
+      "выключатель",
+      "wemo",
+      "локально",
+      "розетка",
+      "умный дом",
+      "сеть",
+      "приватность"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch обеспечивает быстрое, конфиденциальное и надёжное локальное управление старыми устройствами WeMo без облака. Находите устройства в локальной сети, управляйте выключателями и диммерами, смотрите энергопотребление розеток Insight, получайте состояние датчиков движения и безопасно настраивайте Wi‑Fi с учётными данными, зашифрованными с помощью AES.\n\nПолная поддержка устройств: выключатели, диммеры, настенные выключатели, энергорозетки Insight, датчики движения, уличные розетки, устройства Maker и мосты.\nНадёжное обнаружение: SSDP/UPnP с M‑SEARCH для поиска устройств в сети.\nБезопасная настройка: встроенная настройка Wi‑Fi с шифрованием пароля AES-128-CBC.\nНадёжное управление: улучшенная обработка GetBinaryState / SetBinaryState с понятными состояниями и ошибками.\nУдобство: простой диалог настройки Wi‑Fi, показ пароля и индикаторы подключения.\nВнешний вид: тёмный режим и улучшенные темы для современного, удобного интерфейса.\n\nПочему Bit Switch\n\nЛокальный подход: обнаружение и управление выполняются в вашей сети без облака.\nКонфиденциальность: данные шифруются с помощью AES и не отправляются внешним сервисам.\nПрактичность: работает со многими старыми устройствами Belkin WeMo.\n\nЧто нового\n\nБолее надёжное обнаружение SSDP/UPnP.\nУлучшенная настройка Wi‑Fi с шифрованием паролей AES-128-CBC.\nБолее понятный процесс, улучшенные ошибки и показ пароля.\nУлучшенная обработка GetBinaryState / SetBinaryState.\nДоработанные тёмный режим и темы.\n\nСовместимость и конфиденциальность\n\nТелефон и устройства должны быть в одной сети Wi‑Fi. Роутер должен разрешать UDP-мультикаст для обнаружения SSDP. Для сканирования Wi‑Fi требуется разрешение на геолокацию; оно запрашивается во время работы и используется только для поиска и настройки. Облачная учётная запись не нужна — управление выполняется только в локальной сети. Подробнее см. политику конфиденциальности на сайте поддержки."
+  },
+  "ko": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo 로컬 제어",
+    "promotional_text": "구형 WeMo를 로컬에서 제어하세요. 기기를 검색하고 켜거나 끄며 Wi‑Fi를 안전하게 설정할 수 있습니다.",
+    "keywords": [
+      "와이파이",
+      "스위치",
+      "wemo",
+      "로컬 제어",
+      "플러그",
+      "스마트홈",
+      "네트워크",
+      "개인정보"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch는 클라우드 없이 구형 WeMo 기기를 빠르고 비공개로 안정적으로 제어합니다. 로컬 네트워크에서 기기를 검색하고 스위치와 조광기를 제어하며 Insight 플러그의 에너지 사용량과 동작 센서 상태를 확인할 수 있습니다. AES로 암호화된 자격 증명을 사용해 Wi‑Fi도 안전하게 설정합니다.\n\n폭넓은 기기 지원: 스위치, 조광기, 조명 스위치, Insight 에너지 플러그, 동작 센서, 실외 플러그, Maker 기기 및 브리지.\n강력한 검색: M‑SEARCH를 지원하는 SSDP/UPnP로 네트워크 내 기기를 안정적으로 찾습니다.\n안전한 설정: AES-128-CBC 비밀번호 암호화가 적용된 내장 Wi‑Fi 설정.\n안정적인 제어: GetBinaryState / SetBinaryState 처리를 개선해 상태와 오류를 명확히 표시합니다.\n편리한 사용: 간결한 Wi‑Fi 설정, 비밀번호 표시 전환, 연결 및 핸드셰이크 상태 표시.\n디자인: 다크 모드와 개선된 테마로 현대적이고 읽기 쉬운 화면을 제공합니다.\n\nBit Switch를 선택하는 이유\n\n로컬 우선: 검색과 제어가 네트워크 안에서 이루어지며 클라우드를 사용하지 않습니다.\n개인정보 보호: 자격 증명은 AES로 암호화되며 외부 서비스로 전송되지 않습니다.\n실용성: 지금도 사용되는 다양한 구형 Belkin WeMo 하드웨어를 지원합니다.\n\n새로운 기능\n\n더 안정적인 SSDP/UPnP 검색.\nAES-128-CBC 비밀번호 암호화를 적용한 Wi‑Fi 설정 개선.\n더 명확한 흐름, 개선된 오류 메시지, 비밀번호 표시 전환.\nGetBinaryState / SetBinaryState 상태 처리 개선.\n다크 모드와 테마 개선.\n\n호환성 및 개인정보 보호\n\n기기와 휴대폰은 같은 Wi‑Fi 네트워크에 있어야 합니다. 라우터가 SSDP 검색용 UDP 멀티캐스트를 허용해야 합니다. Wi‑Fi 검색에는 위치 권한이 필요하며, 실행 중 요청되어 검색과 설정에만 사용됩니다. 클라우드 계정은 필요하지 않고 로컬 네트워크에서만 제어합니다. 자세한 내용은 지원 사이트의 개인정보 처리방침을 참조하세요."
+  },
+  "zh-Hant": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo 裝置本機控制",
+    "promotional_text": "在本機控制舊款 WeMo：搜尋裝置、切換狀態並安全設定 Wi‑Fi。",
+    "keywords": [
+      "無線網路",
+      "開關",
+      "wemo",
+      "本機控制",
+      "插座",
+      "智慧家庭",
+      "網路",
+      "隱私"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch 可快速、私密且可靠地在本機控制舊款 WeMo 裝置，無需雲端服務。搜尋區域網路中的裝置，控制開關和調光器，查看 Insight 插座的耗電量，取得動作感測器狀態，並使用 AES 加密的憑證安全設定 Wi‑Fi。\n\n完整裝置支援：開關、調光器、牆壁開關、Insight 電力監測插座、動作感測器、戶外插座、Maker 裝置和橋接器。\n可靠搜尋：透過支援 M‑SEARCH 的 SSDP/UPnP，在網路內可靠地找到裝置。\n安全設定：內建 Wi‑Fi 設定，採用 AES-128-CBC 密碼加密。\n可靠控制：改進 GetBinaryState / SetBinaryState 處理，清楚顯示狀態和錯誤。\n易於使用：精簡的 Wi‑Fi 設定對話框、密碼顯示切換，以及連線和交握狀態指示器。\n外觀：支援深色模式與最佳化主題，介面現代且易讀。\n\n為何選擇 Bit Switch\n\n本機優先：裝置搜尋和控制都在你的網路中完成，不使用雲端服務。\n重視隱私：憑證以 AES 加密，絕不傳送至外部服務。\n實用相容：支援多種仍在使用的舊款 Belkin WeMo 硬體。\n\n最新功能\n\n改進 SSDP/UPnP 搜尋，提高網路內偵測可靠性。\n強化 Wi‑Fi 設定流程，使用 AES-128-CBC 加密密碼。\n更清楚的流程、更好的錯誤訊息和密碼顯示切換。\n改進 GetBinaryState / SetBinaryState 狀態處理。\n最佳化深色模式和主題。\n\n相容性與隱私\n\n裝置和手機必須連接相同的 Wi‑Fi 網路。路由器必須允許 SSDP 搜尋所需的 UDP 多點傳送。Wi‑Fi 掃描需要定位權限；權限會在執行時要求，且只用於搜尋和設定。無需雲端帳號，控制只在區域網路內進行。詳情請參閱支援網站上的隱私權政策。"
+  },
+  "pa": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo ਦਾ ਲੋਕਲ ਕੰਟਰੋਲ",
+    "promotional_text": "ਪੁਰਾਣੇ WeMo ਨੂੰ ਲੋਕਲ ਤੌਰ ’ਤੇ ਕੰਟਰੋਲ ਕਰੋ: ਡਿਵਾਈਸ ਲੱਭੋ, ਚਾਲੂ-ਬੰਦ ਕਰੋ ਅਤੇ Wi‑Fi ਸੁਰੱਖਿਅਤ ਢੰਗ ਨਾਲ ਸੈੱਟ ਕਰੋ।",
+    "keywords": [
+      "ਵਾਈਫਾਈ",
+      "ਸਵਿੱਚ",
+      "wemo",
+      "ਲੋਕਲ ਕੰਟਰੋਲ",
+      "ਪਲੱਗ",
+      "ਸਮਾਰਟ ਘਰ",
+      "ਨੈੱਟਵਰਕ",
+      "ਪਰਦੇਦਾਰੀ"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ਪੁਰਾਣੇ WeMo ਡਿਵਾਈਸਾਂ ਦਾ ਤੇਜ਼, ਨਿੱਜੀ ਅਤੇ ਭਰੋਸੇਯੋਗ ਲੋਕਲ ਕੰਟਰੋਲ ਦਿੰਦਾ ਹੈ—ਕਲਾਉਡ ਦੀ ਲੋੜ ਨਹੀਂ। ਲੋਕਲ ਨੈੱਟਵਰਕ ਉੱਤੇ ਡਿਵਾਈਸ ਲੱਭੋ, ਸਵਿੱਚ ਅਤੇ ਡਿਮਰ ਕੰਟਰੋਲ ਕਰੋ, Insight ਪਲੱਗਾਂ ਦੀ ਊਰਜਾ ਵਰਤੋਂ ਦੇਖੋ, ਮੋਸ਼ਨ ਸੈਂਸਰ ਦੀ ਸਥਿਤੀ ਲਵੋ ਅਤੇ AES-ਇਨਕ੍ਰਿਪਟ ਕੀਤੇ ਪ੍ਰਮਾਣ ਪੱਤਰਾਂ ਨਾਲ Wi‑Fi ਸੁਰੱਖਿਅਤ ਢੰਗ ਨਾਲ ਸੈੱਟ ਕਰੋ।\n\nਪੂਰਾ ਡਿਵਾਈਸ ਸਮਰਥਨ: ਸਵਿੱਚ, ਡਿਮਰ, ਲਾਈਟ ਸਵਿੱਚ, Insight ਊਰਜਾ ਪਲੱਗ, ਮੋਸ਼ਨ ਸੈਂਸਰ, ਆਊਟਡੋਰ ਪਲੱਗ, Maker ਡਿਵਾਈਸ ਅਤੇ ਬ੍ਰਿਜ।\nਮਜ਼ਬੂਤ ਖੋਜ: ਨੈੱਟਵਰਕ ਉੱਤੇ ਭਰੋਸੇਯੋਗ ਪਛਾਣ ਲਈ M‑SEARCH ਸਮੇਤ SSDP/UPnP।\nਸੁਰੱਖਿਅਤ ਸੈੱਟਅੱਪ: AES-128-CBC ਪਾਸਵਰਡ ਇਨਕ੍ਰਿਪਸ਼ਨ ਨਾਲ ਬਿਲਟ-ਇਨ Wi‑Fi ਸੈੱਟਅੱਪ।\nਭਰੋਸੇਯੋਗ ਕੰਟਰੋਲ: ਸਪਸ਼ਟ ਸਥਿਤੀ ਅਤੇ ਗਲਤੀ ਰਿਪੋਰਟਿੰਗ ਨਾਲ ਬਿਹਤਰ GetBinaryState / SetBinaryState ਪ੍ਰਬੰਧਨ।\nਸੌਖੀ ਵਰਤੋਂ: ਸਰਲ Wi‑Fi ਡਾਇਲਾਗ, ਪਾਸਵਰਡ ਦਿਖਾਉਣ ਦਾ ਵਿਕਲਪ ਅਤੇ ਕਨੈਕਸ਼ਨ ਸੰਕੇਤਕ।\nਦਿੱਖ: ਆਧੁਨਿਕ, ਸਾਫ਼ ਇੰਟਰਫੇਸ ਲਈ ਡਾਰਕ ਮੋਡ ਅਤੇ ਬਿਹਤਰ ਥੀਮ।\n\nBit Switch ਕਿਉਂ\n\nਲੋਕਲ ਪਹਿਲਾਂ: ਖੋਜ ਅਤੇ ਕੰਟਰੋਲ ਤੁਹਾਡੇ ਨੈੱਟਵਰਕ ਉੱਤੇ ਹੁੰਦੇ ਹਨ; ਕਲਾਉਡ ਨਹੀਂ ਵਰਤਿਆ ਜਾਂਦਾ।\nਪਰਦੇਦਾਰੀ: ਪ੍ਰਮਾਣ ਪੱਤਰ AES ਨਾਲ ਇਨਕ੍ਰਿਪਟ ਹੁੰਦੇ ਹਨ ਅਤੇ ਬਾਹਰੀ ਸੇਵਾਵਾਂ ਨੂੰ ਨਹੀਂ ਭੇਜੇ ਜਾਂਦੇ।\nਵਿਹਾਰਕ: ਕਈ ਪੁਰਾਣੇ Belkin WeMo ਡਿਵਾਈਸਾਂ ਨਾਲ ਕੰਮ ਕਰਦਾ ਹੈ।\n\nਨਵਾਂ ਕੀ ਹੈ\n\nਵਧੇਰੇ ਭਰੋਸੇਯੋਗ SSDP/UPnP ਖੋਜ।\nAES-128-CBC ਪਾਸਵਰਡ ਇਨਕ੍ਰਿਪਸ਼ਨ ਨਾਲ ਬਿਹਤਰ Wi‑Fi ਸੈੱਟਅੱਪ।\nਸਪਸ਼ਟ ਪ੍ਰਕਿਰਿਆ, ਬਿਹਤਰ ਗਲਤੀ ਸੁਨੇਹੇ ਅਤੇ ਪਾਸਵਰਡ ਦਿਖਾਉਣ ਦਾ ਵਿਕਲਪ।\nਬਿਹਤਰ GetBinaryState / SetBinaryState ਪ੍ਰਬੰਧਨ।\nਡਾਰਕ ਮੋਡ ਅਤੇ ਥੀਮ ਸੁਧਾਰ।\n\nਅਨੁਕੂਲਤਾ ਅਤੇ ਪਰਦੇਦਾਰੀ\n\nਡਿਵਾਈਸ ਅਤੇ ਫ਼ੋਨ ਇੱਕੋ Wi‑Fi ਨੈੱਟਵਰਕ ਉੱਤੇ ਹੋਣੇ ਚਾਹੀਦੇ ਹਨ। ਰਾਊਟਰ ਨੂੰ SSDP ਖੋਜ ਲਈ UDP ਮਲਟੀਕਾਸਟ ਦੀ ਆਗਿਆ ਦੇਣੀ ਚਾਹੀਦੀ ਹੈ। Wi‑Fi ਸਕੈਨ ਲਈ ਟਿਕਾਣਾ ਅਨੁਮਤੀ ਚਾਹੀਦੀ ਹੈ; ਇਹ ਚੱਲਦੇ ਸਮੇਂ ਮੰਗੀ ਜਾਂਦੀ ਹੈ ਅਤੇ ਸਿਰਫ਼ ਖੋਜ ਅਤੇ ਸੈੱਟਅੱਪ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਹੈ। ਕਲਾਉਡ ਖਾਤੇ ਦੀ ਲੋੜ ਨਹੀਂ; ਕੰਟਰੋਲ ਸਿਰਫ਼ ਲੋਕਲ ਨੈੱਟਵਰਕ ਉੱਤੇ ਹੁੰਦਾ ਹੈ। ਵੇਰਵਿਆਂ ਲਈ ਸਹਾਇਤਾ ਸਾਈਟ ਉੱਤੇ ਪਰਦੇਦਾਰੀ ਨੀਤੀ ਦੇਖੋ।"
+  },
+  "ta": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo உள்ளகக் கட்டுப்பாடு",
+    "promotional_text": "பழைய WeMo சாதனங்களை உள்ளகமாகக் கட்டுப்படுத்துங்கள்: கண்டறிந்து, இயக்கி, Wi‑Fiஐப் பாதுகாப்பாக அமைக்கலாம்.",
+    "keywords": [
+      "வைஃபை",
+      "சுவிட்ச்",
+      "wemo",
+      "உள்ளகக் கட்டுப்பாடு",
+      "பிளக்",
+      "ஸ்மார்ட் வீடு",
+      "நெட்வொர்க்",
+      "தனியுரிமை"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch பழைய WeMo சாதனங்களுக்கு வேகமான, தனிப்பட்ட, நம்பகமான உள்ளகக் கட்டுப்பாட்டை வழங்குகிறது; கிளவுட் தேவையில்லை. உள்ளக நெட்வொர்க்கில் சாதனங்களைக் கண்டறிந்து, சுவிட்ச் மற்றும் டிம்மர்களைக் கட்டுப்படுத்துங்கள். Insight பிளக்குகளின் மின் பயன்பாட்டையும் இயக்க உணரிகளின் நிலையையும் பார்த்து, AES மறையாக்கப்பட்ட சான்றுகளைக் கொண்டு Wi‑Fiஐப் பாதுகாப்பாக அமைக்கலாம்.\n\nமுழுமையான சாதன ஆதரவு: சுவிட்ச், டிம்மர், லைட் சுவிட்ச், Insight மின் பிளக், இயக்க உணரி, வெளிப்புற பிளக், Maker சாதனம் மற்றும் பிரிட்ஜ்.\nஉறுதியான கண்டறிதல்: நெட்வொர்க்கில் நம்பகமான கண்டறிதலுக்கு M‑SEARCH உடன் SSDP/UPnP.\nபாதுகாப்பான அமைப்பு: AES-128-CBC கடவுச்சொல் மறையாக்கத்துடன் உள்ளமைந்த Wi‑Fi அமைப்பு.\nநம்பகமான கட்டுப்பாடு: தெளிவான நிலை மற்றும் பிழை அறிக்கையுடன் மேம்பட்ட GetBinaryState / SetBinaryState கையாளுதல்.\nஎளிய பயன்பாடு: சீரான Wi‑Fi அமைப்பு, கடவுச்சொல் காட்சி மாற்றி மற்றும் இணைப்புக் குறிகாட்டிகள்.\nதோற்றம்: நவீன, தெளிவான இடைமுகத்துக்கு இருண்ட பயன்முறையும் மேம்பட்ட தீம்களும்.\n\nBit Switch ஏன்\n\nஉள்ளகம் முதலில்: கண்டறிதலும் கட்டுப்பாடும் உங்கள் நெட்வொர்க்கிலேயே நடக்கும்; கிளவுட் பயன்படுத்தப்படாது.\nதனியுரிமை: சான்றுகள் AES மூலம் மறையாக்கப்பட்டு வெளிச் சேவைகளுக்கு அனுப்பப்படாது.\nநடைமுறை: பல பழைய Belkin WeMo சாதனங்களுடன் இயங்கும்.\n\nபுதியவை\n\nஅதிக நம்பகமான SSDP/UPnP கண்டறிதல்.\nAES-128-CBC கடவுச்சொல் மறையாக்கத்துடன் மேம்பட்ட Wi‑Fi அமைப்பு.\nதெளிவான படிகள், சிறந்த பிழைச் செய்திகள் மற்றும் கடவுச்சொல் காட்சி மாற்றி.\nமேம்பட்ட GetBinaryState / SetBinaryState கையாளுதல்.\nஇருண்ட பயன்முறை மற்றும் தீம் மேம்பாடுகள்.\n\nஇணக்கத்தன்மை மற்றும் தனியுரிமை\n\nசாதனங்களும் தொலைபேசியும் ஒரே Wi‑Fi நெட்வொர்க்கில் இருக்க வேண்டும். SSDP கண்டறிதலுக்கு UDP மல்டிகாஸ்டை ரூட்டர் அனுமதிக்க வேண்டும். Wi‑Fi ஸ்கேனுக்கு இருப்பிட அனுமதி தேவை; இயக்க நேரத்தில் கேட்கப்பட்டு கண்டறிதல் மற்றும் அமைப்புக்கு மட்டுமே பயன்படுத்தப்படும். கிளவுட் கணக்கு தேவையில்லை; கட்டுப்பாடு உள்ளக நெட்வொர்க்கில் மட்டுமே நடக்கும். விவரங்களுக்கு ஆதரவுத் தளத்தின் தனியுரிமைக் கொள்கையைப் பார்க்கவும்."
+  },
+  "bn": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo-এর লোকাল নিয়ন্ত্রণ",
+    "promotional_text": "পুরোনো WeMo লোকালি নিয়ন্ত্রণ করুন: ডিভাইস খুঁজুন, চালু-বন্ধ করুন এবং নিরাপদে Wi‑Fi সেট করুন।",
+    "keywords": [
+      "ওয়াইফাই",
+      "সুইচ",
+      "wemo",
+      "লোকাল নিয়ন্ত্রণ",
+      "প্লাগ",
+      "স্মার্ট হোম",
+      "নেটওয়ার্ক",
+      "গোপনীয়তা"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch পুরোনো WeMo ডিভাইসের দ্রুত, ব্যক্তিগত ও নির্ভরযোগ্য লোকাল নিয়ন্ত্রণ দেয়—ক্লাউডের প্রয়োজন নেই। লোকাল নেটওয়ার্কে ডিভাইস খুঁজুন, সুইচ ও ডিমার নিয়ন্ত্রণ করুন, Insight প্লাগের বিদ্যুৎ ব্যবহার এবং মোশন সেন্সরের অবস্থা দেখুন, আর AES-এনক্রিপ্ট করা শংসাপত্র দিয়ে নিরাপদে Wi‑Fi সেট করুন।\n\nসম্পূর্ণ ডিভাইস সমর্থন: সুইচ, ডিমার, লাইট সুইচ, Insight এনার্জি প্লাগ, মোশন সেন্সর, আউটডোর প্লাগ, Maker ডিভাইস ও ব্রিজ।\nনির্ভরযোগ্য অনুসন্ধান: নেটওয়ার্কে নির্ভরযোগ্য শনাক্তকরণের জন্য M‑SEARCH সহ SSDP/UPnP।\nনিরাপদ সেটআপ: AES-128-CBC পাসওয়ার্ড এনক্রিপশনসহ বিল্ট-ইন Wi‑Fi সেটআপ।\nনির্ভরযোগ্য নিয়ন্ত্রণ: স্পষ্ট অবস্থা ও ত্রুটি প্রতিবেদনের সঙ্গে উন্নত GetBinaryState / SetBinaryState ব্যবস্থাপনা।\nসহজ ব্যবহার: সরল Wi‑Fi ডায়ালগ, পাসওয়ার্ড দেখানোর বিকল্প এবং সংযোগ নির্দেশক।\nচেহারা: আধুনিক, পাঠযোগ্য ইন্টারফেসের জন্য ডার্ক মোড ও উন্নত থিম।\n\nকেন Bit Switch\n\nলোকাল-ফার্স্ট: অনুসন্ধান ও নিয়ন্ত্রণ আপনার নেটওয়ার্কে হয়; ক্লাউড ব্যবহার করা হয় না।\nগোপনীয়তা: শংসাপত্র AES দিয়ে এনক্রিপ্ট করা হয় এবং বাইরের সেবায় পাঠানো হয় না।\nব্যবহারিক: পুরোনো Belkin WeMo হার্ডওয়্যারের বিস্তৃত পরিসরে কাজ করে।\n\nনতুন কী\n\nআরও নির্ভরযোগ্য SSDP/UPnP অনুসন্ধান।\nAES-128-CBC পাসওয়ার্ড এনক্রিপশনসহ উন্নত Wi‑Fi সেটআপ।\nস্পষ্ট ধাপ, উন্নত ত্রুটি বার্তা ও পাসওয়ার্ড দেখানোর বিকল্প।\nউন্নত GetBinaryState / SetBinaryState ব্যবস্থাপনা।\nডার্ক মোড ও থিমের উন্নতি।\n\nসামঞ্জস্য ও গোপনীয়তা\n\nডিভাইস ও ফোনকে একই Wi‑Fi নেটওয়ার্কে থাকতে হবে। SSDP অনুসন্ধানের জন্য রাউটারকে UDP মাল্টিকাস্টের অনুমতি দিতে হবে। Wi‑Fi স্ক্যানের জন্য অবস্থানের অনুমতি লাগে; এটি চলার সময় চাওয়া হয় এবং শুধু অনুসন্ধান ও সেটআপে ব্যবহৃত হয়। ক্লাউড অ্যাকাউন্ট লাগে না; নিয়ন্ত্রণ শুধু লোকাল নেটওয়ার্কে হয়। বিস্তারিত জানতে সহায়তা সাইটের গোপনীয়তা নীতি দেখুন।"
+  },
+  "pt-PT": {
+    "name": "Bit Switch",
+    "subtitle": "Controlo local para WeMo",
+    "promotional_text": "Controle dispositivos WeMo antigos localmente: encontre-os, ligue-os e configure o Wi‑Fi em segurança.",
+    "keywords": [
+      "wifi",
+      "interruptor",
+      "wemo",
+      "controlo local",
+      "tomada",
+      "casa inteligente",
+      "rede",
+      "privacidade"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "O Bit Switch oferece controlo local rápido, privado e fiável para dispositivos WeMo antigos, sem necessitar da nuvem. Encontre dispositivos na rede local, controle interruptores e reguladores, consulte o consumo energético das tomadas Insight, receba o estado dos sensores de movimento e configure o Wi‑Fi em segurança com credenciais encriptadas por AES.\n\nCompatibilidade completa: interruptores, reguladores, interruptores de luz, tomadas Insight com medição de energia, sensores de movimento, tomadas exteriores, dispositivos Maker e pontes.\nDeteção robusta: SSDP/UPnP com M‑SEARCH para uma deteção fiável na rede.\nConfiguração segura: configuração Wi‑Fi integrada com encriptação de palavra-passe AES-128-CBC.\nControlo fiável: gestão melhorada de GetBinaryState / SetBinaryState, com estados e erros claros.\nFacilidade de utilização: diálogo Wi‑Fi simplificado, opção de mostrar a palavra-passe e indicadores de ligação.\nAparência: modo escuro e temas aperfeiçoados para uma interface moderna e legível.\n\nPorquê o Bit Switch\n\nLocal primeiro: a deteção e o controlo acontecem na sua rede, sem utilizar a nuvem.\nPrivacidade: as credenciais são encriptadas com AES e nunca enviadas para serviços externos.\nPrático: funciona com uma vasta gama de dispositivos Belkin WeMo antigos.\n\nNovidades\n\nDeteção SSDP/UPnP mais fiável.\nConfiguração Wi‑Fi melhorada com encriptação AES-128-CBC.\nFluxo mais claro, melhores mensagens de erro e opção de mostrar a palavra-passe.\nMelhor gestão de GetBinaryState / SetBinaryState.\nModo escuro e temas aperfeiçoados.\n\nCompatibilidade e privacidade\n\nO telefone e os dispositivos devem estar na mesma rede Wi‑Fi. O router deve permitir multicast UDP para a deteção SSDP. A pesquisa Wi‑Fi requer autorização de localização, pedida durante a utilização e usada apenas para deteção e configuração. Não é necessária uma conta na nuvem; o controlo é exclusivamente local. Consulte a política de privacidade no site de suporte."
+  },
+  "id": {
+    "name": "Bit Switch",
+    "subtitle": "Kontrol lokal untuk WeMo",
+    "promotional_text": "Kontrol perangkat WeMo lama secara lokal: temukan, nyalakan atau matikan, dan siapkan Wi‑Fi dengan aman.",
+    "keywords": [
+      "wifi",
+      "sakelar",
+      "wemo",
+      "kontrol lokal",
+      "steker",
+      "rumah pintar",
+      "jaringan",
+      "privasi"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch memberikan kontrol lokal yang cepat, privat, dan andal untuk perangkat WeMo lama tanpa memerlukan cloud. Temukan perangkat di jaringan lokal, kontrol sakelar dan peredup, lihat penggunaan energi dari steker Insight, terima status sensor gerak, dan siapkan Wi‑Fi secara aman menggunakan kredensial terenkripsi AES.\n\nDukungan perangkat lengkap: sakelar, peredup, sakelar lampu, steker energi Insight, sensor gerak, steker luar ruangan, perangkat Maker, dan bridge.\nPenemuan tangguh: SSDP/UPnP dengan M‑SEARCH untuk mendeteksi perangkat di jaringan secara andal.\nPenyiapan aman: penyiapan Wi‑Fi bawaan dengan enkripsi kata sandi AES-128-CBC.\nKontrol andal: penanganan GetBinaryState / SetBinaryState yang lebih baik dengan laporan status dan galat yang jelas.\nMudah digunakan: dialog Wi‑Fi yang ringkas, tombol untuk menampilkan kata sandi, dan indikator koneksi.\nTampilan: mode gelap dan tema yang disempurnakan untuk antarmuka modern dan mudah dibaca.\n\nMengapa Bit Switch\n\nMengutamakan lokal: penemuan dan kontrol berlangsung di jaringan Anda tanpa menggunakan cloud.\nMenjaga privasi: kredensial dienkripsi dengan AES dan tidak pernah dikirim ke layanan eksternal.\nPraktis: berfungsi dengan berbagai perangkat keras Belkin WeMo lama.\n\nYang Baru\n\nPenemuan SSDP/UPnP yang lebih andal.\nAlur penyiapan Wi‑Fi lebih baik dengan enkripsi AES-128-CBC.\nAlur lebih jelas, pesan galat lebih baik, dan tombol untuk menampilkan kata sandi.\nPenanganan GetBinaryState / SetBinaryState yang lebih baik.\nPenyempurnaan mode gelap dan tema.\n\nKompatibilitas & Privasi\n\nPerangkat dan ponsel harus berada di jaringan Wi‑Fi yang sama. Router harus mengizinkan multicast UDP untuk penemuan SSDP. Pemindaian Wi‑Fi memerlukan izin lokasi; izin diminta saat aplikasi berjalan dan hanya digunakan untuk pemindaian serta penyiapan. Tidak perlu akun cloud; kontrol hanya dilakukan melalui jaringan lokal. Lihat kebijakan privasi di situs dukungan untuk detail."
+  },
+  "sw": {
+    "name": "Bit Switch",
+    "subtitle": "Udhibiti wa vifaa vya WeMo",
+    "promotional_text": "Dhibiti vifaa vya zamani vya WeMo moja kwa moja: vitambue, viwashe au kuvizima, na uweke Wi‑Fi kwa usalama bila kutumia wingu.",
+    "keywords": [
+      "wifi",
+      "swichi",
+      "wemo",
+      "udhibiti",
+      "nyumbani",
+      "kipunguza",
+      "mwendo",
+      "nishati",
+      "mtandao"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch hutoa udhibiti wa haraka, wa faragha na wa kuaminika wa vifaa vya zamani vya WeMo kwenye mtandao wako wa ndani—bila kuhitaji wingu. Tambua vifaa, dhibiti swichi na vipunguza mwanga, angalia matumizi ya nishati ya plagi za Insight, pokea hali ya vitambuzi vya mwendo, na uweke Wi‑Fi kwa usalama kwa vitambulisho vilivyosimbwa kwa AES.\n\nInatumia swichi, vipunguza mwanga, swichi za taa, plagi za nishati za Insight, vitambuzi vya mwendo, plagi za nje, vifaa vya Maker na madaraja. Utambuzi wa SSDP/UPnP wenye M-SEARCH husaidia kupata vifaa kwa uthabiti. Usanidi wa Wi‑Fi hutumia usimbaji wa nenosiri wa AES-128-CBC. Ushughulikiaji ulioboreshwa wa GetBinaryState na SetBinaryState hutoa hali na hitilafu zilizo wazi.\n\nKiolesura kilichorahisishwa kina ufichuaji wa nenosiri, viashiria vya muunganisho na handshake, hali nyeusi na mandhari zinazosomeka.\n\nKwa nini Bit Switch\n\nUtambuzi na udhibiti hufanyika kwenye mtandao wako pekee. Vitambulisho havitumwi kwa huduma za nje, na huhitaji akaunti ya wingu. Inafanya kazi na aina nyingi za vifaa vya zamani vya Belkin WeMo.\n\nUpatanifu na Faragha\n\nSimu na vifaa lazima viwe kwenye mtandao mmoja wa Wi‑Fi. Ruta lazima iruhusu UDP multicast kwa utambuzi wa SSDP. Uchanganuzi wa Wi‑Fi unahitaji ruhusa ya eneo, ambayo huombwa wakati wa matumizi na hutumika tu kuchanganua na kusanidi vifaa."
+  },
+  "mr": {
+    "name": "Bit Switch",
+    "subtitle": "जुन्या WeMo उपकरणांचे नियंत्रण",
+    "promotional_text": "जुनी WeMo उपकरणे स्थानिक नेटवर्कवर शोधा, चालू-बंद करा आणि क्लाउडशिवाय सुरक्षितपणे Wi‑Fi सेट करा.",
+    "keywords": [
+      "wifi",
+      "स्विच",
+      "wemo",
+      "स्थानिक",
+      "स्मार्ट घर",
+      "ऊर्जा",
+      "हालचाल",
+      "प्लग",
+      "दिवा"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch जुन्या WeMo उपकरणांसाठी जलद, खाजगी आणि विश्वासार्ह स्थानिक नियंत्रण देते—क्लाउडची गरज नाही. स्थानिक नेटवर्कवरील उपकरणे शोधा, स्विच आणि डिमर नियंत्रित करा, Insight प्लगचा वीजवापर पाहा, मोशन सेन्सरची स्थिती मिळवा आणि AES-कूटबद्ध ओळखपत्रे वापरून Wi‑Fi सुरक्षितपणे सेट करा.\n\nस्विच, डिमर, लाईट स्विच, Insight ऊर्जा प्लग, मोशन सेन्सर, बाहेरील प्लग, Maker उपकरणे आणि ब्रिज यांना समर्थन आहे. M-SEARCH सह SSDP/UPnP शोध नेटवर्कवरील उपकरणे विश्वासार्हपणे ओळखतो. अंगभूत Wi‑Fi सेटअप AES-128-CBC ने पासवर्ड कूटबद्ध करतो. सुधारित GetBinaryState आणि SetBinaryState हाताळणी स्थिती व त्रुटी स्पष्टपणे दाखवते.\n\nसुलभ Wi‑Fi संवादात पासवर्ड दाखवण्याचा पर्याय आणि कनेक्शन व handshake निर्देशक आहेत. डार्क मोड आणि सुधारित थीम आधुनिक, वाचनीय इंटरफेस देतात.\n\nBit Switch का वापरावे\n\nशोध आणि नियंत्रण केवळ तुमच्या नेटवर्कवर होते. ओळखपत्रे बाह्य सेवांकडे कधीही पाठवली जात नाहीत आणि क्लाउड खाते लागत नाही. अॅप अजूनही वापरात असलेल्या अनेक जुन्या Belkin WeMo उपकरणांवर काम करते.\n\nसुसंगतता आणि गोपनीयता\n\nफोन आणि उपकरणे एकाच Wi‑Fi नेटवर्कवर असणे आवश्यक आहे. SSDP शोधासाठी राउटरने UDP multicast ला परवानगी दिली पाहिजे. Wi‑Fi स्कॅनिंगसाठी स्थान परवानगी आवश्यक आहे; ती वापराच्या वेळी मागितली जाते आणि केवळ स्कॅनिंग व सेटअपसाठी वापरली जाते."
+  },
+  "te": {
+    "name": "Bit Switch",
+    "subtitle": "పాత WeMo పరికరాల నియంత్రణ",
+    "promotional_text": "పాత WeMo పరికరాలను స్థానికంగా కనుగొని, ఆన్ లేదా ఆఫ్ చేయండి. క్లౌడ్ లేకుండా Wi‑Fiని సురక్షితంగా సెటప్ చేయండి.",
+    "keywords": [
+      "wifi",
+      "స్విచ్",
+      "wemo",
+      "స్థానికం",
+      "స్మార్ట్ హోమ్",
+      "శక్తి",
+      "కదలిక",
+      "ప్లగ్",
+      "లైట్"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch పాత WeMo పరికరాలకు వేగవంతమైన, ప్రైవేట్ మరియు నమ్మదగిన స్థానిక నియంత్రణను అందిస్తుంది—క్లౌడ్ అవసరం లేదు. స్థానిక నెట్‌వర్క్‌లో పరికరాలను కనుగొనండి, స్విచ్‌లు మరియు డిమ్మర్‌లను నియంత్రించండి, Insight ప్లగ్‌ల శక్తి వినియోగాన్ని చూడండి, మోషన్ సెన్సర్ స్థితిని పొందండి మరియు AESతో ఎన్‌క్రిప్ట్ చేసిన ఆధారాలతో Wi‑Fiని సురక్షితంగా సెటప్ చేయండి.\n\nస్విచ్‌లు, డిమ్మర్‌లు, లైట్ స్విచ్‌లు, Insight ఎనర్జీ ప్లగ్‌లు, మోషన్ సెన్సర్‌లు, అవుట్‌డోర్ ప్లగ్‌లు, Maker పరికరాలు మరియు బ్రిడ్జ్‌లకు మద్దతు ఉంది. M-SEARCHతో SSDP/UPnP డిస్కవరీ నెట్‌వర్క్‌లో పరికరాలను నమ్మదగిన విధంగా గుర్తిస్తుంది. అంతర్నిర్మిత Wi‑Fi సెటప్ AES-128-CBCతో పాస్‌వర్డ్‌లను ఎన్‌క్రిప్ట్ చేస్తుంది. మెరుగైన GetBinaryState మరియు SetBinaryState నిర్వహణ స్థితి, లోపాలను స్పష్టంగా చూపుతుంది.\n\nసరళమైన Wi‑Fi డైలాగ్‌లో పాస్‌వర్డ్ చూపే ఎంపిక, కనెక్షన్ మరియు handshake సూచికలు ఉన్నాయి. డార్క్ మోడ్, మెరుగైన థీమ్‌లు ఆధునికమైన, సులభంగా చదవగల ఇంటర్‌ఫేస్‌ను అందిస్తాయి.\n\nBit Switch ఎందుకు\n\nపరికరాల అన్వేషణ మరియు నియంత్రణ మీ నెట్‌వర్క్‌లోనే జరుగుతాయి. ఆధారాలు బయటి సేవలకు పంపబడవు; క్లౌడ్ ఖాతా అవసరం లేదు. ఇప్పటికీ వాడుకలో ఉన్న అనేక పాత Belkin WeMo పరికరాలతో ఇది పనిచేస్తుంది.\n\nఅనుకూలత మరియు గోప్యత\n\nఫోన్, పరికరాలు ఒకే Wi‑Fi నెట్‌వర్క్‌లో ఉండాలి. SSDP డిస్కవరీ కోసం రూటర్ UDP multicastను అనుమతించాలి. Wi‑Fi స్కానింగ్‌కు లొకేషన్ అనుమతి అవసరం; వాడుతున్నప్పుడు మాత్రమే అది అడగబడుతుంది, స్కానింగ్ మరియు సెటప్‌కే ఉపయోగించబడుతుంది."
+  },
+  "tr": {
+    "name": "Bit Switch",
+    "subtitle": "Eski WeMo Cihaz Kontrolü",
+    "promotional_text": "Eski WeMo cihazlarını yerel olarak keşfedin, açıp kapatın ve Wi‑Fi bağlantısını güvenle kurun. Bulut gerekmez.",
+    "keywords": [
+      "wifi",
+      "anahtar",
+      "wemo",
+      "yerel",
+      "akıllı ev",
+      "enerji",
+      "hareket",
+      "priz",
+      "aydınlatma"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch, eski WeMo cihazlarını hızlı, gizli ve güvenilir biçimde yerel olarak kontrol eder; bulut gerekmez. Yerel ağınızdaki cihazları keşfedin, anahtarları ve dimmerleri yönetin, Insight prizlerinin enerji kullanımını görüntüleyin, hareket sensörü durumunu alın ve cihaz kurulumu için AES ile şifrelenmiş bilgilerle Wi‑Fi bağlantısını güvenle yapılandırın.\n\nAnahtarlar, dimmerler, ışık anahtarları, Insight enerji prizleri, hareket sensörleri, dış mekân prizleri, Maker cihazları ve köprüler desteklenir. M-SEARCH kullanan SSDP/UPnP keşfi, ağ üzerinde güvenilir algılama sağlar. Yerleşik Wi‑Fi kurulumu, parolaları AES-128-CBC ile şifreler. Geliştirilmiş GetBinaryState ve SetBinaryState işlemleri açık durum ve hata bilgileri sunar.\n\nKolaylaştırılmış Wi‑Fi iletişim kutusu; parola görünürlüğü, bağlantı ve el sıkışma göstergeleri içerir. Koyu mod ve iyileştirilmiş temalar modern, okunabilir bir arayüz sağlar.\n\nNeden Bit Switch?\n\nKeşif ve kontrol yalnızca ağınızda gerçekleşir. Kimlik bilgileri dış hizmetlere gönderilmez ve bulut hesabı gerekmez. Hâlen kullanılan çok çeşitli eski Belkin WeMo donanımlarıyla çalışır.\n\nUyumluluk ve Gizlilik\n\nTelefon ile cihazlar aynı Wi‑Fi ağında olmalıdır. Yönlendirici, SSDP keşfi için UDP çok noktaya yayınına izin vermelidir. Wi‑Fi taraması konum izni gerektirir; izin çalışma zamanında istenir ve yalnızca tarama ile kurulum için kullanılır."
+  },
+  "vi": {
+    "name": "Bit Switch",
+    "subtitle": "Điều khiển thiết bị WeMo cũ",
+    "promotional_text": "Điều khiển WeMo cũ ngay trong mạng nội bộ: tìm thiết bị, bật tắt và thiết lập Wi‑Fi an toàn mà không cần đám mây.",
+    "keywords": [
+      "wifi",
+      "công tắc",
+      "wemo",
+      "nội bộ",
+      "nhà thông minh",
+      "năng lượng",
+      "cảm biến",
+      "ổ cắm"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch giúp điều khiển nhanh chóng, riêng tư và ổn định các thiết bị WeMo cũ ngay trong mạng nội bộ—không cần đám mây. Tìm thiết bị trên mạng, điều khiển công tắc và bộ điều chỉnh độ sáng, xem mức tiêu thụ điện của ổ cắm Insight, nhận trạng thái cảm biến chuyển động và thiết lập Wi‑Fi an toàn bằng thông tin đăng nhập được mã hóa AES.\n\nHỗ trợ công tắc, bộ điều chỉnh độ sáng, công tắc đèn, ổ cắm đo điện Insight, cảm biến chuyển động, ổ cắm ngoài trời, thiết bị Maker và bridge. Khám phá SSDP/UPnP với M-SEARCH giúp phát hiện thiết bị đáng tin cậy trong mạng. Quy trình thiết lập Wi‑Fi tích hợp mã hóa mật khẩu bằng AES-128-CBC. Xử lý GetBinaryState và SetBinaryState được cải thiện, hiển thị rõ trạng thái và lỗi.\n\nHộp thoại Wi‑Fi gọn hơn có nút hiện mật khẩu cùng chỉ báo kết nối và bắt tay. Chế độ tối và giao diện tinh chỉnh đem lại trải nghiệm hiện đại, dễ đọc.\n\nTại sao chọn Bit Switch\n\nViệc khám phá và điều khiển chỉ diễn ra trên mạng của bạn. Thông tin đăng nhập không được gửi đến dịch vụ bên ngoài và không cần tài khoản đám mây. Ứng dụng tương thích với nhiều thiết bị Belkin WeMo cũ vẫn đang được sử dụng.\n\nTương thích và quyền riêng tư\n\nĐiện thoại và thiết bị phải cùng một mạng Wi‑Fi. Bộ định tuyến phải cho phép UDP multicast để khám phá SSDP. Quét Wi‑Fi cần quyền vị trí; quyền chỉ được yêu cầu khi dùng và chỉ phục vụ việc quét cùng thiết lập thiết bị."
+  },
+  "fr-CA": {
+    "name": "Bit Switch",
+    "subtitle": "Contrôle des anciens WeMo",
+    "promotional_text": "Contrôlez vos anciens appareils WeMo localement : détection, marche/arrêt et configuration Wi‑Fi sécurisée, sans nuage.",
+    "keywords": [
+      "wifi",
+      "interrupteur",
+      "wemo",
+      "local",
+      "domotique",
+      "énergie",
+      "mouvement",
+      "prise",
+      "éclairage"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch offre un contrôle local rapide, privé et fiable des anciens appareils WeMo, sans nuage. Détectez les appareils sur votre réseau local, contrôlez les interrupteurs et gradateurs, consultez la consommation des prises Insight, recevez l’état des détecteurs de mouvement et configurez le Wi‑Fi de façon sécuritaire grâce à des identifiants chiffrés par AES.\n\nL’app prend en charge les interrupteurs, gradateurs, interrupteurs d’éclairage, prises énergétiques Insight, détecteurs de mouvement, prises extérieures, appareils Maker et ponts. La détection SSDP/UPnP avec M-SEARCH repère les appareils de manière fiable sur le réseau. La configuration Wi‑Fi intégrée chiffre les mots de passe avec AES-128-CBC. La gestion améliorée de GetBinaryState et SetBinaryState présente clairement l’état et les erreurs.\n\nLa fenêtre Wi‑Fi simplifiée comprend l’affichage du mot de passe et des indicateurs de connexion et de négociation. Le mode sombre et les thèmes raffinés assurent une interface moderne et lisible.\n\nPourquoi Bit Switch\n\nLa détection et le contrôle restent sur votre réseau. Les identifiants ne sont jamais transmis à des services externes et aucun compte infonuagique n’est requis. L’app fonctionne avec une vaste gamme d’anciens appareils Belkin WeMo toujours utilisés.\n\nCompatibilité et confidentialité\n\nLe téléphone et les appareils doivent être connectés au même réseau Wi‑Fi. Le routeur doit autoriser la multidiffusion UDP pour la détection SSDP. L’analyse Wi‑Fi nécessite l’autorisation de localisation, demandée pendant l’utilisation et employée uniquement pour l’analyse et la configuration."
+  },
+  "pt-BR": {
+    "name": "Bit Switch",
+    "subtitle": "Controle de dispositivos WeMo",
+    "promotional_text": "Controle dispositivos WeMo antigos localmente: encontre, ligue, desligue e configure o Wi‑Fi com segurança, sem usar a nuvem.",
+    "keywords": [
+      "wifi",
+      "interruptor",
+      "wemo",
+      "local",
+      "casa inteligente",
+      "energia",
+      "movimento",
+      "tomada",
+      "luz"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "O Bit Switch oferece controle local rápido, privado e confiável para dispositivos WeMo antigos, sem depender da nuvem. Encontre dispositivos na rede local, controle interruptores e dimmers, veja o consumo de energia das tomadas Insight, receba o estado dos sensores de movimento e configure o Wi‑Fi com segurança usando credenciais criptografadas por AES.\n\nCompatível com interruptores, dimmers, interruptores de luz, tomadas de energia Insight, sensores de movimento, tomadas externas, dispositivos Maker e pontes. A descoberta SSDP/UPnP com M-SEARCH detecta dispositivos na rede de forma confiável. A configuração integrada de Wi‑Fi criptografa senhas com AES-128-CBC. O tratamento aprimorado de GetBinaryState e SetBinaryState exibe estados e erros com clareza.\n\nA tela simplificada de Wi‑Fi inclui opção para exibir a senha e indicadores de conexão e handshake. O modo escuro e os temas refinados oferecem uma interface moderna e legível.\n\nPor que usar o Bit Switch\n\nA descoberta e o controle acontecem apenas na sua rede. As credenciais nunca são enviadas a serviços externos e nenhuma conta na nuvem é necessária. Funciona com uma ampla variedade de aparelhos Belkin WeMo antigos que ainda estão em uso.\n\nCompatibilidade e privacidade\n\nO celular e os dispositivos devem estar na mesma rede Wi‑Fi. O roteador deve permitir multicast UDP para a descoberta SSDP. A busca de redes Wi‑Fi exige permissão de localização, solicitada durante o uso e utilizada apenas para a busca e a configuração."
+  },
+  "es-419": {
+    "name": "Bit Switch",
+    "subtitle": "Control de dispositivos WeMo",
+    "promotional_text": "Controla dispositivos WeMo antiguos de forma local: encuéntralos, actívalos y configura el Wi‑Fi con seguridad, sin usar la nube.",
+    "keywords": [
+      "wifi",
+      "interruptor",
+      "wemo",
+      "local",
+      "casa inteligente",
+      "energía",
+      "movimiento",
+      "enchufe",
+      "luz"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ofrece control local rápido, privado y confiable para dispositivos WeMo antiguos, sin depender de la nube. Encuentra dispositivos en tu red local, controla interruptores y atenuadores, consulta el consumo de energía de los enchufes Insight, recibe el estado de los sensores de movimiento y configura el Wi‑Fi de forma segura con credenciales cifradas mediante AES.\n\nAdmite interruptores, atenuadores, interruptores de luz, enchufes de energía Insight, sensores de movimiento, enchufes para exteriores, dispositivos Maker y puentes. La detección SSDP/UPnP con M-SEARCH encuentra dispositivos de manera confiable en la red. La configuración Wi‑Fi integrada cifra las contraseñas con AES-128-CBC. El manejo mejorado de GetBinaryState y SetBinaryState muestra claramente el estado y los errores.\n\nLa pantalla simplificada de Wi‑Fi incluye una opción para ver la contraseña e indicadores de conexión y handshake. El modo oscuro y los temas refinados brindan una interfaz moderna y legible.\n\nPor qué elegir Bit Switch\n\nLa detección y el control ocurren únicamente en tu red. Las credenciales nunca se envían a servicios externos y no necesitas una cuenta en la nube. Funciona con una amplia variedad de equipos Belkin WeMo antiguos que aún están en uso.\n\nCompatibilidad y privacidad\n\nEl teléfono y los dispositivos deben estar en la misma red Wi‑Fi. El router debe permitir multidifusión UDP para la detección SSDP. El escaneo de Wi‑Fi requiere permiso de ubicación, que se solicita durante el uso y se utiliza solo para escanear y configurar dispositivos."
+  },
+  "da": {
+    "name": "Bit Switch",
+    "subtitle": "Styring af ældre WeMo-enheder",
+    "promotional_text": "Styr ældre WeMo-enheder lokalt: Find dem, tænd eller sluk, og konfigurer Wi‑Fi sikkert uden brug af skyen.",
+    "keywords": [
+      "wifi",
+      "kontakt",
+      "wemo",
+      "lokal",
+      "smart hjem",
+      "energi",
+      "bevægelse",
+      "stik",
+      "lys"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch giver hurtig, privat og pålidelig lokal styring af ældre WeMo-enheder uden behov for skyen. Find enheder på dit lokale netværk, styr kontakter og lysdæmpere, se energiforbruget fra Insight-stik, modtag status fra bevægelsessensorer, og konfigurer Wi‑Fi sikkert med AES-krypterede loginoplysninger.\n\nAppen understøtter kontakter, lysdæmpere, lyskontakter, Insight-energistik, bevægelsessensorer, udendørs stik, Maker-enheder og broer. SSDP/UPnP-søgning med M-SEARCH finder pålideligt enheder på netværket. Den indbyggede Wi‑Fi-konfiguration krypterer adgangskoder med AES-128-CBC. Forbedret håndtering af GetBinaryState og SetBinaryState viser tydelig status og fejl.\n\nDen strømlinede Wi‑Fi-dialog har visning af adgangskode samt indikatorer for forbindelse og handshake. Mørk tilstand og finpudsede temaer giver en moderne og læsevenlig brugerflade.\n\nDerfor Bit Switch\n\nSøgning og styring foregår kun på dit netværk. Loginoplysninger sendes aldrig til eksterne tjenester, og der kræves ingen skykonto. Appen virker med mange typer ældre Belkin WeMo-udstyr, der stadig er i brug.\n\nKompatibilitet og privatliv\n\nTelefonen og enhederne skal være på samme Wi‑Fi-netværk. Routeren skal tillade UDP-multicast til SSDP-søgning. Wi‑Fi-scanning kræver lokalitetstilladelse, som anmodes under brug og kun anvendes til scanning og konfiguration."
+  },
+  "cs": {
+    "name": "Bit Switch",
+    "subtitle": "Ovládání starých zařízení WeMo",
+    "promotional_text": "Ovládejte starší zařízení WeMo místně: vyhledejte je, zapínejte a vypínejte a bezpečně nastavte Wi‑Fi bez cloudu.",
+    "keywords": [
+      "wifi",
+      "vypínač",
+      "wemo",
+      "místní",
+      "chytrá domácnost",
+      "energie",
+      "pohyb",
+      "zásuvka",
+      "světlo"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch nabízí rychlé, soukromé a spolehlivé místní ovládání starších zařízení WeMo bez potřeby cloudu. Vyhledávejte zařízení v místní síti, ovládejte vypínače a stmívače, sledujte spotřebu energie zásuvek Insight, získávejte stav pohybových čidel a bezpečně nastavujte Wi‑Fi pomocí přihlašovacích údajů šifrovaných technologií AES.\n\nPodporovány jsou vypínače, stmívače, světelné vypínače, energetické zásuvky Insight, pohybová čidla, venkovní zásuvky, zařízení Maker a mosty. Vyhledávání SSDP/UPnP s M-SEARCH spolehlivě rozpoznává zařízení v síti. Vestavěné nastavení Wi‑Fi šifruje hesla pomocí AES-128-CBC. Vylepšené zpracování GetBinaryState a SetBinaryState přehledně zobrazuje stav a chyby.\n\nZjednodušené nastavení Wi‑Fi nabízí zobrazení hesla a indikátory připojení a navázání komunikace. Tmavý režim a vyladěné motivy zajišťují moderní a čitelné rozhraní.\n\nProč Bit Switch\n\nVyhledávání a ovládání probíhá pouze ve vaší síti. Přihlašovací údaje se nikdy neposílají externím službám a není potřeba cloudový účet. Aplikace funguje s mnoha staršími zařízeními Belkin WeMo, která se stále používají.\n\nKompatibilita a soukromí\n\nTelefon a zařízení musí být ve stejné síti Wi‑Fi. Router musí pro vyhledávání SSDP povolit skupinové vysílání UDP. Skenování Wi‑Fi vyžaduje oprávnění k poloze, které se vyžádá za běhu a používá se jen ke skenování a nastavení."
+  },
+  "ro": {
+    "name": "Bit Switch",
+    "subtitle": "Control pentru WeMo vechi",
+    "promotional_text": "Controlează local dispozitive WeMo vechi: găsește-le, pornește-le sau oprește-le și configurează Wi‑Fi în siguranță, fără cloud.",
+    "keywords": [
+      "wifi",
+      "întrerupător",
+      "wemo",
+      "local",
+      "casă inteligentă",
+      "energie",
+      "mișcare",
+      "priză",
+      "lumină"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch oferă control local rapid, privat și fiabil pentru dispozitive WeMo vechi, fără a necesita servicii cloud. Descoperă dispozitivele din rețeaua locală, controlează întrerupătoare și variatoare, vezi consumul prizelor Insight, primește starea senzorilor de mișcare și configurează Wi‑Fi în siguranță folosind date de acces criptate prin AES.\n\nSunt acceptate întrerupătoare, variatoare, întrerupătoare de lumină, prize energetice Insight, senzori de mișcare, prize de exterior, dispozitive Maker și punți. Descoperirea SSDP/UPnP cu M-SEARCH detectează fiabil dispozitivele din rețea. Configurarea Wi‑Fi integrată criptează parolele cu AES-128-CBC. Gestionarea îmbunătățită a GetBinaryState și SetBinaryState afișează clar starea și erorile.\n\nDialogul Wi‑Fi simplificat include afișarea parolei și indicatori pentru conexiune și handshake. Modul întunecat și temele rafinate asigură o interfață modernă și lizibilă.\n\nDe ce Bit Switch\n\nDescoperirea și controlul au loc numai în rețeaua ta. Datele de acces nu sunt trimise niciodată serviciilor externe și nu este necesar un cont cloud. Aplicația funcționează cu multe tipuri de echipamente Belkin WeMo vechi încă utilizate.\n\nCompatibilitate și confidențialitate\n\nTelefonul și dispozitivele trebuie să fie în aceeași rețea Wi‑Fi. Routerul trebuie să permită multicast UDP pentru descoperirea SSDP. Scanarea Wi‑Fi necesită permisiunea de localizare, solicitată în timpul utilizării și folosită numai pentru scanare și configurare."
+  },
+  "kn": {
+    "name": "Bit Switch",
+    "subtitle": "ಹಳೆಯ WeMo ಸಾಧನಗಳ ನಿಯಂತ್ರಣ",
+    "promotional_text": "ಹಳೆಯ WeMo ಸಾಧನಗಳನ್ನು ಸ್ಥಳೀಯವಾಗಿ ಹುಡುಕಿ, ಆನ್ ಅಥವಾ ಆಫ್ ಮಾಡಿ ಮತ್ತು ಕ್ಲೌಡ್ ಇಲ್ಲದೆ Wi‑Fi ಅನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಹೊಂದಿಸಿ.",
+    "keywords": [
+      "wifi",
+      "ಸ್ವಿಚ್",
+      "wemo",
+      "ಸ್ಥಳೀಯ",
+      "ಸ್ಮಾರ್ಟ್ ಮನೆ",
+      "ಶಕ್ತಿ",
+      "ಚಲನೆ",
+      "ಪ್ಲಗ್",
+      "ಬೆಳಕು"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ಹಳೆಯ WeMo ಸಾಧನಗಳಿಗೆ ವೇಗವಾದ, ಖಾಸಗಿ ಮತ್ತು ವಿಶ್ವಾಸಾರ್ಹ ಸ್ಥಳೀಯ ನಿಯಂತ್ರಣ ನೀಡುತ್ತದೆ—ಕ್ಲೌಡ್ ಅಗತ್ಯವಿಲ್ಲ. ಸ್ಥಳೀಯ ನೆಟ್‌ವರ್ಕ್‌ನಲ್ಲಿ ಸಾಧನಗಳನ್ನು ಹುಡುಕಿ, ಸ್ವಿಚ್ ಮತ್ತು ಡಿಮ್ಮರ್‌ಗಳನ್ನು ನಿಯಂತ್ರಿಸಿ, Insight ಪ್ಲಗ್‌ಗಳ ವಿದ್ಯುತ್ ಬಳಕೆ ನೋಡಿ, ಚಲನೆಯ ಸೆನ್ಸರ್ ಸ್ಥಿತಿ ಪಡೆಯಿರಿ ಮತ್ತು AES ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ರುಜುವಾತುಗಳಿಂದ Wi‑Fi ಅನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಹೊಂದಿಸಿ.\n\nಸ್ವಿಚ್‌ಗಳು, ಡಿಮ್ಮರ್‌ಗಳು, ಲೈಟ್ ಸ್ವಿಚ್‌ಗಳು, Insight ಎನರ್ಜಿ ಪ್ಲಗ್‌ಗಳು, ಚಲನೆಯ ಸೆನ್ಸರ್‌ಗಳು, ಹೊರಾಂಗಣ ಪ್ಲಗ್‌ಗಳು, Maker ಸಾಧನಗಳು ಮತ್ತು ಬ್ರಿಡ್ಜ್‌ಗಳಿಗೆ ಬೆಂಬಲವಿದೆ. M-SEARCH ಜೊತೆಗಿನ SSDP/UPnP ಡಿಸ್ಕವರಿ ನೆಟ್‌ವರ್ಕ್‌ನ ಸಾಧನಗಳನ್ನು ವಿಶ್ವಾಸಾರ್ಹವಾಗಿ ಪತ್ತೆ ಮಾಡುತ್ತದೆ. ಅಂತರ್ನಿರ್ಮಿತ Wi‑Fi ಸೆಟಪ್ AES-128-CBC ಮೂಲಕ ಪಾಸ್‌ವರ್ಡ್‌ಗಳನ್ನು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡುತ್ತದೆ. ಸುಧಾರಿತ GetBinaryState ಮತ್ತು SetBinaryState ನಿರ್ವಹಣೆ ಸ್ಥಿತಿ ಹಾಗೂ ದೋಷಗಳನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ತೋರಿಸುತ್ತದೆ.\n\nಸರಳ Wi‑Fi ಸಂವಾದದಲ್ಲಿ ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸುವ ಆಯ್ಕೆ, ಸಂಪರ್ಕ ಮತ್ತು handshake ಸೂಚಕಗಳಿವೆ. ಡಾರ್ಕ್ ಮೋಡ್ ಮತ್ತು ಸುಧಾರಿತ ಥೀಮ್‌ಗಳು ಆಧುನಿಕ, ಓದಲು ಸುಲಭವಾದ ಇಂಟರ್‌ಫೇಸ್ ನೀಡುತ್ತವೆ.\n\nBit Switch ಏಕೆ\n\nಹುಡುಕಾಟ ಮತ್ತು ನಿಯಂತ್ರಣ ನಿಮ್ಮ ನೆಟ್‌ವರ್ಕ್‌ನಲ್ಲೇ ನಡೆಯುತ್ತವೆ. ರುಜುವಾತುಗಳನ್ನು ಹೊರಗಿನ ಸೇವೆಗಳಿಗೆ ಕಳುಹಿಸುವುದಿಲ್ಲ ಮತ್ತು ಕ್ಲೌಡ್ ಖಾತೆ ಬೇಕಾಗಿಲ್ಲ. ಇನ್ನೂ ಬಳಕೆಯಲ್ಲಿರುವ ಹಲವು ಹಳೆಯ Belkin WeMo ಸಾಧನಗಳೊಂದಿಗೆ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.\n\nಹೊಂದಾಣಿಕೆ ಮತ್ತು ಗೌಪ್ಯತೆ\n\nಫೋನ್ ಮತ್ತು ಸಾಧನಗಳು ಒಂದೇ Wi‑Fi ನೆಟ್‌ವರ್ಕ್‌ನಲ್ಲಿರಬೇಕು. SSDP ಡಿಸ್ಕವರಿಗೆ ರೌಟರ್ UDP multicast ಅನುಮತಿಸಬೇಕು. Wi‑Fi ಸ್ಕ್ಯಾನಿಂಗ್‌ಗೆ ಸ್ಥಳ ಅನುಮತಿ ಬೇಕು; ಬಳಕೆಯ ಸಮಯದಲ್ಲಿ ಕೇಳಲಾಗುತ್ತದೆ ಮತ್ತು ಸ್ಕ್ಯಾನಿಂಗ್ ಹಾಗೂ ಸೆಟಪ್‌ಗೆ ಮಾತ್ರ ಬಳಸಲಾಗುತ್ತದೆ."
+  },
+  "gu": {
+    "name": "Bit Switch",
+    "subtitle": "જૂનાં WeMo ઉપકરણોનું નિયંત્રણ",
+    "promotional_text": "જૂનાં WeMo ઉપકરણોને સ્થાનિક રીતે શોધો, ચાલુ-બંધ કરો અને ક્લાઉડ વગર Wi‑Fi સુરક્ષિત રીતે સેટ કરો.",
+    "keywords": [
+      "wifi",
+      "સ્વિચ",
+      "wemo",
+      "સ્થાનિક",
+      "સ્માર્ટ હોમ",
+      "ઊર્જા",
+      "હલનચલન",
+      "પ્લગ",
+      "લાઇટ"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch જૂનાં WeMo ઉપકરણો માટે ઝડપી, ખાનગી અને વિશ્વસનીય સ્થાનિક નિયંત્રણ આપે છે—ક્લાઉડની જરૂર નથી. સ્થાનિક નેટવર્ક પર ઉપકરણો શોધો, સ્વિચ અને ડિમર નિયંત્રિત કરો, Insight પ્લગનો ઊર્જા વપરાશ જુઓ, મોશન સેન્સરની સ્થિતિ મેળવો અને AESથી એન્ક્રિપ્ટ કરેલ ઓળખપત્રો વડે Wi‑Fi સુરક્ષિત રીતે સેટ કરો.\n\nસ્વિચ, ડિમર, લાઇટ સ્વિચ, Insight એનર્જી પ્લગ, મોશન સેન્સર, આઉટડોર પ્લગ, Maker ઉપકરણો અને બ્રિજને સપોર્ટ મળે છે. M-SEARCH સાથે SSDP/UPnP ડિસ્કવરી નેટવર્ક પરનાં ઉપકરણોને વિશ્વસનીય રીતે શોધે છે. બિલ્ટ-ઇન Wi‑Fi સેટઅપ AES-128-CBCથી પાસવર્ડ એન્ક્રિપ્ટ કરે છે. સુધારેલ GetBinaryState અને SetBinaryState હેન્ડલિંગ સ્થિતિ અને ભૂલો સ્પષ્ટ રીતે બતાવે છે.\n\nસરળ Wi‑Fi ડાયલોગમાં પાસવર્ડ બતાવવાનો વિકલ્પ તથા કનેક્શન અને handshake સૂચકો છે. ડાર્ક મોડ અને સુધારેલી થીમ આધુનિક, વાંચી શકાય તેવું ઇન્ટરફેસ આપે છે.\n\nBit Switch શા માટે\n\nશોધ અને નિયંત્રણ ફક્ત તમારા નેટવર્ક પર થાય છે. ઓળખપત્રો ક્યારેય બહારની સેવાઓને મોકલાતાં નથી અને ક્લાઉડ એકાઉન્ટની જરૂર નથી. હજુ ઉપયોગમાં રહેલાં અનેક જૂનાં Belkin WeMo ઉપકરણો સાથે તે કામ કરે છે.\n\nસુસંગતતા અને ગોપનીયતા\n\nફોન અને ઉપકરણો એક જ Wi‑Fi નેટવર્ક પર હોવાં જોઈએ. SSDP ડિસ્કવરી માટે રાઉટરે UDP multicastને મંજૂરી આપવી જોઈએ. Wi‑Fi સ્કેનિંગ માટે સ્થાનની પરવાનગી જરૂરી છે; તે ઉપયોગ દરમિયાન માગવામાં આવે છે અને ફક્ત સ્કેનિંગ તથા સેટઅપ માટે વપરાય છે."
+  },
+  "or": {
+    "name": "Bit Switch",
+    "subtitle": "ପୁରୁଣା WeMo ଡିଭାଇସ୍ ନିୟନ୍ତ୍ରଣ",
+    "promotional_text": "ପୁରୁଣା WeMo ଡିଭାଇସ୍‌କୁ ସ୍ଥାନୀୟ ଭାବେ ଖୋଜନ୍ତୁ, ଚାଲୁ ବା ବନ୍ଦ କରନ୍ତୁ ଏବଂ କ୍ଲାଉଡ୍ ବିନା ସୁରକ୍ଷିତ ଭାବେ Wi‑Fi ସେଟ୍ କରନ୍ତୁ।",
+    "keywords": [
+      "wifi",
+      "ସ୍ୱିଚ୍",
+      "wemo",
+      "ସ୍ଥାନୀୟ",
+      "ସ୍ମାର୍ଟ ହୋମ୍",
+      "ଶକ୍ତି",
+      "ଗତି",
+      "ପ୍ଲଗ୍",
+      "ଲାଇଟ୍"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ପୁରୁଣା WeMo ଡିଭାଇସ୍ ପାଇଁ ଦ୍ରୁତ, ବ୍ୟକ୍ତିଗତ ଏବଂ ନିର୍ଭରଯୋଗ୍ୟ ସ୍ଥାନୀୟ ନିୟନ୍ତ୍ରଣ ଦିଏ—କ୍ଲାଉଡ୍ ଦରକାର ନାହିଁ। ସ୍ଥାନୀୟ ନେଟ୍‌ୱର୍କରେ ଡିଭାଇସ୍ ଖୋଜନ୍ତୁ, ସ୍ୱିଚ୍ ଏବଂ ଡିମର୍ ନିୟନ୍ତ୍ରଣ କରନ୍ତୁ, Insight ପ୍ଲଗ୍‌ର ଶକ୍ତି ବ୍ୟବହାର ଦେଖନ୍ତୁ, ମୋସନ୍ ସେନ୍ସର୍ ସ୍ଥିତି ପାଆନ୍ତୁ ଏବଂ AES ଏନ୍‌କ୍ରିପ୍ଟ ହୋଇଥିବା ପରିଚୟପତ୍ର ସହ Wi‑Fiକୁ ସୁରକ୍ଷିତ ଭାବେ ସେଟ୍ କରନ୍ତୁ।\n\nସ୍ୱିଚ୍, ଡିମର୍, ଲାଇଟ୍ ସ୍ୱିଚ୍, Insight ଏନର୍ଜି ପ୍ଲଗ୍, ମୋସନ୍ ସେନ୍ସର୍, ଆଉଟ୍‌ଡୋର୍ ପ୍ଲଗ୍, Maker ଡିଭାଇସ୍ ଏବଂ ବ୍ରିଜ୍ ସମର୍ଥିତ। M-SEARCH ସହ SSDP/UPnP ଡିସ୍କଭରି ନେଟ୍‌ୱର୍କରେ ଡିଭାଇସ୍‌ଗୁଡ଼ିକୁ ନିର୍ଭରଯୋଗ୍ୟ ଭାବେ ଚିହ୍ନଟ କରେ। ଅନ୍ତର୍ନିହିତ Wi‑Fi ସେଟଅପ୍ AES-128-CBC ଦ୍ୱାରା ପାସୱାର୍ଡ ଏନ୍‌କ୍ରିପ୍ଟ କରେ। ଉନ୍ନତ GetBinaryState ଏବଂ SetBinaryState ପରିଚାଳନା ସ୍ଥିତି ଓ ତ୍ରୁଟି ସ୍ପଷ୍ଟ କରେ।\n\nସରଳ Wi‑Fi ଡାଏଲଗ୍‌ରେ ପାସୱାର୍ଡ ଦେଖାଇବା ବିକଳ୍ପ ଏବଂ ସଂଯୋଗ ଓ handshake ସୂଚକ ରହିଛି। ଡାର୍କ ମୋଡ୍ ଏବଂ ଉନ୍ନତ ଥିମ୍ ଏକ ଆଧୁନିକ, ପଠନୀୟ ଇଣ୍ଟରଫେସ୍ ଦିଏ।\n\nBit Switch କାହିଁକି\n\nସନ୍ଧାନ ଓ ନିୟନ୍ତ୍ରଣ କେବଳ ଆପଣଙ୍କ ନେଟ୍‌ୱର୍କରେ ହୁଏ। ପରିଚୟପତ୍ର ବାହ୍ୟ ସେବାକୁ ପଠାଯାଏ ନାହିଁ ଏବଂ କ୍ଲାଉଡ୍ ଆକାଉଣ୍ଟ ଦରକାର ନାହିଁ। ଏହା ଏବେ ମଧ୍ୟ ବ୍ୟବହୃତ ଅନେକ ପୁରୁଣା Belkin WeMo ଡିଭାଇସ୍ ସହ କାମ କରେ।\n\nସୁସଙ୍ଗତତା ଏବଂ ଗୋପନୀୟତା\n\nଫୋନ୍ ଏବଂ ଡିଭାଇସ୍ ସମାନ Wi‑Fi ନେଟ୍‌ୱର୍କରେ ରହିବା ଆବଶ୍ୟକ। SSDP ଡିସ୍କଭରି ପାଇଁ ରାଉଟର୍ UDP multicastକୁ ଅନୁମତି ଦେବା ଆବଶ୍ୟକ। Wi‑Fi ସ୍କାନିଂ ପାଇଁ ଲୋକେସନ୍ ଅନୁମତି ଦରକାର; ବ୍ୟବହାର ସମୟରେ ଏହା ମଗାଯାଏ ଏବଂ କେବଳ ସ୍କାନିଂ ଓ ସେଟଅପ୍ ପାଇଁ ବ୍ୟବହୃତ ହୁଏ।"
+  },
+  "ms": {
+    "name": "Bit Switch",
+    "subtitle": "Kawalan peranti WeMo lama",
+    "promotional_text": "Kawal peranti WeMo lama secara setempat: temui, hidupkan atau matikan, dan sediakan Wi‑Fi dengan selamat tanpa awan.",
+    "keywords": [
+      "wifi",
+      "suis",
+      "wemo",
+      "setempat",
+      "rumah pintar",
+      "tenaga",
+      "gerakan",
+      "palam",
+      "lampu"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch menyediakan kawalan setempat yang pantas, peribadi dan boleh dipercayai untuk peranti WeMo lama tanpa memerlukan awan. Temui peranti pada rangkaian setempat anda, kawal suis dan pemalap, lihat penggunaan tenaga palam Insight, terima status penderia gerakan dan sediakan Wi‑Fi dengan selamat menggunakan kelayakan yang disulitkan dengan AES.\n\nSokongan merangkumi suis, pemalap, suis lampu, palam tenaga Insight, penderia gerakan, palam luar, peranti Maker dan jambatan. Penemuan SSDP/UPnP dengan M-SEARCH mengesan peranti pada rangkaian dengan andal. Persediaan Wi‑Fi terbina dalam menyulitkan kata laluan menggunakan AES-128-CBC. Pengendalian GetBinaryState dan SetBinaryState yang ditambah baik memaparkan status serta ralat dengan jelas.\n\nDialog Wi‑Fi yang dipermudah mempunyai pilihan paparan kata laluan serta penunjuk sambungan dan handshake. Mod gelap dan tema yang diperhalusi memberikan antara muka moden yang mudah dibaca.\n\nMengapa Bit Switch\n\nPenemuan dan kawalan hanya berlaku pada rangkaian anda. Kelayakan tidak pernah dihantar kepada perkhidmatan luar dan akaun awan tidak diperlukan. Aplikasi ini berfungsi dengan pelbagai perkakasan Belkin WeMo lama yang masih digunakan.\n\nKeserasian dan Privasi\n\nTelefon dan peranti mesti berada pada rangkaian Wi‑Fi yang sama. Penghala mesti membenarkan multicast UDP untuk penemuan SSDP. Pengimbasan Wi‑Fi memerlukan kebenaran lokasi yang diminta semasa penggunaan dan digunakan hanya untuk mengimbas dan menyediakan peranti."
+  },
+  "sl": {
+    "name": "Bit Switch",
+    "subtitle": "Lokalni nadzor naprav WeMo",
+    "promotional_text": "Lokalno upravljajte starejše naprave WeMo: odkrijte jih, preklapljajte in varno nastavite Wi-Fi brez oblaka.",
+    "keywords": [
+      "wifi",
+      "stikalo",
+      "wemo",
+      "pametni dom",
+      "lokalno",
+      "upravljanje",
+      "naprave",
+      "avtomatizacija"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch omogoča hitro, zasebno in zanesljivo lokalno upravljanje starejših naprav WeMo brez oblaka. Odkrijte naprave v lokalnem omrežju, upravljajte stikala in zatemnilnike, spremljajte porabo energije v vtičnicah Insight, preverjajte stanje senzorjev gibanja ter varno nastavite Wi-Fi s poverilnicami, šifriranimi z AES.\n\nPopolna podpora napravam: stikala, zatemnilniki, svetlobna stikala, energijske vtičnice Insight, senzorji gibanja, zunanje vtičnice, naprave Maker in mostovi.\nZanesljivo odkrivanje: SSDP/UPnP z M-SEARCH za učinkovito zaznavanje v omrežju.\nVarna nastavitev: vgrajena nastavitev Wi-Fi s šifriranjem gesel AES-128-CBC varuje poverilnice med konfiguracijo.\nZanesljivo upravljanje: izboljšana obravnava GetBinaryState / SetBinaryState z jasnim stanjem in sporočili o napakah.\nPreprosta uporaba: poenostavljeno okno za nastavitev Wi-Fi, prikaz gesla ter kazalniki povezave in rokovanja.\nVidez: temni način in izpopolnjene teme za sodoben, berljiv vmesnik.\n\nZakaj Bit Switch\n\nLokalno delovanje: odkrivanje in upravljanje potekata v vašem omrežju; oblak ni potreben.\nZasebnost: nastavitev uporablja šifriranje AES, poverilnice pa se nikoli ne pošiljajo zunanjim storitvam.\nPraktičnost: deluje s številnimi starejšimi napravami Belkin WeMo, ki so še vedno v uporabi.\n\nNovosti\n\nIzboljšano odkrivanje SSDP/UPnP.\nIzboljšana nastavitev Wi-Fi s šifriranjem gesel AES-128-CBC.\nJasnejši potek nastavitve, boljša sporočila o napakah in prikaz gesla.\nIzboljšana obravnava klicev GetBinaryState / SetBinaryState.\nTemni način in izboljšane teme.\n\nZdružljivost in zasebnost\n\nNaprave in telefon morajo biti v istem omrežju Wi-Fi.\nUsmerjevalnik mora dovoljevati večvrstno oddajanje UDP za odkrivanje SSDP.\nIskanje omrežij Wi-Fi zahteva dovoljenje za lokacijo; zahteva se med uporabo in je namenjeno le iskanju ter nastavitvi.\nRačun v oblaku ni potreben; upravljanje poteka samo v lokalnem omrežju. Podrobnosti najdete v pravilniku o zasebnosti na spletnem mestu za podporo."
+  },
+  "it": {
+    "name": "Bit Switch",
+    "subtitle": "Controllo locale per WeMo",
+    "promotional_text": "Controlla localmente i dispositivi WeMo meno recenti: rilevali, attivali e configura il Wi-Fi in sicurezza, senza cloud.",
+    "keywords": [
+      "wifi",
+      "interruttore",
+      "wemo",
+      "casa smart",
+      "locale",
+      "controllo",
+      "dispositivi",
+      "domotica"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch offre un controllo locale rapido, privato e affidabile dei dispositivi WeMo meno recenti, senza cloud. Rileva i dispositivi sulla rete locale, controlla interruttori e dimmer, visualizza i consumi delle prese Insight, ricevi lo stato dei sensori di movimento e configura il Wi-Fi in sicurezza con credenziali crittografate tramite AES.\n\nSupporto completo: interruttori, dimmer, interruttori luce, prese energetiche Insight, sensori di movimento, prese da esterno, dispositivi Maker e bridge.\nRilevamento affidabile: SSDP/UPnP con M-SEARCH per individuare i dispositivi in rete.\nConfigurazione sicura: procedura Wi-Fi integrata con crittografia AES-128-CBC delle password, per proteggere le credenziali durante la configurazione.\nControllo affidabile: gestione migliorata di GetBinaryState / SetBinaryState con stato e segnalazione degli errori chiari.\nFacilità d'uso: finestra Wi-Fi semplificata, opzione per mostrare la password e indicatori di connessione e handshake.\nAspetto: modalità scura e temi perfezionati per un'interfaccia moderna e leggibile.\n\nPerché Bit Switch\n\nFunzionamento locale: rilevamento e controllo avvengono sulla tua rete, senza usare il cloud.\nPrivacy: la configurazione usa la crittografia AES e le credenziali non vengono mai inviate a servizi esterni.\nPraticità: compatibile con molti dispositivi Belkin WeMo meno recenti ancora in uso.\n\nNovità\n\nRilevamento SSDP/UPnP migliorato.\nConfigurazione Wi-Fi ottimizzata con crittografia AES-128-CBC delle password.\nProcedura più chiara, messaggi di errore migliori e opzione per mostrare la password.\nGestione migliorata delle chiamate GetBinaryState / SetBinaryState.\nModalità scura e temi perfezionati.\n\nCompatibilità e privacy\n\nI dispositivi e il telefono devono essere connessi alla stessa rete Wi-Fi.\nIl router deve consentire il multicast UDP per il rilevamento SSDP.\nLa scansione Wi-Fi richiede l'autorizzazione alla posizione, richiesta durante l'uso e impiegata solo per scansione e configurazione.\nNon occorre un account cloud: il controllo avviene solo sulla rete locale. Consulta l'informativa sulla privacy nel sito di supporto."
+  },
+  "th": {
+    "name": "Bit Switch",
+    "subtitle": "ควบคุม WeMo ในเครือข่าย",
+    "promotional_text": "ควบคุมอุปกรณ์ WeMo รุ่นเก่าภายในเครือข่าย ค้นหา เปิดปิด และตั้งค่า Wi-Fi อย่างปลอดภัยโดยไม่ใช้คลาวด์",
+    "keywords": [
+      "wifi",
+      "สวิตช์",
+      "wemo",
+      "บ้านอัจฉริยะ",
+      "ควบคุม",
+      "อุปกรณ์",
+      "เครือข่าย",
+      "อัตโนมัติ"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ช่วยให้ควบคุมอุปกรณ์ WeMo รุ่นเก่าภายในเครือข่ายได้อย่างรวดเร็ว เป็นส่วนตัว และเชื่อถือได้ โดยไม่ต้องใช้คลาวด์ ค้นหาอุปกรณ์ในเครือข่าย ควบคุมสวิตช์และตัวหรี่ไฟ ดูการใช้พลังงานจากปลั๊ก Insight รับสถานะเซ็นเซอร์ตรวจจับการเคลื่อนไหว และตั้งค่า Wi-Fi อย่างปลอดภัยด้วยข้อมูลรับรองที่เข้ารหัส AES\n\nรองรับอุปกรณ์ครบถ้วน: สวิตช์ ตัวหรี่ไฟ สวิตช์ไฟ ปลั๊กวัดพลังงาน Insight เซ็นเซอร์ตรวจจับการเคลื่อนไหว ปลั๊กกลางแจ้ง อุปกรณ์ Maker และบริดจ์\nการค้นหาที่เชื่อถือได้: ใช้ SSDP/UPnP พร้อม M-SEARCH เพื่อตรวจหาอุปกรณ์ในเครือข่าย\nการตั้งค่าที่ปลอดภัย: การตั้งค่า Wi-Fi ในตัวเข้ารหัสรหัสผ่านด้วย AES-128-CBC เพื่อปกป้องข้อมูลรับรองระหว่างกำหนดค่า\nการควบคุมที่เชื่อถือได้: ปรับปรุงการจัดการ GetBinaryState / SetBinaryState พร้อมสถานะและข้อผิดพลาดที่ชัดเจน\nใช้งานง่าย: หน้าต่างตั้งค่า Wi-Fi ที่กระชับ ตัวเลือกแสดงรหัสผ่าน และตัวบ่งชี้การเชื่อมต่อกับแฮนด์เชก\nรูปลักษณ์: รองรับโหมดมืดและธีมที่ปรับปรุงเพื่ออินเทอร์เฟซที่ทันสมัยและอ่านง่าย\n\nทำไมต้อง Bit Switch\n\nทำงานในเครือข่าย: การค้นหาและควบคุมเกิดขึ้นในเครือข่ายของคุณ ไม่ต้องใช้คลาวด์\nเน้นความเป็นส่วนตัว: การตั้งค่าใช้การเข้ารหัส AES และไม่ส่งข้อมูลรับรองไปยังบริการภายนอก\nใช้งานได้จริง: ทำงานกับฮาร์ดแวร์ Belkin WeMo รุ่นเก่าหลายประเภทที่ยังใช้งานอยู่\n\nมีอะไรใหม่\n\nปรับปรุงการค้นหา SSDP/UPnP ให้เชื่อถือได้ยิ่งขึ้น\nปรับปรุงการตั้งค่า Wi-Fi พร้อมการเข้ารหัสรหัสผ่าน AES-128-CBC\nขั้นตอนที่ชัดเจนขึ้น ข้อความแสดงข้อผิดพลาดที่ดีขึ้น และตัวเลือกแสดงรหัสผ่าน\nปรับปรุงการจัดการคำสั่ง GetBinaryState / SetBinaryState\nโหมดมืดและธีมที่ปรับปรุงใหม่\n\nความเข้ากันได้และความเป็นส่วนตัว\n\nอุปกรณ์และโทรศัพท์ต้องอยู่ในเครือข่าย Wi-Fi เดียวกัน\nเราเตอร์ต้องอนุญาต UDP multicast สำหรับการค้นหา SSDP\nการสแกน Wi-Fi ต้องใช้สิทธิ์เข้าถึงตำแหน่ง ระบบจะขอสิทธิ์ขณะใช้งานและใช้เพื่อการสแกนกับตั้งค่าเท่านั้น\nไม่ต้องมีบัญชีคลาวด์ ควบคุมผ่านเครือข่ายภายในเท่านั้น ดูรายละเอียดในนโยบายความเป็นส่วนตัวบนเว็บไซต์ช่วยเหลือ"
+  },
+  "ml": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo പ്രാദേശിക നിയന്ത്രണം",
+    "promotional_text": "പഴയ WeMo ഉപകരണങ്ങൾ പ്രാദേശികമായി കണ്ടെത്തി നിയന്ത്രിക്കൂ; ക്ലൗഡ് ഇല്ലാതെ Wi-Fi സുരക്ഷിതമായി സജ്ജീകരിക്കൂ.",
+    "keywords": [
+      "wifi",
+      "സ്വിച്ച്",
+      "wemo",
+      "സ്മാർട്ട്ഹോം",
+      "നിയന്ത്രണം",
+      "ഉപകരണം",
+      "പ്രാദേശികം",
+      "ഓട്ടോമേഷൻ"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "പഴയ WeMo ഉപകരണങ്ങൾക്ക് ക്ലൗഡ് ആവശ്യമില്ലാതെ വേഗമേറിയതും സ്വകാര്യവും വിശ്വസനീയവുമായ പ്രാദേശിക നിയന്ത്രണം Bit Switch നൽകുന്നു. പ്രാദേശിക നെറ്റ്‌വർക്കിലെ ഉപകരണങ്ങൾ കണ്ടെത്തുക, സ്വിച്ചുകളും ഡിമ്മറുകളും നിയന്ത്രിക്കുക, Insight പ്ലഗുകളുടെ ഊർജ ഉപയോഗം കാണുക, മോഷൻ സെൻസറുകളുടെ നില അറിയുക, AES എൻക്രിപ്റ്റ് ചെയ്ത ക്രെഡൻഷ്യലുകൾ ഉപയോഗിച്ച് Wi-Fi സുരക്ഷിതമായി സജ്ജീകരിക്കുക.\n\nസമ്പൂർണ ഉപകരണ പിന്തുണ: സ്വിച്ചുകൾ, ഡിമ്മറുകൾ, ലൈറ്റ് സ്വിച്ചുകൾ, Insight എനർജി പ്ലഗുകൾ, മോഷൻ സെൻസറുകൾ, ഔട്ട്ഡോർ പ്ലഗുകൾ, Maker ഉപകരണങ്ങൾ, ബ്രിഡ്ജുകൾ.\nവിശ്വസനീയമായ കണ്ടെത്തൽ: നെറ്റ്‌വർക്കിലെ ഉപകരണങ്ങൾ കണ്ടെത്താൻ M-SEARCH സഹിതമുള്ള SSDP/UPnP.\nസുരക്ഷിത സജ്ജീകരണം: കോൺഫിഗറേഷൻ സമയത്ത് ക്രെഡൻഷ്യലുകൾ സംരക്ഷിക്കാൻ AES-128-CBC പാസ്‌വേഡ് എൻക്രിപ്ഷനോടുകൂടിയ Wi-Fi സജ്ജീകരണം.\nവിശ്വസനീയ നിയന്ത്രണം: വ്യക്തമായ നിലയും പിശക് റിപ്പോർട്ടും സഹിതം മെച്ചപ്പെടുത്തിയ GetBinaryState / SetBinaryState കൈകാര്യം ചെയ്യൽ.\nഎളുപ്പത്തിലുള്ള ഉപയോഗം: ലളിതമായ Wi-Fi സജ്ജീകരണ ഡയലോഗ്, പാസ്‌വേഡ് കാണാനുള്ള സൗകര്യം, കണക്ഷൻ-ഹാൻഡ്‌ഷേക്ക് സൂചകങ്ങൾ.\nരൂപഭംഗി: ആധുനികവും വായിക്കാൻ എളുപ്പവുമായ ഇന്റർഫേസിനായി ഡാർക്ക് മോഡും പരിഷ്കരിച്ച തീമുകളും.\n\nഎന്തുകൊണ്ട് Bit Switch\n\nപ്രാദേശിക പ്രവർത്തനം: കണ്ടെത്തലും നിയന്ത്രണവും നിങ്ങളുടെ നെറ്റ്‌വർക്കിൽ നടക്കുന്നു; ക്ലൗഡ് ആവശ്യമില്ല.\nസ്വകാര്യത: സജ്ജീകരണം AES എൻക്രിപ്ഷൻ ഉപയോഗിക്കുന്നു; ക്രെഡൻഷ്യലുകൾ ബാഹ്യ സേവനങ്ങളിലേക്ക് അയയ്ക്കില്ല.\nപ്രായോഗികം: ഇപ്പോഴും ഉപയോഗത്തിലുള്ള നിരവധി പഴയ Belkin WeMo ഉപകരണങ്ങളിൽ പ്രവർത്തിക്കുന്നു.\n\nപുതിയവ\n\nകൂടുതൽ വിശ്വസനീയമായ SSDP/UPnP കണ്ടെത്തൽ.\nAES-128-CBC പാസ്‌വേഡ് എൻക്രിപ്ഷനോടുകൂടിയ മെച്ചപ്പെട്ട Wi-Fi സജ്ജീകരണം.\nവ്യക്തമായ നടപടികൾ, മികച്ച പിശക് സന്ദേശങ്ങൾ, പാസ്‌വേഡ് കാണാനുള്ള സൗകര്യം.\nGetBinaryState / SetBinaryState കോളുകളുടെ മെച്ചപ്പെട്ട കൈകാര്യം ചെയ്യൽ.\nഡാർക്ക് മോഡും പരിഷ്കരിച്ച തീമുകളും.\n\nഅനുയോജ്യതയും സ്വകാര്യതയും\n\nഉപകരണങ്ങളും ഫോണും ഒരേ Wi-Fi നെറ്റ്‌വർക്കിലായിരിക്കണം.\nSSDP കണ്ടെത്തലിന് റൂട്ടർ UDP multicast അനുവദിക്കണം.\nWi-Fi സ്കാനിംഗിന് ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്; ഉപയോഗസമയത്ത് ചോദിക്കുന്ന ഈ അനുമതി സ്കാനിംഗിനും സജ്ജീകരണത്തിനും മാത്രം ഉപയോഗിക്കുന്നു.\nക്ലൗഡ് അക്കൗണ്ട് ആവശ്യമില്ല; നിയന്ത്രണം പ്രാദേശിക നെറ്റ്‌വർക്കിൽ മാത്രം. കൂടുതൽ വിവരങ്ങൾക്ക് സപ്പോർട്ട് സൈറ്റിലെ സ്വകാര്യതാ നയം കാണുക."
+  },
+  "uk": {
+    "name": "Bit Switch",
+    "subtitle": "Локальне керування WeMo",
+    "promotional_text": "Керуйте старими пристроями WeMo локально: знаходьте, перемикайте й безпечно налаштовуйте Wi-Fi без хмари.",
+    "keywords": [
+      "wifi",
+      "перемикач",
+      "wemo",
+      "розумний дім",
+      "локально",
+      "керування",
+      "пристрої",
+      "автоматизація"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch забезпечує швидке, приватне й надійне локальне керування старими пристроями WeMo без хмари. Знаходьте пристрої в локальній мережі, керуйте перемикачами й димерами, переглядайте споживання енергії розетками Insight, отримуйте стан датчиків руху та безпечно налаштовуйте Wi-Fi за допомогою облікових даних із шифруванням AES.\n\nПовна підтримка: перемикачі, димери, вимикачі світла, енергетичні розетки Insight, датчики руху, зовнішні розетки, пристрої Maker і мости.\nНадійне виявлення: SSDP/UPnP із M-SEARCH для пошуку пристроїв у мережі.\nБезпечне налаштування: вбудоване налаштування Wi-Fi із шифруванням пароля AES-128-CBC захищає облікові дані під час конфігурації.\nНадійне керування: удосконалена обробка GetBinaryState / SetBinaryState із чітким станом і повідомленнями про помилки.\nЗручність: спрощене вікно налаштування Wi-Fi, показ пароля й індикатори підключення та рукостискання.\nВигляд: темний режим і вдосконалені теми для сучасного, читабельного інтерфейсу.\n\nЧому Bit Switch\n\nЛокальна робота: пошук і керування відбуваються у вашій мережі, хмара не потрібна.\nКонфіденційність: налаштування використовує шифрування AES; дані ніколи не надсилаються зовнішнім сервісам.\nПрактичність: працює з багатьма старими пристроями Belkin WeMo, які досі використовуються.\n\nЩо нового\n\nУдосконалене виявлення SSDP/UPnP.\nПоліпшене налаштування Wi-Fi із шифруванням паролів AES-128-CBC.\nЗрозуміліший процес, кращі повідомлення про помилки й показ пароля.\nПоліпшена обробка викликів GetBinaryState / SetBinaryState.\nТемний режим та оновлені теми.\n\nСумісність і конфіденційність\n\nПристрої та телефон мають бути в одній мережі Wi-Fi.\nМаршрутизатор має дозволяти групову передачу UDP для виявлення SSDP.\nДля сканування Wi-Fi потрібен дозвіл на геолокацію; він запитується під час роботи й використовується лише для сканування та налаштування.\nХмарний обліковий запис не потрібен; керування відбувається лише в локальній мережі. Докладніше дивіться в політиці конфіденційності на сайті підтримки."
+  },
+  "nl": {
+    "name": "Bit Switch",
+    "subtitle": "Lokale bediening voor WeMo",
+    "promotional_text": "Bedien oudere WeMo-apparaten lokaal: ontdek en schakel ze en configureer wifi veilig, zonder cloud.",
+    "keywords": [
+      "wifi",
+      "schakelaar",
+      "wemo",
+      "slim huis",
+      "lokaal",
+      "bediening",
+      "apparaten",
+      "automatisering"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch biedt snelle, private en betrouwbare lokale bediening van oudere WeMo-apparaten, zonder cloud. Ontdek apparaten op je lokale netwerk, bedien schakelaars en dimmers, bekijk het energieverbruik van Insight-stekkers, ontvang de status van bewegingssensoren en configureer wifi veilig met via AES versleutelde inloggegevens.\n\nVolledige apparaatondersteuning: schakelaars, dimmers, lichtschakelaars, Insight-energiestekkers, bewegingssensoren, buitenstekkers, Maker-apparaten en bridges.\nRobuuste detectie: SSDP/UPnP met M-SEARCH voor betrouwbare detectie op het netwerk.\nVeilige configuratie: ingebouwde wifi-configuratie met AES-128-CBC-versleuteling beschermt inloggegevens tijdens het instellen.\nBetrouwbare bediening: verbeterde verwerking van GetBinaryState / SetBinaryState met duidelijke status- en foutmeldingen.\nGebruiksgemak: vereenvoudigd wifi-venster, optie om het wachtwoord te tonen en indicatoren voor verbinding en handshake.\nUiterlijk: donkere modus en verfijnde thema's voor een moderne, leesbare interface.\n\nWaarom Bit Switch\n\nLokaal voorop: detectie en bediening vinden plaats op je eigen netwerk; de cloud is niet nodig.\nPrivacygericht: de configuratie gebruikt AES-versleuteling en stuurt inloggegevens nooit naar externe diensten.\nPraktisch: werkt met veel oudere Belkin WeMo-apparaten die nog steeds in gebruik zijn.\n\nWat is er nieuw\n\nVerbeterde SSDP/UPnP-detectie.\nVerbeterde wifi-configuratie met AES-128-CBC-versleuteling van wachtwoorden.\nDuidelijker configuratieproces, betere foutmeldingen en optie om het wachtwoord te tonen.\nVerbeterde verwerking van GetBinaryState / SetBinaryState-aanroepen.\nDonkere modus en verfijnde thema's.\n\nCompatibiliteit en privacy\n\nDe apparaten en telefoon moeten met hetzelfde wifi-netwerk verbonden zijn.\nDe router moet UDP-multicast toestaan voor SSDP-detectie.\nVoor wifi-scans is locatietoestemming nodig; deze wordt tijdens gebruik gevraagd en alleen voor scannen en configureren gebruikt.\nEr is geen cloudaccount nodig; bediening vindt uitsluitend op het lokale netwerk plaats. Zie het privacybeleid op de ondersteuningssite voor details."
+  },
+  "fi": {
+    "name": "Bit Switch",
+    "subtitle": "WeMo-laitteiden lähiohjaus",
+    "promotional_text": "Ohjaa vanhoja WeMo-laitteita paikallisesti: etsi ja kytke laitteita sekä määritä Wi-Fi turvallisesti ilman pilvipalvelua.",
+    "keywords": [
+      "wifi",
+      "kytkin",
+      "wemo",
+      "älykoti",
+      "paikallinen",
+      "ohjaus",
+      "laitteet",
+      "automaatio"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch mahdollistaa vanhojen WeMo-laitteiden nopean, yksityisen ja luotettavan paikallisohjauksen ilman pilvipalvelua. Etsi laitteita lähiverkosta, ohjaa kytkimiä ja himmentimiä, tarkastele Insight-pistorasioiden energiankulutusta, vastaanota liiketunnistimien tila ja määritä Wi-Fi turvallisesti AES-salatuilla tunnistetiedoilla.\n\nKattava laitetuki: kytkimet, himmentimet, valokytkimet, Insight-energiapistorasiat, liiketunnistimet, ulkopistorasiat, Maker-laitteet ja sillat.\nLuotettava etsintä: SSDP/UPnP ja M-SEARCH tunnistavat verkon laitteet luotettavasti.\nTurvallinen määritys: sisäinen Wi-Fi-määritys salaa salasanan AES-128-CBC-menetelmällä ja suojaa tunnistetiedot määrityksen aikana.\nLuotettava ohjaus: parannettu GetBinaryState / SetBinaryState -käsittely sekä selkeät tila- ja virheilmoitukset.\nHelppokäyttöisyys: selkeä Wi-Fi-määritysikkuna, salasanan näyttö ja yhteyden sekä kättelyn ilmaisimet.\nUlkoasu: tumma tila ja viimeistellyt teemat tarjoavat modernin ja helposti luettavan käyttöliittymän.\n\nMiksi Bit Switch\n\nPaikallinen: etsintä ja ohjaus tapahtuvat omassa verkossasi ilman pilvipalvelua.\nYksityinen: määritys käyttää AES-salausta, eikä tunnistetietoja lähetetä ulkoisiin palveluihin.\nKäytännöllinen: toimii monien yhä käytössä olevien vanhojen Belkin WeMo -laitteiden kanssa.\n\nUutta\n\nLuotettavampi SSDP/UPnP-etsintä.\nParannettu Wi-Fi-määritys ja salasanojen AES-128-CBC-salaus.\nSelkeämpi määritys, paremmat virheilmoitukset ja salasanan näyttö.\nParannettu GetBinaryState / SetBinaryState -kutsujen käsittely.\nTumma tila ja viimeistellyt teemat.\n\nYhteensopivuus ja yksityisyys\n\nLaitteiden ja puhelimen on oltava samassa Wi-Fi-verkossa.\nReitittimen on sallittava UDP-monilähetys SSDP-etsintää varten.\nWi-Fi-skannaus vaatii sijaintiluvan, joka pyydetään käytön aikana ja jota käytetään vain skannaukseen ja määritykseen.\nPilvitiliä ei tarvita; ohjaus tapahtuu vain lähiverkossa. Lisätietoja on tukisivuston tietosuojakäytännössä."
+  },
+  "el": {
+    "name": "Bit Switch",
+    "subtitle": "Τοπικός έλεγχος για WeMo",
+    "promotional_text": "Ελέγξτε τοπικά παλιές συσκευές WeMo: εντοπίστε, ενεργοποιήστε και ρυθμίστε με ασφάλεια το Wi-Fi χωρίς cloud.",
+    "keywords": [
+      "wifi",
+      "διακόπτης",
+      "wemo",
+      "έξυπνο σπίτι",
+      "τοπικά",
+      "έλεγχος",
+      "συσκευές",
+      "αυτοματισμός"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Το Bit Switch προσφέρει γρήγορο, ιδιωτικό και αξιόπιστο τοπικό έλεγχο παλαιότερων συσκευών WeMo χωρίς cloud. Εντοπίστε συσκευές στο τοπικό δίκτυο, ελέγξτε διακόπτες και ροοστάτες, δείτε την κατανάλωση ενέργειας από πρίζες Insight, λάβετε την κατάσταση αισθητήρων κίνησης και ρυθμίστε με ασφάλεια το Wi-Fi με διαπιστευτήρια κρυπτογραφημένα μέσω AES.\n\nΠλήρης υποστήριξη: διακόπτες, ροοστάτες, διακόπτες φωτισμού, πρίζες ενέργειας Insight, αισθητήρες κίνησης, εξωτερικές πρίζες, συσκευές Maker και γέφυρες.\nΑξιόπιστος εντοπισμός: SSDP/UPnP με M-SEARCH για αποτελεσματικό εντοπισμό στο δίκτυο.\nΑσφαλής ρύθμιση: ενσωματωμένη ρύθμιση Wi-Fi με κρυπτογράφηση κωδικού AES-128-CBC για προστασία των διαπιστευτηρίων.\nΑξιόπιστος έλεγχος: βελτιωμένος χειρισμός GetBinaryState / SetBinaryState με σαφή κατάσταση και αναφορά σφαλμάτων.\nΕυχρηστία: απλοποιημένο παράθυρο Wi-Fi, εμφάνιση κωδικού και ενδείξεις σύνδεσης και χειραψίας.\nΕμφάνιση: σκοτεινή λειτουργία και ανανεωμένα θέματα για σύγχρονο, ευανάγνωστο περιβάλλον.\n\nΓιατί Bit Switch\n\nΤοπική λειτουργία: ο εντοπισμός και ο έλεγχος γίνονται στο δίκτυό σας χωρίς cloud.\nΙδιωτικότητα: η ρύθμιση χρησιμοποιεί κρυπτογράφηση AES και δεν στέλνει διαπιστευτήρια σε εξωτερικές υπηρεσίες.\nΠρακτικότητα: λειτουργεί με πολλές παλαιότερες συσκευές Belkin WeMo που χρησιμοποιούνται ακόμα.\n\nΤι νέο υπάρχει\n\nΒελτιωμένος εντοπισμός SSDP/UPnP.\nΒελτιωμένη ρύθμιση Wi-Fi με κρυπτογράφηση κωδικών AES-128-CBC.\nΣαφέστερη διαδικασία, καλύτερα μηνύματα σφάλματος και εμφάνιση κωδικού.\nΒελτιωμένος χειρισμός κλήσεων GetBinaryState / SetBinaryState.\nΣκοτεινή λειτουργία και ανανεωμένα θέματα.\n\nΣυμβατότητα και ιδιωτικότητα\n\nΟι συσκευές και το τηλέφωνο πρέπει να βρίσκονται στο ίδιο δίκτυο Wi-Fi.\nΟ δρομολογητής πρέπει να επιτρέπει UDP multicast για εντοπισμό SSDP.\nΗ σάρωση Wi-Fi απαιτεί άδεια τοποθεσίας, η οποία ζητείται κατά τη χρήση και αξιοποιείται μόνο για σάρωση και ρύθμιση.\nΔεν απαιτείται λογαριασμός cloud. Ο έλεγχος γίνεται μόνο στο τοπικό δίκτυο. Δείτε την πολιτική απορρήτου στον ιστότοπο υποστήριξης."
+  },
+  "he": {
+    "name": "Bit Switch",
+    "subtitle": "שליטה מקומית ב-WeMo",
+    "promotional_text": "שלטו מקומית במכשירי WeMo ישנים: גלו, הפעילו והגדירו Wi-Fi באופן מאובטח, ללא ענן.",
+    "keywords": [
+      "wifi",
+      "מתג",
+      "wemo",
+      "בית חכם",
+      "מקומי",
+      "שליטה",
+      "מכשירים",
+      "אוטומציה"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch מאפשר שליטה מקומית מהירה, פרטית ואמינה במכשירי WeMo ישנים, ללא צורך בענן. גלו מכשירים ברשת המקומית, שלטו במתגים ובעמעמים, צפו בצריכת האנרגיה של שקעי Insight, קבלו את מצב חיישני התנועה והגדירו Wi-Fi באופן מאובטח באמצעות פרטי גישה מוצפנים ב-AES.\n\nתמיכה מלאה במכשירים: מתגים, עמעמים, מתגי תאורה, שקעי אנרגיה Insight, חיישני תנועה, שקעי חוץ, מכשירי Maker וגשרים.\nגילוי אמין: SSDP/UPnP עם M-SEARCH לזיהוי אמין של מכשירים ברשת.\nהגדרה מאובטחת: הגדרת Wi-Fi מובנית עם הצפנת סיסמאות AES-128-CBC להגנה על פרטי הגישה במהלך התצורה.\nשליטה אמינה: טיפול משופר ב-GetBinaryState / SetBinaryState עם דיווח ברור על מצב ושגיאות.\nנוחות שימוש: חלון הגדרת Wi-Fi פשוט, אפשרות להצגת הסיסמה ומחווני חיבור ולחיצת יד.\nמראה: מצב כהה וערכות נושא משופרות לממשק מודרני וקריא.\n\nלמה Bit Switch\n\nמקומי תחילה: הגילוי והשליטה מתבצעים ברשת שלכם, ללא צורך בענן.\nפרטיות: ההגדרה משתמשת בהצפנת AES ופרטי הגישה לעולם אינם נשלחים לשירותים חיצוניים.\nשימושי: עובד עם מגוון מכשירי Belkin WeMo ישנים שעדיין נמצאים בשימוש.\n\nמה חדש\n\nגילוי SSDP/UPnP משופר ואמין יותר.\nתהליך הגדרת Wi-Fi משופר עם הצפנת סיסמאות AES-128-CBC.\nתהליך ברור יותר, הודעות שגיאה טובות יותר ואפשרות להצגת הסיסמה.\nטיפול משופר בקריאות GetBinaryState / SetBinaryState.\nמצב כהה וערכות נושא משופרות.\n\nתאימות ופרטיות\n\nהמכשירים והטלפון חייבים להיות באותה רשת Wi-Fi.\nהנתב חייב לאפשר UDP multicast לצורך גילוי SSDP.\nסריקת Wi-Fi דורשת הרשאת מיקום; היא מתבקשת בזמן השימוש ומשמשת רק לסריקה ולהגדרה.\nאין צורך בחשבון ענן; השליטה מתבצעת ברשת המקומית בלבד. לפרטים, עיינו במדיניות הפרטיות באתר התמיכה."
+  },
+  "hu": {
+    "name": "Bit Switch",
+    "subtitle": "Helyi WeMo-vezérlés",
+    "promotional_text": "Vezéreld helyben a régebbi WeMo eszközöket: keresd meg, kapcsold és állítsd be biztonságosan a Wi-Fi-t felhő nélkül.",
+    "keywords": [
+      "wifi",
+      "kapcsoló",
+      "wemo",
+      "okosotthon",
+      "helyi",
+      "vezérlés",
+      "eszközök",
+      "automatizálás"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "A Bit Switch gyors, privát és megbízható helyi vezérlést kínál régebbi WeMo eszközökhöz, felhő nélkül. Fedezd fel a helyi hálózat eszközeit, vezéreld a kapcsolókat és fényerő-szabályozókat, tekintsd meg az Insight aljzatok energiafogyasztását, ellenőrizd a mozgásérzékelők állapotát, és állítsd be biztonságosan a Wi-Fi-t AES-titkosítású hitelesítő adatokkal.\n\nTeljes eszköztámogatás: kapcsolók, fényerő-szabályozók, villanykapcsolók, Insight energiafigyelő aljzatok, mozgásérzékelők, kültéri aljzatok, Maker eszközök és hidak.\nMegbízható felderítés: SSDP/UPnP M-SEARCH funkcióval a hálózati eszközök biztos észleléséhez.\nBiztonságos beállítás: a beépített Wi-Fi-beállítás AES-128-CBC jelszótitkosítással védi a hitelesítő adatokat.\nMegbízható vezérlés: továbbfejlesztett GetBinaryState / SetBinaryState kezelés, egyértelmű állapot- és hibajelzéssel.\nEgyszerű használat: átlátható Wi-Fi-beállítás, jelszómegjelenítés, valamint kapcsolat- és kézfogásjelzők.\nMegjelenés: sötét mód és finomított témák a modern, jól olvasható felületért.\n\nMiért a Bit Switch?\n\nHelyi működés: a felderítés és vezérlés a saját hálózatodon történik, felhő használata nélkül.\nAdatvédelem: a beállítás AES-titkosítást használ, és nem küld hitelesítő adatokat külső szolgáltatásoknak.\nPraktikus: számos, még használatban lévő régebbi Belkin WeMo eszközzel működik.\n\nÚjdonságok\n\nMegbízhatóbb SSDP/UPnP-felderítés.\nTovábbfejlesztett Wi-Fi-beállítás AES-128-CBC jelszótitkosítással.\nÁtláthatóbb folyamat, jobb hibaüzenetek és jelszómegjelenítés.\nA GetBinaryState / SetBinaryState hívások jobb kezelése.\nSötét mód és finomított témák.\n\nKompatibilitás és adatvédelem\n\nAz eszközöknek és a telefonnak ugyanahhoz a Wi-Fi-hálózathoz kell kapcsolódniuk.\nAz útválasztónak engedélyeznie kell az UDP multicastot az SSDP-felderítéshez.\nA Wi-Fi-keresés helyhozzáférést igényel; az engedélyt futás közben kérjük, és csak keresésre, illetve beállításra használjuk.\nFelhőfiók nem szükséges; a vezérlés kizárólag a helyi hálózaton történik. Részletekért lásd a támogatási webhely adatvédelmi tájékoztatóját."
+  },
+  "nb-NO": {
+    "name": "Bit Switch",
+    "subtitle": "Lokal styring av WeMo",
+    "promotional_text": "Styr eldre WeMo-enheter lokalt: finn og slå dem av eller på, og konfigurer Wi-Fi sikkert uten skyen.",
+    "keywords": [
+      "wifi",
+      "bryter",
+      "wemo",
+      "smarthjem",
+      "lokal",
+      "styring",
+      "enheter",
+      "automatisering"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch gir rask, privat og pålitelig lokal styring av eldre WeMo-enheter uten bruk av skyen. Finn enheter i lokalnettet, styr brytere og dimmere, se energibruken til Insight-kontakter, motta status fra bevegelsessensorer, og konfigurer Wi-Fi sikkert med AES-kryptert påloggingsinformasjon.\n\nFull enhetsstøtte: brytere, dimmere, lysbrytere, Insight-energikontakter, bevegelsessensorer, utendørskontakter, Maker-enheter og broer.\nRobust søk: SSDP/UPnP med M-SEARCH for pålitelig enhetsoppdagelse i nettverket.\nSikkert oppsett: innebygd Wi-Fi-oppsett med AES-128-CBC-kryptering av passord beskytter informasjonen under konfigurering.\nPålitelig styring: forbedret håndtering av GetBinaryState / SetBinaryState med tydelige status- og feilmeldinger.\nBrukervennlig: forenklet Wi-Fi-oppsett, visning av passord og indikatorer for tilkobling og håndtrykk.\nUtseende: mørk modus og finjusterte temaer gir et moderne, lettlest grensesnitt.\n\nHvorfor Bit Switch\n\nLokalt først: søk og styring skjer i ditt eget nettverk, uten behov for skyen.\nPersonvern: oppsettet bruker AES-kryptering, og informasjonen sendes aldri til eksterne tjenester.\nPraktisk: fungerer med en rekke eldre Belkin WeMo-enheter som fortsatt er i bruk.\n\nNyheter\n\nForbedret SSDP/UPnP-søk.\nBedre Wi-Fi-oppsett med AES-128-CBC-kryptering av passord.\nTydeligere oppsett, bedre feilmeldinger og visning av passord.\nBedre håndtering av GetBinaryState / SetBinaryState-kall.\nMørk modus og finjusterte temaer.\n\nKompatibilitet og personvern\n\nEnhetene og telefonen må være tilkoblet samme Wi-Fi-nettverk.\nRuteren må tillate UDP-multicast for SSDP-søk.\nWi-Fi-skanning krever posisjonstillatelse. Den etterspørres under bruk og brukes bare til skanning og konfigurering.\nIngen skykonto kreves; styring skjer bare i lokalnettet. Se personvernerklæringen på støttenettstedet for mer informasjon."
+  },
+  "pl": {
+    "name": "Bit Switch",
+    "subtitle": "Lokalne sterowanie WeMo",
+    "promotional_text": "Steruj lokalnie starszymi urządzeniami WeMo: wykrywaj je, przełączaj i bezpiecznie konfiguruj Wi-Fi bez chmury.",
+    "keywords": [
+      "wifi",
+      "przełącznik",
+      "wemo",
+      "inteligentny dom",
+      "lokalnie",
+      "sterowanie",
+      "urządzenia",
+      "automatyka"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch zapewnia szybkie, prywatne i niezawodne lokalne sterowanie starszymi urządzeniami WeMo bez chmury. Wykrywaj urządzenia w sieci lokalnej, steruj przełącznikami i ściemniaczami, sprawdzaj zużycie energii przez gniazdka Insight, odbieraj stan czujników ruchu i bezpiecznie konfiguruj Wi-Fi przy użyciu danych szyfrowanych za pomocą AES.\n\nPełna obsługa urządzeń: przełączniki, ściemniacze, włączniki światła, gniazdka energetyczne Insight, czujniki ruchu, gniazdka zewnętrzne, urządzenia Maker i mostki.\nNiezawodne wykrywanie: SSDP/UPnP z M-SEARCH do skutecznego odnajdywania urządzeń w sieci.\nBezpieczna konfiguracja: wbudowana konfiguracja Wi-Fi z szyfrowaniem haseł AES-128-CBC chroni dane podczas ustawiania urządzeń.\nNiezawodne sterowanie: ulepszona obsługa GetBinaryState / SetBinaryState z czytelnymi stanami i komunikatami o błędach.\nŁatwa obsługa: uproszczone okno konfiguracji Wi-Fi, podgląd hasła oraz wskaźniki połączenia i uzgadniania.\nWygląd: tryb ciemny i dopracowane motywy zapewniają nowoczesny, czytelny interfejs.\n\nDlaczego Bit Switch\n\nLokalne działanie: wykrywanie i sterowanie odbywa się w Twojej sieci, bez korzystania z chmury.\nPrywatność: konfiguracja korzysta z szyfrowania AES, a dane nigdy nie są wysyłane do usług zewnętrznych.\nPraktyczność: współpracuje z wieloma starszymi urządzeniami Belkin WeMo, które wciąż są używane.\n\nCo nowego\n\nUlepszone wykrywanie SSDP/UPnP.\nLepsza konfiguracja Wi-Fi z szyfrowaniem haseł AES-128-CBC.\nCzytelniejszy proces, lepsze komunikaty o błędach i podgląd hasła.\nUlepszona obsługa wywołań GetBinaryState / SetBinaryState.\nTryb ciemny i dopracowane motywy.\n\nZgodność i prywatność\n\nUrządzenia i telefon muszą znajdować się w tej samej sieci Wi-Fi.\nRouter musi zezwalać na multiemisję UDP na potrzeby wykrywania SSDP.\nSkanowanie Wi-Fi wymaga dostępu do lokalizacji; zgoda jest pobierana podczas działania i używana tylko do skanowania oraz konfiguracji.\nKonto w chmurze nie jest wymagane; sterowanie odbywa się wyłącznie w sieci lokalnej. Szczegóły zawiera polityka prywatności w witrynie pomocy."
+  },
+  "sv": {
+    "name": "Bit Switch",
+    "subtitle": "Lokal styrning av WeMo",
+    "promotional_text": "Styr äldre WeMo-enheter lokalt: hitta och slå på eller av dem och konfigurera Wi-Fi säkert, utan molnet.",
+    "keywords": [
+      "wifi",
+      "brytare",
+      "wemo",
+      "smarta hem",
+      "lokal",
+      "styrning",
+      "enheter",
+      "automatisering"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch ger snabb, privat och tillförlitlig lokal styrning av äldre WeMo-enheter utan molnet. Hitta enheter i det lokala nätverket, styr brytare och dimrar, visa energiförbrukning från Insight-uttag, ta emot status från rörelsesensorer och konfigurera Wi-Fi säkert med AES-krypterade inloggningsuppgifter.\n\nFullständigt enhetsstöd: brytare, dimrar, ljusbrytare, Insight-energiuttag, rörelsesensorer, utomhusuttag, Maker-enheter och bryggor.\nTillförlitlig identifiering: SSDP/UPnP med M-SEARCH för säker upptäckt i nätverket.\nSäker konfiguration: inbyggd Wi-Fi-konfiguration med AES-128-CBC-kryptering av lösenord skyddar uppgifterna under inställningen.\nPålitlig styrning: förbättrad hantering av GetBinaryState / SetBinaryState med tydlig status- och felrapportering.\nEnkel användning: förenklad Wi-Fi-dialog, visning av lösenord samt indikatorer för anslutning och handskakning.\nUtseende: mörkt läge och finslipade teman för ett modernt, lättläst gränssnitt.\n\nVarför Bit Switch\n\nLokalt först: identifiering och styrning sker i ditt nätverk utan att molnet behövs.\nIntegritet: konfigurationen använder AES-kryptering och uppgifterna skickas aldrig till externa tjänster.\nPraktiskt: fungerar med många äldre Belkin WeMo-enheter som fortfarande används.\n\nNyheter\n\nFörbättrad SSDP/UPnP-identifiering.\nBättre Wi-Fi-konfiguration med AES-128-CBC-kryptering av lösenord.\nTydligare flöde, bättre felmeddelanden och visning av lösenord.\nFörbättrad hantering av GetBinaryState / SetBinaryState-anrop.\nMörkt läge och finslipade teman.\n\nKompatibilitet och integritet\n\nEnheterna och telefonen måste vara anslutna till samma Wi-Fi-nätverk.\nRoutern måste tillåta UDP-multicast för SSDP-identifiering.\nWi-Fi-skanning kräver platsbehörighet. Den begärs under användning och används endast för skanning och konfiguration.\nInget molnkonto krävs; styrning sker endast i det lokala nätverket. Mer information finns i integritetspolicyn på supportwebbplatsen."
+  },
+  "ca": {
+    "name": "Bit Switch",
+    "subtitle": "Control local per a WeMo",
+    "promotional_text": "Controla localment els dispositius WeMo antics: detecta'ls, activa'ls i configura la Wi-Fi amb seguretat, sense núvol.",
+    "keywords": [
+      "wifi",
+      "interruptor",
+      "wemo",
+      "casa intel·ligent",
+      "local",
+      "control",
+      "dispositius",
+      "automatització"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch permet controlar de manera local, ràpida, privada i fiable els dispositius WeMo antics, sense núvol. Detecta dispositius a la xarxa local, controla interruptors i reguladors, consulta el consum energètic dels endolls Insight, rep l'estat dels sensors de moviment i configura la Wi-Fi de forma segura amb credencials xifrades mitjançant AES.\n\nCompatibilitat completa: interruptors, reguladors, interruptors de llum, endolls energètics Insight, sensors de moviment, endolls d'exterior, dispositius Maker i ponts.\nDetecció fiable: SSDP/UPnP amb M-SEARCH per localitzar dispositius a la xarxa.\nConfiguració segura: la configuració de Wi-Fi integrada xifra les contrasenyes amb AES-128-CBC per protegir les credencials.\nControl fiable: gestió millorada de GetBinaryState / SetBinaryState amb informació clara de l'estat i els errors.\nFacilitat d'ús: diàleg de Wi-Fi simplificat, opció de mostrar la contrasenya i indicadors de connexió i encaixada.\nAparença: mode fosc i temes refinats per a una interfície moderna i llegible.\n\nPer què Bit Switch\n\nFuncionament local: la detecció i el control tenen lloc a la teva xarxa, sense utilitzar el núvol.\nPrivadesa: la configuració usa xifratge AES i mai no envia les credencials a serveis externs.\nPràctic: funciona amb molts dispositius Belkin WeMo antics que encara s'utilitzen.\n\nNovetats\n\nDetecció SSDP/UPnP millorada.\nConfiguració de Wi-Fi millorada amb xifratge de contrasenyes AES-128-CBC.\nProcés més clar, millors missatges d'error i opció de mostrar la contrasenya.\nGestió millorada de les crides GetBinaryState / SetBinaryState.\nMode fosc i temes refinats.\n\nCompatibilitat i privadesa\n\nEls dispositius i el telèfon han d'estar a la mateixa xarxa Wi-Fi.\nL'encaminador ha de permetre la multidifusió UDP per a la detecció SSDP.\nL'escaneig de Wi-Fi requereix permís d'ubicació; es demana durant l'ús i només s'empra per escanejar i configurar.\nNo cal cap compte al núvol; el control només es fa a la xarxa local. Consulta la política de privadesa al lloc web d'assistència."
+  },
+  "hr": {
+    "name": "Bit Switch",
+    "subtitle": "Lokalno upravljanje za WeMo",
+    "promotional_text": "Lokalno upravljajte starijim WeMo uređajima: pronađite ih, uključite ili isključite i sigurno postavite Wi-Fi bez oblaka.",
+    "keywords": [
+      "wifi",
+      "prekidač",
+      "wemo",
+      "pametni dom",
+      "lokalno",
+      "upravljanje",
+      "uređaji",
+      "automatizacija"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch omogućuje brzo, privatno i pouzdano lokalno upravljanje starijim WeMo uređajima bez oblaka. Pronađite uređaje na lokalnoj mreži, upravljajte prekidačima i prigušivačima, pregledajte potrošnju energije utičnica Insight, primajte stanje senzora pokreta i sigurno postavite Wi-Fi s vjerodajnicama šifriranima pomoću AES-a.\n\nPotpuna podrška: prekidači, prigušivači, prekidači za svjetlo, energetske utičnice Insight, senzori pokreta, vanjske utičnice, uređaji Maker i mostovi.\nPouzdano otkrivanje: SSDP/UPnP uz M-SEARCH za učinkovito pronalaženje uređaja na mreži.\nSigurno postavljanje: ugrađena postavka Wi-Fi mreže s AES-128-CBC šifriranjem lozinke štiti vjerodajnice tijekom konfiguracije.\nPouzdano upravljanje: poboljšana obrada GetBinaryState / SetBinaryState uz jasan prikaz stanja i pogrešaka.\nJednostavna uporaba: pojednostavljen dijaloški okvir za Wi-Fi, prikaz lozinke te pokazatelji veze i rukovanja.\nIzgled: tamni način rada i dotjerane teme za moderno, čitljivo sučelje.\n\nZašto Bit Switch\n\nLokalni rad: otkrivanje i upravljanje odvijaju se na vašoj mreži, bez potrebe za oblakom.\nPrivatnost: postavljanje koristi AES šifriranje, a vjerodajnice se nikad ne šalju vanjskim uslugama.\nPraktičnost: radi s brojnim starijim uređajima Belkin WeMo koji su još u uporabi.\n\nNovosti\n\nPoboljšano SSDP/UPnP otkrivanje.\nPoboljšano postavljanje Wi-Fi mreže uz AES-128-CBC šifriranje lozinki.\nJasniji postupak, bolje poruke o pogreškama i prikaz lozinke.\nPoboljšana obrada poziva GetBinaryState / SetBinaryState.\nTamni način rada i dotjerane teme.\n\nKompatibilnost i privatnost\n\nUređaji i telefon moraju biti na istoj Wi-Fi mreži.\nUsmjerivač mora dopuštati UDP multicast za SSDP otkrivanje.\nSkeniranje Wi-Fi mreža zahtijeva dopuštenje za lokaciju; traži se tijekom uporabe i koristi samo za skeniranje i postavljanje.\nRačun u oblaku nije potreban; upravljanje se odvija samo na lokalnoj mreži. Pojedinosti potražite u pravilima privatnosti na web-mjestu za podršku."
+  },
+  "sk": {
+    "name": "Bit Switch",
+    "subtitle": "Miestne ovládanie WeMo",
+    "promotional_text": "Ovládajte staršie zariadenia WeMo miestne: vyhľadajte ich, prepínajte a bezpečne nastavte Wi-Fi bez cloudu.",
+    "keywords": [
+      "wifi",
+      "spínač",
+      "wemo",
+      "inteligentná domácnosť",
+      "miestne",
+      "ovládanie",
+      "zariadenia",
+      "automatizácia"
+    ],
+    "support": {
+      "website": "https://binaryboots.com/",
+      "product_page": "https://binaryboots.com/privacy.html"
+    },
+    "copyright": "Binary Boots",
+    "description": "Bit Switch prináša rýchle, súkromné a spoľahlivé miestne ovládanie starších zariadení WeMo bez cloudu. Vyhľadajte zariadenia v miestnej sieti, ovládajte spínače a stmievače, sledujte spotrebu energie zásuviek Insight, prijímajte stav snímačov pohybu a bezpečne nastavte Wi-Fi pomocou prihlasovacích údajov šifrovaných cez AES.\n\nÚplná podpora: spínače, stmievače, vypínače svetiel, energetické zásuvky Insight, snímače pohybu, vonkajšie zásuvky, zariadenia Maker a mosty.\nSpoľahlivé vyhľadávanie: SSDP/UPnP s M-SEARCH na účinné zisťovanie zariadení v sieti.\nBezpečné nastavenie: vstavané nastavenie Wi-Fi so šifrovaním hesla AES-128-CBC chráni prihlasovacie údaje počas konfigurácie.\nSpoľahlivé ovládanie: vylepšené spracovanie GetBinaryState / SetBinaryState s jasným stavom a hlásením chýb.\nJednoduché používanie: prehľadné okno nastavenia Wi-Fi, zobrazenie hesla a indikátory pripojenia a nadviazania spojenia.\nVzhľad: tmavý režim a vyladené motívy pre moderné, čitateľné rozhranie.\n\nPrečo Bit Switch\n\nMiestne fungovanie: vyhľadávanie a ovládanie prebieha vo vašej sieti, bez potreby cloudu.\nOchrana súkromia: nastavenie používa šifrovanie AES a údaje sa nikdy neposielajú externým službám.\nPraktickosť: funguje s mnohými staršími zariadeniami Belkin WeMo, ktoré sa stále používajú.\n\nNovinky\n\nVylepšené vyhľadávanie SSDP/UPnP.\nLepšie nastavenie Wi-Fi so šifrovaním hesiel AES-128-CBC.\nJasnejší postup, lepšie chybové hlásenia a zobrazenie hesla.\nVylepšené spracovanie volaní GetBinaryState / SetBinaryState.\nTmavý režim a vyladené motívy.\n\nKompatibilita a súkromie\n\nZariadenia a telefón musia byť pripojené k rovnakej sieti Wi-Fi.\nSmerovač musí povoľovať UDP multicast na vyhľadávanie SSDP.\nVyhľadávanie Wi-Fi vyžaduje povolenie polohy; žiada sa počas používania a používa sa iba na vyhľadávanie a nastavenie.\nCloudový účet nie je potrebný; ovládanie prebieha iba v miestnej sieti. Podrobnosti nájdete v zásadách ochrany súkromia na stránke podpory."
+  }
+}

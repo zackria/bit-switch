@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Lokalne sterowanie WeMo
+
+Promotional Text
+Steruj lokalnie starszymi urządzeniami WeMo: wykrywaj je, przełączaj i bezpiecznie konfiguruj Wi-Fi bez chmury.
+
+Keywords
+wifi,przełącznik,wemo,inteligentny dom,lokalnie,sterowanie,urządzenia,automatyka
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch zapewnia szybkie, prywatne i niezawodne lokalne sterowanie starszymi urządzeniami WeMo bez chmury. Wykrywaj urządzenia w sieci lokalnej, steruj przełącznikami i ściemniaczami, sprawdzaj zużycie energii przez gniazdka Insight, odbieraj stan czujników ruchu i bezpiecznie konfiguruj Wi-Fi przy użyciu danych szyfrowanych za pomocą AES.
+
+Pełna obsługa urządzeń: przełączniki, ściemniacze, włączniki światła, gniazdka energetyczne Insight, czujniki ruchu, gniazdka zewnętrzne, urządzenia Maker i mostki.
+Niezawodne wykrywanie: SSDP/UPnP z M-SEARCH do skutecznego odnajdywania urządzeń w sieci.
+Bezpieczna konfiguracja: wbudowana konfiguracja Wi-Fi z szyfrowaniem haseł AES-128-CBC chroni dane podczas ustawiania urządzeń.
+Niezawodne sterowanie: ulepszona obsługa GetBinaryState / SetBinaryState z czytelnymi stanami i komunikatami o błędach.
+Łatwa obsługa: uproszczone okno konfiguracji Wi-Fi, podgląd hasła oraz wskaźniki połączenia i uzgadniania.
+Wygląd: tryb ciemny i dopracowane motywy zapewniają nowoczesny, czytelny interfejs.
+
+Dlaczego Bit Switch
+
+Lokalne działanie: wykrywanie i sterowanie odbywa się w Twojej sieci, bez korzystania z chmury.
+Prywatność: konfiguracja korzysta z szyfrowania AES, a dane nigdy nie są wysyłane do usług zewnętrznych.
+Praktyczność: współpracuje z wieloma starszymi urządzeniami Belkin WeMo, które wciąż są używane.
+
+Co nowego
+
+Ulepszone wykrywanie SSDP/UPnP.
+Lepsza konfiguracja Wi-Fi z szyfrowaniem haseł AES-128-CBC.
+Czytelniejszy proces, lepsze komunikaty o błędach i podgląd hasła.
+Ulepszona obsługa wywołań GetBinaryState / SetBinaryState.
+Tryb ciemny i dopracowane motywy.
+
+Zgodność i prywatność
+
+Urządzenia i telefon muszą znajdować się w tej samej sieci Wi-Fi.
+Router musi zezwalać na multiemisję UDP na potrzeby wykrywania SSDP.
+Skanowanie Wi-Fi wymaga dostępu do lokalizacji; zgoda jest pobierana podczas działania i używana tylko do skanowania oraz konfiguracji.
+Konto w chmurze nie jest wymagane; sterowanie odbywa się wyłącznie w sieci lokalnej. Szczegóły zawiera polityka prywatności w witrynie pomocy.

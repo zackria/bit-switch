@@ -1,0 +1,71 @@
+We also need to ensure the maximum length or characters are followed in all the languages
+Name:(Max 30 characters)
+Subtitle: (Max 30 characters)
+Keywords (Max 100 characters total, comma-separated, no spaces after commas)
+Promotional Text (Max 170 characters — updatable without App Review)
+Description: (Max 4,000 characters)
+
+
+
+
+Update this JSON file "bitswitch_AppStore.json" 
+
+You need to use the descriptions from these files to update the JSON. 
+01_AppStoreText_EN_English.txt
+02_AppStoreText_ES_Spanish.txt
+03_AppStoreText_FR_French.txt
+04_AppStoreText_DE_German.txt
+05_AppStoreText_AR_Arabic.txt
+06_AppStoreText_ZH-HANS_Chinese_Simplified.txt
+07_AppStoreText_HI_Hindi.txt
+08_AppStoreText_UR_Urdu.txt
+09_AppStoreText_JA_Japanese.txt
+10_AppStoreText_RU_Russian.txt
+11_AppStoreText_KO_Korean.txt
+12_AppStoreText_ZH-HANT_Chinese_Traditional.txt
+13_AppStoreText_PA_Punjabi.txt
+14_AppStoreText_TA_Tamil.txt
+15_AppStoreText_BN_Bengali.txt
+16_AppStoreText_PT_Portuguese.txt
+17_AppStoreText_ID_Indonesian.txt
+18_AppStoreText_SW_Swahili.txt
+19_AppStoreText_MR_Marathi.txt
+20_AppStoreText_TE_Telugu.txt
+21_AppStoreText_TR_Turkish.txt
+22_AppStoreText_VI_Vietnamese.txt
+23_AppStoreText_FR-CA_French_Canada.txt
+24_AppStoreText_PT-BR_Portuguese_Brazil.txt
+25_AppStoreText_ES-419_Spanish_Latin_America.txt
+26_AppStoreText_DA_Danish.txt
+27_AppStoreText_CS_Czech.txt
+28_AppStoreText_RO_Romanian.txt
+29_AppStoreText_KN_Kannada.txt
+30_AppStoreText_GU_Gujarati.txt
+31_AppStoreText_OR_Odia.txt
+32_AppStoreText_MS_Malay.txt
+33_AppStoreText_SL_Slovenian.txt
+34_AppStoreText_IT_Italian.txt
+35_AppStoreText_TH_Thai.txt
+36_AppStoreText_ML_Malayalam.txt
+37_AppStoreText_UK_Ukrainian.txt
+38_AppStoreText_NL_Dutch.txt
+39_AppStoreText_FI_Finnish.txt
+40_AppStoreText_EL_Greek.txt
+41_AppStoreText_HE_Hebrew.txt
+42_AppStoreText_HU_Hungarian.txt
+43_AppStoreText_NO_Norwegian.txt
+44_AppStoreText_PL_Polish.txt
+45_AppStoreText_SV_Swedish.txt
+46_AppStoreText_CA_Catalan.txt
+47_AppStoreText_HR_Croatian.txt
+48_AppStoreText_SK_Slovak.txt
+
+
+We also need to ensure the maximum length or characters are followed in all the languages
+Name:(Max 30 characters)
+Subtitle: (Max 30 characters)
+Keywords (Max 100 characters total, comma-separated, no spaces after commas)
+Promotional Text (Max 170 characters — updatable without App Review)
+Description: (Max 4,000 characters)
+
+

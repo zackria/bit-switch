@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Control pentru WeMo vechi
+
+Promotional Text
+Controlează local dispozitive WeMo vechi: găsește-le, pornește-le sau oprește-le și configurează Wi‑Fi în siguranță, fără cloud.
+
+Keywords
+wifi,întrerupător,wemo,local,casă inteligentă,energie,mișcare,priză,lumină
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch oferă control local rapid, privat și fiabil pentru dispozitive WeMo vechi, fără a necesita servicii cloud. Descoperă dispozitivele din rețeaua locală, controlează întrerupătoare și variatoare, vezi consumul prizelor Insight, primește starea senzorilor de mișcare și configurează Wi‑Fi în siguranță folosind date de acces criptate prin AES.
+
+Sunt acceptate întrerupătoare, variatoare, întrerupătoare de lumină, prize energetice Insight, senzori de mișcare, prize de exterior, dispozitive Maker și punți. Descoperirea SSDP/UPnP cu M-SEARCH detectează fiabil dispozitivele din rețea. Configurarea Wi‑Fi integrată criptează parolele cu AES-128-CBC. Gestionarea îmbunătățită a GetBinaryState și SetBinaryState afișează clar starea și erorile.
+
+Dialogul Wi‑Fi simplificat include afișarea parolei și indicatori pentru conexiune și handshake. Modul întunecat și temele rafinate asigură o interfață modernă și lizibilă.
+
+De ce Bit Switch
+
+Descoperirea și controlul au loc numai în rețeaua ta. Datele de acces nu sunt trimise niciodată serviciilor externe și nu este necesar un cont cloud. Aplicația funcționează cu multe tipuri de echipamente Belkin WeMo vechi încă utilizate.
+
+Compatibilitate și confidențialitate
+
+Telefonul și dispozitivele trebuie să fie în aceeași rețea Wi‑Fi. Routerul trebuie să permită multicast UDP pentru descoperirea SSDP. Scanarea Wi‑Fi necesită permisiunea de localizare, solicitată în timpul utilizării și folosită numai pentru scanare și configurare.

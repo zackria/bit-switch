@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Lokalni nadzor naprav WeMo
+
+Promotional Text
+Lokalno upravljajte starejše naprave WeMo: odkrijte jih, preklapljajte in varno nastavite Wi-Fi brez oblaka.
+
+Keywords
+wifi,stikalo,wemo,pametni dom,lokalno,upravljanje,naprave,avtomatizacija
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch omogoča hitro, zasebno in zanesljivo lokalno upravljanje starejših naprav WeMo brez oblaka. Odkrijte naprave v lokalnem omrežju, upravljajte stikala in zatemnilnike, spremljajte porabo energije v vtičnicah Insight, preverjajte stanje senzorjev gibanja ter varno nastavite Wi-Fi s poverilnicami, šifriranimi z AES.
+
+Popolna podpora napravam: stikala, zatemnilniki, svetlobna stikala, energijske vtičnice Insight, senzorji gibanja, zunanje vtičnice, naprave Maker in mostovi.
+Zanesljivo odkrivanje: SSDP/UPnP z M-SEARCH za učinkovito zaznavanje v omrežju.
+Varna nastavitev: vgrajena nastavitev Wi-Fi s šifriranjem gesel AES-128-CBC varuje poverilnice med konfiguracijo.
+Zanesljivo upravljanje: izboljšana obravnava GetBinaryState / SetBinaryState z jasnim stanjem in sporočili o napakah.
+Preprosta uporaba: poenostavljeno okno za nastavitev Wi-Fi, prikaz gesla ter kazalniki povezave in rokovanja.
+Videz: temni način in izpopolnjene teme za sodoben, berljiv vmesnik.
+
+Zakaj Bit Switch
+
+Lokalno delovanje: odkrivanje in upravljanje potekata v vašem omrežju; oblak ni potreben.
+Zasebnost: nastavitev uporablja šifriranje AES, poverilnice pa se nikoli ne pošiljajo zunanjim storitvam.
+Praktičnost: deluje s številnimi starejšimi napravami Belkin WeMo, ki so še vedno v uporabi.
+
+Novosti
+
+Izboljšano odkrivanje SSDP/UPnP.
+Izboljšana nastavitev Wi-Fi s šifriranjem gesel AES-128-CBC.
+Jasnejši potek nastavitve, boljša sporočila o napakah in prikaz gesla.
+Izboljšana obravnava klicev GetBinaryState / SetBinaryState.
+Temni način in izboljšane teme.
+
+Združljivost in zasebnost
+
+Naprave in telefon morajo biti v istem omrežju Wi-Fi.
+Usmerjevalnik mora dovoljevati večvrstno oddajanje UDP za odkrivanje SSDP.
+Iskanje omrežij Wi-Fi zahteva dovoljenje za lokacijo; zahteva se med uporabo in je namenjeno le iskanju ter nastavitvi.
+Račun v oblaku ni potreben; upravljanje poteka samo v lokalnem omrežju. Podrobnosti najdete v pravilniku o zasebnosti na spletnem mestu za podporo.

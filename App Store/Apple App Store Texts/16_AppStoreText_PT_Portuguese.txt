@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: Controlo local para WeMo
+
+Promotional Text
+Controle dispositivos WeMo antigos localmente: encontre-os, ligue-os e configure o Wi‑Fi em segurança.
+
+Keywords
+wifi,interruptor,wemo,controlo local,tomada,casa inteligente,rede,privacidade
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+O Bit Switch oferece controlo local rápido, privado e fiável para dispositivos WeMo antigos, sem necessitar da nuvem. Encontre dispositivos na rede local, controle interruptores e reguladores, consulte o consumo energético das tomadas Insight, receba o estado dos sensores de movimento e configure o Wi‑Fi em segurança com credenciais encriptadas por AES.
+
+Compatibilidade completa: interruptores, reguladores, interruptores de luz, tomadas Insight com medição de energia, sensores de movimento, tomadas exteriores, dispositivos Maker e pontes.
+Deteção robusta: SSDP/UPnP com M‑SEARCH para uma deteção fiável na rede.
+Configuração segura: configuração Wi‑Fi integrada com encriptação de palavra-passe AES-128-CBC.
+Controlo fiável: gestão melhorada de GetBinaryState / SetBinaryState, com estados e erros claros.
+Facilidade de utilização: diálogo Wi‑Fi simplificado, opção de mostrar a palavra-passe e indicadores de ligação.
+Aparência: modo escuro e temas aperfeiçoados para uma interface moderna e legível.
+
+Porquê o Bit Switch
+
+Local primeiro: a deteção e o controlo acontecem na sua rede, sem utilizar a nuvem.
+Privacidade: as credenciais são encriptadas com AES e nunca enviadas para serviços externos.
+Prático: funciona com uma vasta gama de dispositivos Belkin WeMo antigos.
+
+Novidades
+
+Deteção SSDP/UPnP mais fiável.
+Configuração Wi‑Fi melhorada com encriptação AES-128-CBC.
+Fluxo mais claro, melhores mensagens de erro e opção de mostrar a palavra-passe.
+Melhor gestão de GetBinaryState / SetBinaryState.
+Modo escuro e temas aperfeiçoados.
+
+Compatibilidade e privacidade
+
+O telefone e os dispositivos devem estar na mesma rede Wi‑Fi. O router deve permitir multicast UDP para a deteção SSDP. A pesquisa Wi‑Fi requer autorização de localização, pedida durante a utilização e usada apenas para deteção e configuração. Não é necessária uma conta na nuvem; o controlo é exclusivamente local. Consulte a política de privacidade no site de suporte.

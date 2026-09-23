@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Controllo locale per WeMo
+
+Promotional Text
+Controlla localmente i dispositivi WeMo meno recenti: rilevali, attivali e configura il Wi-Fi in sicurezza, senza cloud.
+
+Keywords
+wifi,interruttore,wemo,casa smart,locale,controllo,dispositivi,domotica
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch offre un controllo locale rapido, privato e affidabile dei dispositivi WeMo meno recenti, senza cloud. Rileva i dispositivi sulla rete locale, controlla interruttori e dimmer, visualizza i consumi delle prese Insight, ricevi lo stato dei sensori di movimento e configura il Wi-Fi in sicurezza con credenziali crittografate tramite AES.
+
+Supporto completo: interruttori, dimmer, interruttori luce, prese energetiche Insight, sensori di movimento, prese da esterno, dispositivi Maker e bridge.
+Rilevamento affidabile: SSDP/UPnP con M-SEARCH per individuare i dispositivi in rete.
+Configurazione sicura: procedura Wi-Fi integrata con crittografia AES-128-CBC delle password, per proteggere le credenziali durante la configurazione.
+Controllo affidabile: gestione migliorata di GetBinaryState / SetBinaryState con stato e segnalazione degli errori chiari.
+Facilità d'uso: finestra Wi-Fi semplificata, opzione per mostrare la password e indicatori di connessione e handshake.
+Aspetto: modalità scura e temi perfezionati per un'interfaccia moderna e leggibile.
+
+Perché Bit Switch
+
+Funzionamento locale: rilevamento e controllo avvengono sulla tua rete, senza usare il cloud.
+Privacy: la configurazione usa la crittografia AES e le credenziali non vengono mai inviate a servizi esterni.
+Praticità: compatibile con molti dispositivi Belkin WeMo meno recenti ancora in uso.
+
+Novità
+
+Rilevamento SSDP/UPnP migliorato.
+Configurazione Wi-Fi ottimizzata con crittografia AES-128-CBC delle password.
+Procedura più chiara, messaggi di errore migliori e opzione per mostrare la password.
+Gestione migliorata delle chiamate GetBinaryState / SetBinaryState.
+Modalità scura e temi perfezionati.
+
+Compatibilità e privacy
+
+I dispositivi e il telefono devono essere connessi alla stessa rete Wi-Fi.
+Il router deve consentire il multicast UDP per il rilevamento SSDP.
+La scansione Wi-Fi richiede l'autorizzazione alla posizione, richiesta durante l'uso e impiegata solo per scansione e configurazione.
+Non occorre un account cloud: il controllo avviene solo sulla rete locale. Consulta l'informativa sulla privacy nel sito di supporto.

@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Điều khiển thiết bị WeMo cũ
+
+Promotional Text
+Điều khiển WeMo cũ ngay trong mạng nội bộ: tìm thiết bị, bật tắt và thiết lập Wi‑Fi an toàn mà không cần đám mây.
+
+Keywords
+wifi,công tắc,wemo,nội bộ,nhà thông minh,năng lượng,cảm biến,ổ cắm
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch giúp điều khiển nhanh chóng, riêng tư và ổn định các thiết bị WeMo cũ ngay trong mạng nội bộ—không cần đám mây. Tìm thiết bị trên mạng, điều khiển công tắc và bộ điều chỉnh độ sáng, xem mức tiêu thụ điện của ổ cắm Insight, nhận trạng thái cảm biến chuyển động và thiết lập Wi‑Fi an toàn bằng thông tin đăng nhập được mã hóa AES.
+
+Hỗ trợ công tắc, bộ điều chỉnh độ sáng, công tắc đèn, ổ cắm đo điện Insight, cảm biến chuyển động, ổ cắm ngoài trời, thiết bị Maker và bridge. Khám phá SSDP/UPnP với M-SEARCH giúp phát hiện thiết bị đáng tin cậy trong mạng. Quy trình thiết lập Wi‑Fi tích hợp mã hóa mật khẩu bằng AES-128-CBC. Xử lý GetBinaryState và SetBinaryState được cải thiện, hiển thị rõ trạng thái và lỗi.
+
+Hộp thoại Wi‑Fi gọn hơn có nút hiện mật khẩu cùng chỉ báo kết nối và bắt tay. Chế độ tối và giao diện tinh chỉnh đem lại trải nghiệm hiện đại, dễ đọc.
+
+Tại sao chọn Bit Switch
+
+Việc khám phá và điều khiển chỉ diễn ra trên mạng của bạn. Thông tin đăng nhập không được gửi đến dịch vụ bên ngoài và không cần tài khoản đám mây. Ứng dụng tương thích với nhiều thiết bị Belkin WeMo cũ vẫn đang được sử dụng.
+
+Tương thích và quyền riêng tư
+
+Điện thoại và thiết bị phải cùng một mạng Wi‑Fi. Bộ định tuyến phải cho phép UDP multicast để khám phá SSDP. Quét Wi‑Fi cần quyền vị trí; quyền chỉ được yêu cầu khi dùng và chỉ phục vụ việc quét cùng thiết lập thiết bị.

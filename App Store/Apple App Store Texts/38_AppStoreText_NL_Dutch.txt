@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Lokale bediening voor WeMo
+
+Promotional Text
+Bedien oudere WeMo-apparaten lokaal: ontdek en schakel ze en configureer wifi veilig, zonder cloud.
+
+Keywords
+wifi,schakelaar,wemo,slim huis,lokaal,bediening,apparaten,automatisering
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch biedt snelle, private en betrouwbare lokale bediening van oudere WeMo-apparaten, zonder cloud. Ontdek apparaten op je lokale netwerk, bedien schakelaars en dimmers, bekijk het energieverbruik van Insight-stekkers, ontvang de status van bewegingssensoren en configureer wifi veilig met via AES versleutelde inloggegevens.
+
+Volledige apparaatondersteuning: schakelaars, dimmers, lichtschakelaars, Insight-energiestekkers, bewegingssensoren, buitenstekkers, Maker-apparaten en bridges.
+Robuuste detectie: SSDP/UPnP met M-SEARCH voor betrouwbare detectie op het netwerk.
+Veilige configuratie: ingebouwde wifi-configuratie met AES-128-CBC-versleuteling beschermt inloggegevens tijdens het instellen.
+Betrouwbare bediening: verbeterde verwerking van GetBinaryState / SetBinaryState met duidelijke status- en foutmeldingen.
+Gebruiksgemak: vereenvoudigd wifi-venster, optie om het wachtwoord te tonen en indicatoren voor verbinding en handshake.
+Uiterlijk: donkere modus en verfijnde thema's voor een moderne, leesbare interface.
+
+Waarom Bit Switch
+
+Lokaal voorop: detectie en bediening vinden plaats op je eigen netwerk; de cloud is niet nodig.
+Privacygericht: de configuratie gebruikt AES-versleuteling en stuurt inloggegevens nooit naar externe diensten.
+Praktisch: werkt met veel oudere Belkin WeMo-apparaten die nog steeds in gebruik zijn.
+
+Wat is er nieuw
+
+Verbeterde SSDP/UPnP-detectie.
+Verbeterde wifi-configuratie met AES-128-CBC-versleuteling van wachtwoorden.
+Duidelijker configuratieproces, betere foutmeldingen en optie om het wachtwoord te tonen.
+Verbeterde verwerking van GetBinaryState / SetBinaryState-aanroepen.
+Donkere modus en verfijnde thema's.
+
+Compatibiliteit en privacy
+
+De apparaten en telefoon moeten met hetzelfde wifi-netwerk verbonden zijn.
+De router moet UDP-multicast toestaan voor SSDP-detectie.
+Voor wifi-scans is locatietoestemming nodig; deze wordt tijdens gebruik gevraagd en alleen voor scannen en configureren gebruikt.
+Er is geen cloudaccount nodig; bediening vindt uitsluitend op het lokale netwerk plaats. Zie het privacybeleid op de ondersteuningssite voor details.

@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: Control local para WeMo
+
+Promotional Text
+Controla WeMo antiguos de forma local: descubre dispositivos, actívalos y configura el Wi‑Fi.
+
+Keywords
+wifi,interruptor,wemo,control local,enchufe,domótica,red,privacidad
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch ofrece un control local rápido, privado y fiable para dispositivos WeMo antiguos, sin necesidad de la nube. Descubre dispositivos en tu red local, controla interruptores y reguladores, consulta el consumo de los enchufes Insight, recibe el estado de sensores de movimiento y configura el Wi‑Fi de forma segura con credenciales cifradas mediante AES.
+
+Compatibilidad completa: interruptores, reguladores, interruptores de luz, enchufes Insight con medición de energía, sensores de movimiento, enchufes exteriores, dispositivos Maker y puentes.
+Detección robusta: SSDP/UPnP con M‑SEARCH para encontrar dispositivos de forma fiable en la red.
+Configuración segura: Wi‑Fi integrado con cifrado de contraseñas AES-128-CBC.
+Control fiable: mejor gestión de GetBinaryState / SetBinaryState, con estados y errores claros.
+Facilidad de uso: diálogo de Wi‑Fi simplificado, opción para mostrar la contraseña e indicadores de conexión.
+Apariencia: modo oscuro y temas refinados para una interfaz moderna y legible.
+
+Por qué Bit Switch
+
+Local ante todo: la detección y el control ocurren en tu red; no se usa la nube.
+Privacidad: las credenciales se cifran con AES y nunca se envían a servicios externos.
+Práctico: compatible con una amplia gama de dispositivos Belkin WeMo antiguos.
+
+Novedades
+
+Detección SSDP/UPnP más fiable.
+Configuración Wi‑Fi mejorada con cifrado AES-128-CBC.
+Flujo más claro, mejores mensajes de error y opción para mostrar la contraseña.
+Mejor gestión de GetBinaryState / SetBinaryState.
+Modo oscuro y temas mejorados.
+
+Compatibilidad y privacidad
+
+El teléfono y los dispositivos deben estar en la misma red Wi‑Fi. El router debe permitir multidifusión UDP para SSDP. El análisis Wi‑Fi requiere permiso de ubicación, solicitado en tiempo de ejecución y usado solo para detectar y configurar. No se necesita una cuenta en la nube; el control es exclusivamente local. Consulta la política de privacidad en el sitio de soporte.

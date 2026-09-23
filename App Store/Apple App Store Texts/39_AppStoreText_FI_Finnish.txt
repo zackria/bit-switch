@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: WeMo-laitteiden lähiohjaus
+
+Promotional Text
+Ohjaa vanhoja WeMo-laitteita paikallisesti: etsi ja kytke laitteita sekä määritä Wi-Fi turvallisesti ilman pilvipalvelua.
+
+Keywords
+wifi,kytkin,wemo,älykoti,paikallinen,ohjaus,laitteet,automaatio
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch mahdollistaa vanhojen WeMo-laitteiden nopean, yksityisen ja luotettavan paikallisohjauksen ilman pilvipalvelua. Etsi laitteita lähiverkosta, ohjaa kytkimiä ja himmentimiä, tarkastele Insight-pistorasioiden energiankulutusta, vastaanota liiketunnistimien tila ja määritä Wi-Fi turvallisesti AES-salatuilla tunnistetiedoilla.
+
+Kattava laitetuki: kytkimet, himmentimet, valokytkimet, Insight-energiapistorasiat, liiketunnistimet, ulkopistorasiat, Maker-laitteet ja sillat.
+Luotettava etsintä: SSDP/UPnP ja M-SEARCH tunnistavat verkon laitteet luotettavasti.
+Turvallinen määritys: sisäinen Wi-Fi-määritys salaa salasanan AES-128-CBC-menetelmällä ja suojaa tunnistetiedot määrityksen aikana.
+Luotettava ohjaus: parannettu GetBinaryState / SetBinaryState -käsittely sekä selkeät tila- ja virheilmoitukset.
+Helppokäyttöisyys: selkeä Wi-Fi-määritysikkuna, salasanan näyttö ja yhteyden sekä kättelyn ilmaisimet.
+Ulkoasu: tumma tila ja viimeistellyt teemat tarjoavat modernin ja helposti luettavan käyttöliittymän.
+
+Miksi Bit Switch
+
+Paikallinen: etsintä ja ohjaus tapahtuvat omassa verkossasi ilman pilvipalvelua.
+Yksityinen: määritys käyttää AES-salausta, eikä tunnistetietoja lähetetä ulkoisiin palveluihin.
+Käytännöllinen: toimii monien yhä käytössä olevien vanhojen Belkin WeMo -laitteiden kanssa.
+
+Uutta
+
+Luotettavampi SSDP/UPnP-etsintä.
+Parannettu Wi-Fi-määritys ja salasanojen AES-128-CBC-salaus.
+Selkeämpi määritys, paremmat virheilmoitukset ja salasanan näyttö.
+Parannettu GetBinaryState / SetBinaryState -kutsujen käsittely.
+Tumma tila ja viimeistellyt teemat.
+
+Yhteensopivuus ja yksityisyys
+
+Laitteiden ja puhelimen on oltava samassa Wi-Fi-verkossa.
+Reitittimen on sallittava UDP-monilähetys SSDP-etsintää varten.
+Wi-Fi-skannaus vaatii sijaintiluvan, joka pyydetään käytön aikana ja jota käytetään vain skannaukseen ja määritykseen.
+Pilvitiliä ei tarvita; ohjaus tapahtuu vain lähiverkossa. Lisätietoja on tukisivuston tietosuojakäytännössä.

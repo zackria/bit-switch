@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Legacy Control for WeMo
+
+Promotional Text
+Control legacy WeMo devices locally: discover, toggle, monitor energy and motion, and securely provision Wi-Fi—no cloud required.
+
+Keywords
+wifi,switch,wemo,legacy,local,smart home,dimmer,insight,motion,upnp
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch provides fast, private, and reliable local control for legacy WeMo devices — no cloud required. Discover devices on your local network, control switches and dimmers, view energy usage from Insight plugs, receive motion sensor state, and provision Wi‑Fi securely using AES-encrypted credentials for device setup.
+
+Full device support: switches, dimmers, light switches, Insight energy plugs, motion sensors, outdoor plugs, Maker devices, and bridges.
+Robust discovery: SSDP/UPnP discovery with M‑SEARCH reliable on-network detection.
+Secure provisioning: built-in Wi‑Fi setup with AES-128-CBC password encryption to keep credentials private during device configuration.
+Reliable control: improved GetBinaryState / SetBinaryState handling with clear status and error reporting.
+Usability: streamlined Wi‑Fi setup dialog, password visibility toggle, and status indicators for connection and handshake.
+Appearance: supports dark mode and refined themes for a modern, readable UI.
+
+Why Bit Switch
+
+Local-first: device discovery and control happen on your network — no cloud required or used for device control.
+Privacy-focused: provisioning uses AES encryption; credentials are never sent to external services.
+Practical: works with a wide range of legacy Belkin WeMo hardware still in the wild.
+
+What's New
+
+Improved SSDP/UPnP discovery for more reliable on-network detection.
+Enhanced Wi‑Fi provisioning flow with AES-128-CBC encryption of passwords.
+UI improvements: clearer Wi‑Fi setup flow, better error messages, and password visibility toggle.
+Better state handling for GetBinaryState / SetBinaryState calls.
+Dark mode and theme refinements.
+
+Compatibility & Privacy
+
+Devices and phone must be on the same Wi‑Fi network.
+Router must allow UDP multicast for SSDP discovery.
+Wi‑Fi scanning requires location permission; permissions are requested at runtime and used only for scanning and provisioning.
+No cloud account required; local network control only. See our privacy policy on the support site for details.

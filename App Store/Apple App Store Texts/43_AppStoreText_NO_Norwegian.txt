@@ -1,0 +1,46 @@
+Name: Bit Switch
+
+Subtitle: Lokal styring av WeMo
+
+Promotional Text
+Styr eldre WeMo-enheter lokalt: finn og slå dem av eller på, og konfigurer Wi-Fi sikkert uten skyen.
+
+Keywords
+wifi,bryter,wemo,smarthjem,lokal,styring,enheter,automatisering
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch gir rask, privat og pålitelig lokal styring av eldre WeMo-enheter uten bruk av skyen. Finn enheter i lokalnettet, styr brytere og dimmere, se energibruken til Insight-kontakter, motta status fra bevegelsessensorer, og konfigurer Wi-Fi sikkert med AES-kryptert påloggingsinformasjon.
+
+Full enhetsstøtte: brytere, dimmere, lysbrytere, Insight-energikontakter, bevegelsessensorer, utendørskontakter, Maker-enheter og broer.
+Robust søk: SSDP/UPnP med M-SEARCH for pålitelig enhetsoppdagelse i nettverket.
+Sikkert oppsett: innebygd Wi-Fi-oppsett med AES-128-CBC-kryptering av passord beskytter informasjonen under konfigurering.
+Pålitelig styring: forbedret håndtering av GetBinaryState / SetBinaryState med tydelige status- og feilmeldinger.
+Brukervennlig: forenklet Wi-Fi-oppsett, visning av passord og indikatorer for tilkobling og håndtrykk.
+Utseende: mørk modus og finjusterte temaer gir et moderne, lettlest grensesnitt.
+
+Hvorfor Bit Switch
+
+Lokalt først: søk og styring skjer i ditt eget nettverk, uten behov for skyen.
+Personvern: oppsettet bruker AES-kryptering, og informasjonen sendes aldri til eksterne tjenester.
+Praktisk: fungerer med en rekke eldre Belkin WeMo-enheter som fortsatt er i bruk.
+
+Nyheter
+
+Forbedret SSDP/UPnP-søk.
+Bedre Wi-Fi-oppsett med AES-128-CBC-kryptering av passord.
+Tydeligere oppsett, bedre feilmeldinger og visning av passord.
+Bedre håndtering av GetBinaryState / SetBinaryState-kall.
+Mørk modus og finjusterte temaer.
+
+Kompatibilitet og personvern
+
+Enhetene og telefonen må være tilkoblet samme Wi-Fi-nettverk.
+Ruteren må tillate UDP-multicast for SSDP-søk.
+Wi-Fi-skanning krever posisjonstillatelse. Den etterspørres under bruk og brukes bare til skanning og konfigurering.
+Ingen skykonto kreves; styring skjer bare i lokalnettet. Se personvernerklæringen på støttenettstedet for mer informasjon.

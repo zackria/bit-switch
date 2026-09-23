@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: WeMo 裝置本機控制
+
+Promotional Text
+在本機控制舊款 WeMo：搜尋裝置、切換狀態並安全設定 Wi‑Fi。
+
+Keywords
+無線網路,開關,wemo,本機控制,插座,智慧家庭,網路,隱私
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch 可快速、私密且可靠地在本機控制舊款 WeMo 裝置，無需雲端服務。搜尋區域網路中的裝置，控制開關和調光器，查看 Insight 插座的耗電量，取得動作感測器狀態，並使用 AES 加密的憑證安全設定 Wi‑Fi。
+
+完整裝置支援：開關、調光器、牆壁開關、Insight 電力監測插座、動作感測器、戶外插座、Maker 裝置和橋接器。
+可靠搜尋：透過支援 M‑SEARCH 的 SSDP/UPnP，在網路內可靠地找到裝置。
+安全設定：內建 Wi‑Fi 設定，採用 AES-128-CBC 密碼加密。
+可靠控制：改進 GetBinaryState / SetBinaryState 處理，清楚顯示狀態和錯誤。
+易於使用：精簡的 Wi‑Fi 設定對話框、密碼顯示切換，以及連線和交握狀態指示器。
+外觀：支援深色模式與最佳化主題，介面現代且易讀。
+
+為何選擇 Bit Switch
+
+本機優先：裝置搜尋和控制都在你的網路中完成，不使用雲端服務。
+重視隱私：憑證以 AES 加密，絕不傳送至外部服務。
+實用相容：支援多種仍在使用的舊款 Belkin WeMo 硬體。
+
+最新功能
+
+改進 SSDP/UPnP 搜尋，提高網路內偵測可靠性。
+強化 Wi‑Fi 設定流程，使用 AES-128-CBC 加密密碼。
+更清楚的流程、更好的錯誤訊息和密碼顯示切換。
+改進 GetBinaryState / SetBinaryState 狀態處理。
+最佳化深色模式和主題。
+
+相容性與隱私
+
+裝置和手機必須連接相同的 Wi‑Fi 網路。路由器必須允許 SSDP 搜尋所需的 UDP 多點傳送。Wi‑Fi 掃描需要定位權限；權限會在執行時要求，且只用於搜尋和設定。無需雲端帳號，控制只在區域網路內進行。詳情請參閱支援網站上的隱私權政策。

@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Ovládání starých zařízení WeMo
+
+Promotional Text
+Ovládejte starší zařízení WeMo místně: vyhledejte je, zapínejte a vypínejte a bezpečně nastavte Wi‑Fi bez cloudu.
+
+Keywords
+wifi,vypínač,wemo,místní,chytrá domácnost,energie,pohyb,zásuvka,světlo
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch nabízí rychlé, soukromé a spolehlivé místní ovládání starších zařízení WeMo bez potřeby cloudu. Vyhledávejte zařízení v místní síti, ovládejte vypínače a stmívače, sledujte spotřebu energie zásuvek Insight, získávejte stav pohybových čidel a bezpečně nastavujte Wi‑Fi pomocí přihlašovacích údajů šifrovaných technologií AES.
+
+Podporovány jsou vypínače, stmívače, světelné vypínače, energetické zásuvky Insight, pohybová čidla, venkovní zásuvky, zařízení Maker a mosty. Vyhledávání SSDP/UPnP s M-SEARCH spolehlivě rozpoznává zařízení v síti. Vestavěné nastavení Wi‑Fi šifruje hesla pomocí AES-128-CBC. Vylepšené zpracování GetBinaryState a SetBinaryState přehledně zobrazuje stav a chyby.
+
+Zjednodušené nastavení Wi‑Fi nabízí zobrazení hesla a indikátory připojení a navázání komunikace. Tmavý režim a vyladěné motivy zajišťují moderní a čitelné rozhraní.
+
+Proč Bit Switch
+
+Vyhledávání a ovládání probíhá pouze ve vaší síti. Přihlašovací údaje se nikdy neposílají externím službám a není potřeba cloudový účet. Aplikace funguje s mnoha staršími zařízeními Belkin WeMo, která se stále používají.
+
+Kompatibilita a soukromí
+
+Telefon a zařízení musí být ve stejné síti Wi‑Fi. Router musí pro vyhledávání SSDP povolit skupinové vysílání UDP. Skenování Wi‑Fi vyžaduje oprávnění k poloze, které se vyžádá za běhu a používá se jen ke skenování a nastavení.

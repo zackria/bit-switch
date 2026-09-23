@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Control de dispositivos WeMo
+
+Promotional Text
+Controla dispositivos WeMo antiguos de forma local: encuéntralos, actívalos y configura el Wi‑Fi con seguridad, sin usar la nube.
+
+Keywords
+wifi,interruptor,wemo,local,casa inteligente,energía,movimiento,enchufe,luz
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch ofrece control local rápido, privado y confiable para dispositivos WeMo antiguos, sin depender de la nube. Encuentra dispositivos en tu red local, controla interruptores y atenuadores, consulta el consumo de energía de los enchufes Insight, recibe el estado de los sensores de movimiento y configura el Wi‑Fi de forma segura con credenciales cifradas mediante AES.
+
+Admite interruptores, atenuadores, interruptores de luz, enchufes de energía Insight, sensores de movimiento, enchufes para exteriores, dispositivos Maker y puentes. La detección SSDP/UPnP con M-SEARCH encuentra dispositivos de manera confiable en la red. La configuración Wi‑Fi integrada cifra las contraseñas con AES-128-CBC. El manejo mejorado de GetBinaryState y SetBinaryState muestra claramente el estado y los errores.
+
+La pantalla simplificada de Wi‑Fi incluye una opción para ver la contraseña e indicadores de conexión y handshake. El modo oscuro y los temas refinados brindan una interfaz moderna y legible.
+
+Por qué elegir Bit Switch
+
+La detección y el control ocurren únicamente en tu red. Las credenciales nunca se envían a servicios externos y no necesitas una cuenta en la nube. Funciona con una amplia variedad de equipos Belkin WeMo antiguos que aún están en uso.
+
+Compatibilidad y privacidad
+
+El teléfono y los dispositivos deben estar en la misma red Wi‑Fi. El router debe permitir multidifusión UDP para la detección SSDP. El escaneo de Wi‑Fi requiere permiso de ubicación, que se solicita durante el uso y se utiliza solo para escanear y configurar dispositivos.

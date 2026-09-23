@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: WeMo 设备本地控制
+
+Promotional Text
+在本地控制旧款 WeMo：发现设备、切换状态并安全配置 Wi‑Fi。
+
+Keywords
+无线网络,开关,wemo,本地控制,插座,智能家居,网络,隐私
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch 可快速、私密且可靠地在本地控制旧款 WeMo 设备，无需云服务。发现本地网络中的设备，控制开关和调光器，查看 Insight 插座的能耗，获取运动传感器状态，并使用 AES 加密凭据安全配置 Wi‑Fi。
+
+全面的设备支持：开关、调光器、墙壁开关、Insight 能耗插座、运动传感器、户外插座、Maker 设备和网桥。
+可靠发现：通过带 M‑SEARCH 的 SSDP/UPnP，在网络内可靠发现设备。
+安全配置：内置 Wi‑Fi 设置，采用 AES-128-CBC 密码加密。
+可靠控制：改进 GetBinaryState / SetBinaryState 处理，清晰显示状态和错误。
+易于使用：精简的 Wi‑Fi 设置对话框、密码显示开关以及连接和握手状态指示器。
+外观：支持深色模式和优化主题，界面现代且易读。
+
+为什么选择 Bit Switch
+
+本地优先：设备发现和控制均在你的网络中进行，不使用云服务。
+注重隐私：凭据经 AES 加密，绝不会发送到外部服务。
+实用兼容：支持多种仍在使用的旧款 Belkin WeMo 硬件。
+
+新增功能
+
+改进 SSDP/UPnP 发现，提高网络内检测可靠性。
+增强 Wi‑Fi 配置流程，使用 AES-128-CBC 加密密码。
+更清晰的流程、更好的错误消息和密码显示开关。
+改进 GetBinaryState / SetBinaryState 状态处理。
+优化深色模式和主题。
+
+兼容性与隐私
+
+设备和手机必须连接同一 Wi‑Fi 网络。路由器必须允许用于 SSDP 发现的 UDP 多播。Wi‑Fi 扫描需要位置权限；权限在运行时请求，且仅用于扫描和配置。无需云账户，仅在本地网络中控制。详情请参阅支持网站上的隐私政策。

@@ -1,0 +1,43 @@
+Name: Bit Switch
+
+Subtitle: Contrôle local pour WeMo
+
+Promotional Text
+Contrôlez vos anciens appareils WeMo en local : détection, commande et configuration Wi‑Fi.
+
+Keywords
+wifi,interrupteur,wemo,contrôle local,prise,domotique,réseau,vie privée
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch offre un contrôle local rapide, privé et fiable des anciens appareils WeMo, sans cloud. Détectez les appareils sur votre réseau local, commandez interrupteurs et variateurs, consultez la consommation des prises Insight, recevez l’état des détecteurs de mouvement et configurez le Wi‑Fi en toute sécurité grâce au chiffrement AES des identifiants.
+
+Compatibilité complète : interrupteurs, variateurs, interrupteurs muraux, prises Insight avec suivi énergétique, détecteurs de mouvement, prises extérieures, appareils Maker et ponts.
+Détection robuste : SSDP/UPnP avec M‑SEARCH pour une détection fiable sur le réseau.
+Configuration sécurisée : assistant Wi‑Fi intégré avec chiffrement AES-128-CBC du mot de passe.
+Contrôle fiable : meilleure gestion de GetBinaryState / SetBinaryState, avec états et erreurs clairs.
+Simplicité : dialogue Wi‑Fi épuré, affichage facultatif du mot de passe et indicateurs de connexion.
+Apparence : mode sombre et thèmes soignés pour une interface moderne et lisible.
+
+Pourquoi Bit Switch
+
+Priorité au local : détection et contrôle s’effectuent sur votre réseau, sans cloud.
+Respect de la vie privée : les identifiants sont chiffrés par AES et ne quittent jamais votre réseau.
+Pratique : fonctionne avec de nombreux anciens appareils Belkin WeMo.
+
+Nouveautés
+
+Détection SSDP/UPnP plus fiable.
+Configuration Wi‑Fi améliorée avec chiffrement AES-128-CBC.
+Parcours plus clair, meilleurs messages d’erreur et affichage du mot de passe.
+Meilleure gestion de GetBinaryState / SetBinaryState.
+Mode sombre et thèmes affinés.
+
+Compatibilité et confidentialité
+
+Le téléphone et les appareils doivent être sur le même réseau Wi‑Fi. Le routeur doit autoriser la multidiffusion UDP pour SSDP. L’analyse Wi‑Fi requiert l’autorisation de localisation, demandée à l’utilisation et réservée à la détection et à la configuration. Aucun compte cloud n’est requis : le contrôle reste local. Consultez notre politique de confidentialité sur le site d’assistance.

@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Eski WeMo Cihaz Kontrolü
+
+Promotional Text
+Eski WeMo cihazlarını yerel olarak keşfedin, açıp kapatın ve Wi‑Fi bağlantısını güvenle kurun. Bulut gerekmez.
+
+Keywords
+wifi,anahtar,wemo,yerel,akıllı ev,enerji,hareket,priz,aydınlatma
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch, eski WeMo cihazlarını hızlı, gizli ve güvenilir biçimde yerel olarak kontrol eder; bulut gerekmez. Yerel ağınızdaki cihazları keşfedin, anahtarları ve dimmerleri yönetin, Insight prizlerinin enerji kullanımını görüntüleyin, hareket sensörü durumunu alın ve cihaz kurulumu için AES ile şifrelenmiş bilgilerle Wi‑Fi bağlantısını güvenle yapılandırın.
+
+Anahtarlar, dimmerler, ışık anahtarları, Insight enerji prizleri, hareket sensörleri, dış mekân prizleri, Maker cihazları ve köprüler desteklenir. M-SEARCH kullanan SSDP/UPnP keşfi, ağ üzerinde güvenilir algılama sağlar. Yerleşik Wi‑Fi kurulumu, parolaları AES-128-CBC ile şifreler. Geliştirilmiş GetBinaryState ve SetBinaryState işlemleri açık durum ve hata bilgileri sunar.
+
+Kolaylaştırılmış Wi‑Fi iletişim kutusu; parola görünürlüğü, bağlantı ve el sıkışma göstergeleri içerir. Koyu mod ve iyileştirilmiş temalar modern, okunabilir bir arayüz sağlar.
+
+Neden Bit Switch?
+
+Keşif ve kontrol yalnızca ağınızda gerçekleşir. Kimlik bilgileri dış hizmetlere gönderilmez ve bulut hesabı gerekmez. Hâlen kullanılan çok çeşitli eski Belkin WeMo donanımlarıyla çalışır.
+
+Uyumluluk ve Gizlilik
+
+Telefon ile cihazlar aynı Wi‑Fi ağında olmalıdır. Yönlendirici, SSDP keşfi için UDP çok noktaya yayınına izin vermelidir. Wi‑Fi taraması konum izni gerektirir; izin çalışma zamanında istenir ve yalnızca tarama ile kurulum için kullanılır.

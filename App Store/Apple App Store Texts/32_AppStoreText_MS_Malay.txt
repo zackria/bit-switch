@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Kawalan peranti WeMo lama
+
+Promotional Text
+Kawal peranti WeMo lama secara setempat: temui, hidupkan atau matikan, dan sediakan Wi‑Fi dengan selamat tanpa awan.
+
+Keywords
+wifi,suis,wemo,setempat,rumah pintar,tenaga,gerakan,palam,lampu
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch menyediakan kawalan setempat yang pantas, peribadi dan boleh dipercayai untuk peranti WeMo lama tanpa memerlukan awan. Temui peranti pada rangkaian setempat anda, kawal suis dan pemalap, lihat penggunaan tenaga palam Insight, terima status penderia gerakan dan sediakan Wi‑Fi dengan selamat menggunakan kelayakan yang disulitkan dengan AES.
+
+Sokongan merangkumi suis, pemalap, suis lampu, palam tenaga Insight, penderia gerakan, palam luar, peranti Maker dan jambatan. Penemuan SSDP/UPnP dengan M-SEARCH mengesan peranti pada rangkaian dengan andal. Persediaan Wi‑Fi terbina dalam menyulitkan kata laluan menggunakan AES-128-CBC. Pengendalian GetBinaryState dan SetBinaryState yang ditambah baik memaparkan status serta ralat dengan jelas.
+
+Dialog Wi‑Fi yang dipermudah mempunyai pilihan paparan kata laluan serta penunjuk sambungan dan handshake. Mod gelap dan tema yang diperhalusi memberikan antara muka moden yang mudah dibaca.
+
+Mengapa Bit Switch
+
+Penemuan dan kawalan hanya berlaku pada rangkaian anda. Kelayakan tidak pernah dihantar kepada perkhidmatan luar dan akaun awan tidak diperlukan. Aplikasi ini berfungsi dengan pelbagai perkakasan Belkin WeMo lama yang masih digunakan.
+
+Keserasian dan Privasi
+
+Telefon dan peranti mesti berada pada rangkaian Wi‑Fi yang sama. Penghala mesti membenarkan multicast UDP untuk penemuan SSDP. Pengimbasan Wi‑Fi memerlukan kebenaran lokasi yang diminta semasa penggunaan dan digunakan hanya untuk mengimbas dan menyediakan peranti.

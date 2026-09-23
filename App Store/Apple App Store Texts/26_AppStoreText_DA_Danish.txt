@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Styring af ældre WeMo-enheder
+
+Promotional Text
+Styr ældre WeMo-enheder lokalt: Find dem, tænd eller sluk, og konfigurer Wi‑Fi sikkert uden brug af skyen.
+
+Keywords
+wifi,kontakt,wemo,lokal,smart hjem,energi,bevægelse,stik,lys
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch giver hurtig, privat og pålidelig lokal styring af ældre WeMo-enheder uden behov for skyen. Find enheder på dit lokale netværk, styr kontakter og lysdæmpere, se energiforbruget fra Insight-stik, modtag status fra bevægelsessensorer, og konfigurer Wi‑Fi sikkert med AES-krypterede loginoplysninger.
+
+Appen understøtter kontakter, lysdæmpere, lyskontakter, Insight-energistik, bevægelsessensorer, udendørs stik, Maker-enheder og broer. SSDP/UPnP-søgning med M-SEARCH finder pålideligt enheder på netværket. Den indbyggede Wi‑Fi-konfiguration krypterer adgangskoder med AES-128-CBC. Forbedret håndtering af GetBinaryState og SetBinaryState viser tydelig status og fejl.
+
+Den strømlinede Wi‑Fi-dialog har visning af adgangskode samt indikatorer for forbindelse og handshake. Mørk tilstand og finpudsede temaer giver en moderne og læsevenlig brugerflade.
+
+Derfor Bit Switch
+
+Søgning og styring foregår kun på dit netværk. Loginoplysninger sendes aldrig til eksterne tjenester, og der kræves ingen skykonto. Appen virker med mange typer ældre Belkin WeMo-udstyr, der stadig er i brug.
+
+Kompatibilitet og privatliv
+
+Telefonen og enhederne skal være på samme Wi‑Fi-netværk. Routeren skal tillade UDP-multicast til SSDP-søgning. Wi‑Fi-scanning kræver lokalitetstilladelse, som anmodes under brug og kun anvendes til scanning og konfiguration.

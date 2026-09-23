@@ -1,0 +1,30 @@
+Name: Bit Switch
+
+Subtitle: Contrôle des anciens WeMo
+
+Promotional Text
+Contrôlez vos anciens appareils WeMo localement : détection, marche/arrêt et configuration Wi‑Fi sécurisée, sans nuage.
+
+Keywords
+wifi,interrupteur,wemo,local,domotique,énergie,mouvement,prise,éclairage
+
+Support URL
+https://binaryboots.com/
+
+https://binaryboots.com/privacy.html
+
+Description
+
+Bit Switch offre un contrôle local rapide, privé et fiable des anciens appareils WeMo, sans nuage. Détectez les appareils sur votre réseau local, contrôlez les interrupteurs et gradateurs, consultez la consommation des prises Insight, recevez l’état des détecteurs de mouvement et configurez le Wi‑Fi de façon sécuritaire grâce à des identifiants chiffrés par AES.
+
+L’app prend en charge les interrupteurs, gradateurs, interrupteurs d’éclairage, prises énergétiques Insight, détecteurs de mouvement, prises extérieures, appareils Maker et ponts. La détection SSDP/UPnP avec M-SEARCH repère les appareils de manière fiable sur le réseau. La configuration Wi‑Fi intégrée chiffre les mots de passe avec AES-128-CBC. La gestion améliorée de GetBinaryState et SetBinaryState présente clairement l’état et les erreurs.
+
+La fenêtre Wi‑Fi simplifiée comprend l’affichage du mot de passe et des indicateurs de connexion et de négociation. Le mode sombre et les thèmes raffinés assurent une interface moderne et lisible.
+
+Pourquoi Bit Switch
+
+La détection et le contrôle restent sur votre réseau. Les identifiants ne sont jamais transmis à des services externes et aucun compte infonuagique n’est requis. L’app fonctionne avec une vaste gamme d’anciens appareils Belkin WeMo toujours utilisés.
+
+Compatibilité et confidentialité
+
+Le téléphone et les appareils doivent être connectés au même réseau Wi‑Fi. Le routeur doit autoriser la multidiffusion UDP pour la détection SSDP. L’analyse Wi‑Fi nécessite l’autorisation de localisation, demandée pendant l’utilisation et employée uniquement pour l’analyse et la configuration.

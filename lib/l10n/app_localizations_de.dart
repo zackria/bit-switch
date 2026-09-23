@@ -461,6 +461,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsTitle => 'Einstellungen';
 
   @override
+  String get settingsSectionGeneral => 'Allgemein';
+
+  @override
+  String get settingsLanguage => 'Sprache';
+
+  @override
+  String get settingsSelectLanguage => 'Sprache auswählen';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Systemstandard';
+
+  @override
   String get settingsSectionNetwork => 'Netzwerk';
 
   @override

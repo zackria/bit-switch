@@ -430,6 +430,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsTitle => '设置';
 
   @override
+  String get settingsSectionGeneral => '通用';
+
+  @override
+  String get settingsLanguage => '语言';
+
+  @override
+  String get settingsSelectLanguage => '选择语言';
+
+  @override
+  String get settingsLanguageSystemDefault => '系统默认';
+
+  @override
   String get settingsSectionNetwork => '网络';
 
   @override
@@ -1495,6 +1507,18 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get settingsTitle => '设置';
 
   @override
+  String get settingsSectionGeneral => '通用';
+
+  @override
+  String get settingsLanguage => '语言';
+
+  @override
+  String get settingsSelectLanguage => '选择语言';
+
+  @override
+  String get settingsLanguageSystemDefault => '系统默认';
+
+  @override
   String get settingsSectionNetwork => '网络';
 
   @override
@@ -2558,6 +2582,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsTitle => '設定';
+
+  @override
+  String get settingsSectionGeneral => '一般';
+
+  @override
+  String get settingsLanguage => '語言';
+
+  @override
+  String get settingsSelectLanguage => '選擇語言';
+
+  @override
+  String get settingsLanguageSystemDefault => '系統預設';
 
   @override
   String get settingsSectionNetwork => '網路';

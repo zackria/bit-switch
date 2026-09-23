@@ -449,6 +449,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsTitle => 'الإعدادات';
 
   @override
+  String get settingsSectionGeneral => 'عام';
+
+  @override
+  String get settingsLanguage => 'اللغة';
+
+  @override
+  String get settingsSelectLanguage => 'اختر اللغة';
+
+  @override
+  String get settingsLanguageSystemDefault => 'افتراضي النظام';
+
+  @override
   String get settingsSectionNetwork => 'الشبكة';
 
   @override

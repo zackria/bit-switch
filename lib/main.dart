@@ -48,19 +48,22 @@ class WemoControlApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => deviceProvider ?? DeviceProvider()),
         ChangeNotifierProvider(create: (_) => settingsProvider ?? SettingsProvider()),
       ],
-      child: MaterialApp(
-        onGenerateTitle: (context) => context.l10n.appTitle,
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        builder: (context, child) {
-          updateCurrentLocale(Localizations.localeOf(context));
-          return child ?? const SizedBox.shrink();
-        },
-        theme: _buildLightTheme(),
-        darkTheme: _buildDarkTheme(),
-        themeMode: ThemeMode.system,
-        home: const HomeScreen(),
+      child: Consumer<SettingsProvider>(
+        builder: (context, settings, _) => MaterialApp(
+          onGenerateTitle: (context) => context.l10n.appTitle,
+          debugShowCheckedModeBanner: false,
+          locale: settings.locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          builder: (context, child) {
+            updateCurrentLocale(Localizations.localeOf(context));
+            return child ?? const SizedBox.shrink();
+          },
+          theme: _buildLightTheme(),
+          darkTheme: _buildDarkTheme(),
+          themeMode: ThemeMode.system,
+          home: const HomeScreen(),
+        ),
       ),
     );
   }

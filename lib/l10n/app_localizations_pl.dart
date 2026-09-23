@@ -453,6 +453,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsTitle => 'Ustawienia';
 
   @override
+  String get settingsSectionGeneral => 'Ogólne';
+
+  @override
+  String get settingsLanguage => 'Język';
+
+  @override
+  String get settingsSelectLanguage => 'Wybierz język';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Domyślne systemowe';
+
+  @override
   String get settingsSectionNetwork => 'Sieć';
 
   @override

@@ -453,6 +453,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsTitle => 'Cài đặt';
 
   @override
+  String get settingsSectionGeneral => 'Chung';
+
+  @override
+  String get settingsLanguage => 'Ngôn ngữ';
+
+  @override
+  String get settingsSelectLanguage => 'Chọn ngôn ngữ';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Mặc định hệ thống';
+
+  @override
   String get settingsSectionNetwork => 'Mạng';
 
   @override

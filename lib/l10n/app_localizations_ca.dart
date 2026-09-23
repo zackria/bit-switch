@@ -458,6 +458,18 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settingsTitle => 'Configuració';
 
   @override
+  String get settingsSectionGeneral => 'General';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsSelectLanguage => 'Selecciona l\'idioma';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Predeterminat del sistema';
+
+  @override
   String get settingsSectionNetwork => 'Xarxa';
 
   @override

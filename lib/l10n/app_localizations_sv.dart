@@ -452,6 +452,18 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsTitle => 'Inställningar';
 
   @override
+  String get settingsSectionGeneral => 'Allmänt';
+
+  @override
+  String get settingsLanguage => 'Språk';
+
+  @override
+  String get settingsSelectLanguage => 'Välj språk';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Systemstandard';
+
+  @override
   String get settingsSectionNetwork => 'Nätverk';
 
   @override

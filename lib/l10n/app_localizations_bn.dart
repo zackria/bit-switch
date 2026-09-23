@@ -453,6 +453,18 @@ class AppLocalizationsBn extends AppLocalizations {
   String get settingsTitle => 'সেটিংস';
 
   @override
+  String get settingsSectionGeneral => 'সাধারণ';
+
+  @override
+  String get settingsLanguage => 'ভাষা';
+
+  @override
+  String get settingsSelectLanguage => 'ভাষা নির্বাচন করুন';
+
+  @override
+  String get settingsLanguageSystemDefault => 'সিস্টেম ডিফল্ট';
+
+  @override
   String get settingsSectionNetwork => 'নেটওয়ার্ক';
 
   @override

@@ -454,6 +454,18 @@ class AppLocalizationsDa extends AppLocalizations {
   String get settingsTitle => 'Indstillinger';
 
   @override
+  String get settingsSectionGeneral => 'Generelt';
+
+  @override
+  String get settingsLanguage => 'Sprog';
+
+  @override
+  String get settingsSelectLanguage => 'Vælg sprog';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Systemstandard';
+
+  @override
   String get settingsSectionNetwork => 'Netværk';
 
   @override

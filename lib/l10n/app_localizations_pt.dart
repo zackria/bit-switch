@@ -458,6 +458,18 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsTitle => 'Configurações';
 
   @override
+  String get settingsSectionGeneral => 'Geral';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsSelectLanguage => 'Selecionar idioma';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Padrão do sistema';
+
+  @override
   String get settingsSectionNetwork => 'Rede';
 
   @override
@@ -1600,6 +1612,18 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get settingsTitle => 'Configurações';
+
+  @override
+  String get settingsSectionGeneral => 'Geral';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsSelectLanguage => 'Selecionar idioma';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Padrão do sistema';
 
   @override
   String get settingsSectionNetwork => 'Rede';

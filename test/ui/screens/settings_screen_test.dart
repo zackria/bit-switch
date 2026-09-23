@@ -112,6 +112,45 @@ void main() {
       });
     });
 
+    testWidgets('shows language dialog and changes language', (tester) async {
+      final settingsProvider = SettingsProvider();
+      final deviceProvider = DeviceProvider(
+        controlService: DeviceControlService(soapClient: MockSoapClient()),
+        discoveryService: DeviceDiscoveryService(ssdpClient: MockSsdpClient()),
+      );
+      await settingsProvider.ensureLoaded();
+
+      await tester.runAsync(() async {
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: settingsProvider),
+              ChangeNotifierProvider.value(value: deviceProvider),
+            ],
+            child: const MaterialApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+      });
+
+      expect(find.text('Language'), findsOneWidget);
+      expect(find.text('System Default'), findsOneWidget);
+
+      await tester.tap(find.text('Language'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Select Language'), findsOneWidget);
+
+      // The first real language option (right after "System Default") is
+      // always within the dialog's initial viewport, avoiding a scroll.
+      await tester.tap(find.text('العربية'));
+      await tester.pumpAndSettle();
+
+      expect(settingsProvider.locale, const Locale('ar'));
+      expect(find.text('العربية'), findsOneWidget);
+      deviceProvider.dispose();
+    });
+
     testWidgets('changes auto refresh', (tester) async {
       final settingsProvider = SettingsProvider();
       final deviceProvider = DeviceProvider(

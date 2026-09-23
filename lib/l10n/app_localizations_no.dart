@@ -455,6 +455,18 @@ class AppLocalizationsNo extends AppLocalizations {
   String get settingsTitle => 'Innstillinger';
 
   @override
+  String get settingsSectionGeneral => 'Generelt';
+
+  @override
+  String get settingsLanguage => 'Språk';
+
+  @override
+  String get settingsSelectLanguage => 'Velg språk';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Systemstandard';
+
+  @override
   String get settingsSectionNetwork => 'Nettverk';
 
   @override

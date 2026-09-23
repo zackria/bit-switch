@@ -454,6 +454,18 @@ class AppLocalizationsSw extends AppLocalizations {
   String get settingsTitle => 'Mipangilio';
 
   @override
+  String get settingsSectionGeneral => 'Jumla';
+
+  @override
+  String get settingsLanguage => 'Lugha';
+
+  @override
+  String get settingsSelectLanguage => 'Chagua Lugha';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Chaguo-msingi la Mfumo';
+
+  @override
   String get settingsSectionNetwork => 'Mtandao';
 
   @override

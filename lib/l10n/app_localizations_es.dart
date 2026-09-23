@@ -458,6 +458,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsTitle => 'Configuración';
 
   @override
+  String get settingsSectionGeneral => 'General';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsSelectLanguage => 'Seleccionar idioma';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Predeterminado del sistema';
+
+  @override
   String get settingsSectionNetwork => 'Red';
 
   @override
@@ -1603,6 +1615,18 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get settingsTitle => 'Configuración';
+
+  @override
+  String get settingsSectionGeneral => 'General';
+
+  @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsSelectLanguage => 'Seleccionar idioma';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Predeterminado del sistema';
 
   @override
   String get settingsSectionNetwork => 'Red';

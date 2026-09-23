@@ -454,6 +454,18 @@ class AppLocalizationsFi extends AppLocalizations {
   String get settingsTitle => 'Asetukset';
 
   @override
+  String get settingsSectionGeneral => 'Yleiset';
+
+  @override
+  String get settingsLanguage => 'Kieli';
+
+  @override
+  String get settingsSelectLanguage => 'Valitse kieli';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Järjestelmän oletus';
+
+  @override
   String get settingsSectionNetwork => 'Verkko';
 
   @override

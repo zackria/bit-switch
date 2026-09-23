@@ -459,6 +459,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsTitle => 'Paramètres';
 
   @override
+  String get settingsSectionGeneral => 'Général';
+
+  @override
+  String get settingsLanguage => 'Langue';
+
+  @override
+  String get settingsSelectLanguage => 'Sélectionner la langue';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Paramètre système par défaut';
+
+  @override
   String get settingsSectionNetwork => 'Réseau';
 
   @override
@@ -1616,6 +1628,18 @@ class AppLocalizationsFrCa extends AppLocalizationsFr {
 
   @override
   String get settingsTitle => 'Paramètres';
+
+  @override
+  String get settingsSectionGeneral => 'Général';
+
+  @override
+  String get settingsLanguage => 'Langue';
+
+  @override
+  String get settingsSelectLanguage => 'Sélectionner la langue';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Paramètre par défaut du système';
 
   @override
   String get settingsSectionNetwork => 'Réseau';

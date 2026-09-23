@@ -452,6 +452,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsTitle => 'Ayarlar';
 
   @override
+  String get settingsSectionGeneral => 'Genel';
+
+  @override
+  String get settingsLanguage => 'Dil';
+
+  @override
+  String get settingsSelectLanguage => 'Dil Seç';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Sistem Varsayılanı';
+
+  @override
   String get settingsSectionNetwork => 'Ağ';
 
   @override

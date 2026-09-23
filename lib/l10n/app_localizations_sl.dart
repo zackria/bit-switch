@@ -455,6 +455,18 @@ class AppLocalizationsSl extends AppLocalizations {
   String get settingsTitle => 'nastavitve';
 
   @override
+  String get settingsSectionGeneral => 'Splošno';
+
+  @override
+  String get settingsLanguage => 'Jezik';
+
+  @override
+  String get settingsSelectLanguage => 'Izberite jezik';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Privzeto v sistemu';
+
+  @override
   String get settingsSectionNetwork => 'Omrežje';
 
   @override

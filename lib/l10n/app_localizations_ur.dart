@@ -453,6 +453,18 @@ class AppLocalizationsUr extends AppLocalizations {
   String get settingsTitle => 'ترتیبات';
 
   @override
+  String get settingsSectionGeneral => 'عمومی';
+
+  @override
+  String get settingsLanguage => 'زبان';
+
+  @override
+  String get settingsSelectLanguage => 'زبان منتخب کریں';
+
+  @override
+  String get settingsLanguageSystemDefault => 'سسٹم ڈیفالٹ';
+
+  @override
   String get settingsSectionNetwork => 'نیٹ ورک';
 
   @override

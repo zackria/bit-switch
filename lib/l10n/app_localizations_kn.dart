@@ -457,6 +457,18 @@ class AppLocalizationsKn extends AppLocalizations {
   String get settingsTitle => 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು';
 
   @override
+  String get settingsSectionGeneral => 'ಸಾಮಾನ್ಯ';
+
+  @override
+  String get settingsLanguage => 'ಭಾಷೆ';
+
+  @override
+  String get settingsSelectLanguage => 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get settingsLanguageSystemDefault => 'ಸಿಸ್ಟಂ ಡೀಫಾಲ್ಟ್';
+
+  @override
   String get settingsSectionNetwork => 'ನೆಟ್ವರ್ಕ್';
 
   @override

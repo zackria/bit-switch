@@ -456,6 +456,18 @@ class AppLocalizationsMr extends AppLocalizations {
   String get settingsTitle => 'सेटिंग्ज';
 
   @override
+  String get settingsSectionGeneral => 'सामान्य';
+
+  @override
+  String get settingsLanguage => 'भाषा';
+
+  @override
+  String get settingsSelectLanguage => 'भाषा निवडा';
+
+  @override
+  String get settingsLanguageSystemDefault => 'सिस्टम डीफॉल्ट';
+
+  @override
   String get settingsSectionNetwork => 'नेटवर्क';
 
   @override

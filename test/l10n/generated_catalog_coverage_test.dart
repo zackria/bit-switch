@@ -261,6 +261,8 @@ void _touchAll(AppLocalizations l) {
     buffer.write(l.settingsHowLongScan);
     buffer.write(l.settingsImportant);
     buffer.write(l.settingsIncreaseTimeoutHint);
+    buffer.write(l.settingsLanguage);
+    buffer.write(l.settingsLanguageSystemDefault);
     buffer.write(l.settingsLocalNetworkAlsoNeeded);
     buffer.write(l.settingsLocalNetworkBody);
     buffer.write(l.settingsLocalNetworkIosReason);
@@ -295,7 +297,9 @@ void _touchAll(AppLocalizations l) {
     buffer.write(l.settingsSectionDebug);
     buffer.write(l.settingsSectionDeviceSetup);
     buffer.write(l.settingsSectionDiscovery);
+    buffer.write(l.settingsSectionGeneral);
     buffer.write(l.settingsSectionNetwork);
+    buffer.write(l.settingsSelectLanguage);
     buffer.write(l.settingsSetRefreshInterval);
     buffer.write(l.settingsShowDebug);
     buffer.write(l.settingsShowDebugHomeSubtitle);

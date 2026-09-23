@@ -454,6 +454,18 @@ class AppLocalizationsHu extends AppLocalizations {
   String get settingsTitle => 'Beállítások elemre';
 
   @override
+  String get settingsSectionGeneral => 'Általános';
+
+  @override
+  String get settingsLanguage => 'Nyelv';
+
+  @override
+  String get settingsSelectLanguage => 'Nyelv kiválasztása';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Rendszer alapértelmezett';
+
+  @override
   String get settingsSectionNetwork => 'Hálózat';
 
   @override

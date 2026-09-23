@@ -448,6 +448,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String get settingsTitle => 'การตั้งค่า';
 
   @override
+  String get settingsSectionGeneral => 'ทั่วไป';
+
+  @override
+  String get settingsLanguage => 'ภาษา';
+
+  @override
+  String get settingsSelectLanguage => 'เลือกภาษา';
+
+  @override
+  String get settingsLanguageSystemDefault => 'ค่าเริ่มต้นของระบบ';
+
+  @override
   String get settingsSectionNetwork => 'เครือข่าย';
 
   @override

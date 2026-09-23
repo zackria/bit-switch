@@ -456,6 +456,18 @@ class AppLocalizationsMl extends AppLocalizations {
   String get settingsTitle => 'ക്രമീകരണങ്ങൾ';
 
   @override
+  String get settingsSectionGeneral => 'പൊതുവായത്';
+
+  @override
+  String get settingsLanguage => 'ഭാഷ';
+
+  @override
+  String get settingsSelectLanguage => 'ഭാഷ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get settingsLanguageSystemDefault => 'സിസ്റ്റം ഡിഫോൾട്ട്';
+
+  @override
   String get settingsSectionNetwork => 'നെറ്റ്വർക്ക്';
 
   @override

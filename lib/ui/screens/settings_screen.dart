@@ -7,7 +7,9 @@ import '../../providers/device_provider.dart';
 import '../../providers/pairing_provider.dart';
 import '../../services/wifi_detection_service.dart';
 import 'device_pairing_screen.dart';
+import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
+import '../../l10n/language_names.dart';
 
 class SettingsScreen extends StatefulWidget {
   final WifiDetectionService? wifiService;
@@ -257,6 +259,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         builder: (context, settings, devices, child) {
           return ListView(
             children: [
+              _buildSectionHeader(context, context.l10n.settingsSectionGeneral),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(context.l10n.settingsLanguage),
+                subtitle: Text(
+                  settings.locale == null
+                      ? context.l10n.settingsLanguageSystemDefault
+                      : nativeLanguageName(settings.locale!),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _showLanguageDialog(context, settings),
+              ),
+              const Divider(),
+
               // Network information and permissions
               if (_isMobile) ...[
                 _buildSectionHeader(
@@ -690,6 +706,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }).toList(),
             ),
           ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.commonCancel),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context, SettingsProvider settings) {
+    final options = <Locale?>[null, ...AppLocalizations.supportedLocales];
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.settingsSelectLanguage),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: options.length,
+            itemBuilder: (context, index) {
+              final locale = options[index];
+              return RadioListTile<Locale?>(
+                value: locale,
+                groupValue: settings.locale,
+                title: Text(
+                  locale == null
+                      ? context.l10n.settingsLanguageSystemDefault
+                      : nativeLanguageName(locale),
+                ),
+                onChanged: (value) {
+                  settings.setLocale(value);
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
         ),
         actions: [
           TextButton(

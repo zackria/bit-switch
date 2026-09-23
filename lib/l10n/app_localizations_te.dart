@@ -452,6 +452,18 @@ class AppLocalizationsTe extends AppLocalizations {
   String get settingsTitle => 'సెట్టింగ్‌లు';
 
   @override
+  String get settingsSectionGeneral => 'సాధారణ';
+
+  @override
+  String get settingsLanguage => 'భాష';
+
+  @override
+  String get settingsSelectLanguage => 'భాషను ఎంచుకోండి';
+
+  @override
+  String get settingsLanguageSystemDefault => 'సిస్టమ్ డిఫాల్ట్';
+
+  @override
   String get settingsSectionNetwork => 'నెట్‌వర్క్';
 
   @override

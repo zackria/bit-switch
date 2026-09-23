@@ -453,6 +453,18 @@ class AppLocalizationsHr extends AppLocalizations {
   String get settingsTitle => 'postavke';
 
   @override
+  String get settingsSectionGeneral => 'Općenito';
+
+  @override
+  String get settingsLanguage => 'Jezik';
+
+  @override
+  String get settingsSelectLanguage => 'Odaberi jezik';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Zadano sustava';
+
+  @override
   String get settingsSectionNetwork => 'mreža';
 
   @override

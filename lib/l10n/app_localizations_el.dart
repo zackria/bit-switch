@@ -457,6 +457,18 @@ class AppLocalizationsEl extends AppLocalizations {
   String get settingsTitle => 'Ρυθμίσεις';
 
   @override
+  String get settingsSectionGeneral => 'Γενικά';
+
+  @override
+  String get settingsLanguage => 'Γλώσσα';
+
+  @override
+  String get settingsSelectLanguage => 'Επιλογή γλώσσας';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Προεπιλογή συστήματος';
+
+  @override
   String get settingsSectionNetwork => 'Δίκτυο';
 
   @override

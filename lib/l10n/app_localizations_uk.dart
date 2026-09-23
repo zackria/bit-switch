@@ -453,6 +453,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get settingsTitle => 'Налаштування';
 
   @override
+  String get settingsSectionGeneral => 'Загальні';
+
+  @override
+  String get settingsLanguage => 'Мова';
+
+  @override
+  String get settingsSelectLanguage => 'Виберіть мову';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Системний за замовчуванням';
+
+  @override
   String get settingsSectionNetwork => 'Мережа';
 
   @override

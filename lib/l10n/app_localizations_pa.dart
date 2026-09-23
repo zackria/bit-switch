@@ -454,6 +454,18 @@ class AppLocalizationsPa extends AppLocalizations {
   String get settingsTitle => 'ਸੈਟਿੰਗਾਂ';
 
   @override
+  String get settingsSectionGeneral => 'ਆਮ';
+
+  @override
+  String get settingsLanguage => 'ਭਾਸ਼ਾ';
+
+  @override
+  String get settingsSelectLanguage => 'ਭਾਸ਼ਾ ਚੁਣੋ';
+
+  @override
+  String get settingsLanguageSystemDefault => 'ਸਿਸਟਮ ਡਿਫੌਲਟ';
+
+  @override
   String get settingsSectionNetwork => 'ਨੈੱਟਵਰਕ';
 
   @override

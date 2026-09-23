@@ -457,6 +457,18 @@ class AppLocalizationsOr extends AppLocalizations {
   String get settingsTitle => 'ସେଟିଂସମୂହ';
 
   @override
+  String get settingsSectionGeneral => 'ସାଧାରଣ';
+
+  @override
+  String get settingsLanguage => 'ଭାଷା';
+
+  @override
+  String get settingsSelectLanguage => 'ଭାଷା ବାଛନ୍ତୁ';
+
+  @override
+  String get settingsLanguageSystemDefault => 'ସିଷ୍ଟମ ଡିଫଲ୍ଟ';
+
+  @override
   String get settingsSectionNetwork => 'ନେଟୱାର୍କ |';
 
   @override

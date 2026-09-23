@@ -453,6 +453,18 @@ class AppLocalizationsCs extends AppLocalizations {
   String get settingsTitle => 'Nastavení';
 
   @override
+  String get settingsSectionGeneral => 'Obecné';
+
+  @override
+  String get settingsLanguage => 'Jazyk';
+
+  @override
+  String get settingsSelectLanguage => 'Vyberte jazyk';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Výchozí nastavení systému';
+
+  @override
   String get settingsSectionNetwork => 'Síť';
 
   @override

@@ -460,6 +460,18 @@ class AppLocalizationsNl extends AppLocalizations {
   String get settingsTitle => 'Instellingen';
 
   @override
+  String get settingsSectionGeneral => 'Algemeen';
+
+  @override
+  String get settingsLanguage => 'Taal';
+
+  @override
+  String get settingsSelectLanguage => 'Taal selecteren';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Systeemstandaard';
+
+  @override
   String get settingsSectionNetwork => 'Netwerk';
 
   @override

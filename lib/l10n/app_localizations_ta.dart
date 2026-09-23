@@ -457,6 +457,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get settingsTitle => 'அமைப்புகள்';
 
   @override
+  String get settingsSectionGeneral => 'பொது';
+
+  @override
+  String get settingsLanguage => 'மொழி';
+
+  @override
+  String get settingsSelectLanguage => 'மொழியைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get settingsLanguageSystemDefault => 'கணினி இயல்புநிலை';
+
+  @override
   String get settingsSectionNetwork => 'நெட்வொர்க்';
 
   @override

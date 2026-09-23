@@ -445,6 +445,18 @@ class AppLocalizationsHe extends AppLocalizations {
   String get settingsTitle => 'הגדרות';
 
   @override
+  String get settingsSectionGeneral => 'כללי';
+
+  @override
+  String get settingsLanguage => 'שפה';
+
+  @override
+  String get settingsSelectLanguage => 'בחר שפה';
+
+  @override
+  String get settingsLanguageSystemDefault => 'ברירת מחדל של המערכת';
+
+  @override
   String get settingsSectionNetwork => 'רשת';
 
   @override

@@ -455,6 +455,18 @@ class AppLocalizationsMs extends AppLocalizations {
   String get settingsTitle => 'tetapan';
 
   @override
+  String get settingsSectionGeneral => 'Umum';
+
+  @override
+  String get settingsLanguage => 'Bahasa';
+
+  @override
+  String get settingsSelectLanguage => 'Pilih Bahasa';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Lalai Sistem';
+
+  @override
   String get settingsSectionNetwork => 'Rangkaian';
 
   @override

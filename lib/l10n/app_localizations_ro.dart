@@ -459,6 +459,18 @@ class AppLocalizationsRo extends AppLocalizations {
   String get settingsTitle => 'Setări';
 
   @override
+  String get settingsSectionGeneral => 'General';
+
+  @override
+  String get settingsLanguage => 'Limbă';
+
+  @override
+  String get settingsSelectLanguage => 'Selectează limba';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Prestabilit de sistem';
+
+  @override
   String get settingsSectionNetwork => 'Rețea';
 
   @override

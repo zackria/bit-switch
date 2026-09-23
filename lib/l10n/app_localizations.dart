@@ -919,6 +919,30 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
+  /// No description provided for @settingsSectionGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get settingsSectionGeneral;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsSelectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get settingsSelectLanguage;
+
+  /// No description provided for @settingsLanguageSystemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get settingsLanguageSystemDefault;
+
   /// No description provided for @settingsSectionNetwork.
   ///
   /// In en, this message translates to:

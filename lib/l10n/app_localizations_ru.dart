@@ -458,6 +458,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsTitle => 'Настройки';
 
   @override
+  String get settingsSectionGeneral => 'Общие';
+
+  @override
+  String get settingsLanguage => 'Язык';
+
+  @override
+  String get settingsSelectLanguage => 'Выберите язык';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Системный по умолчанию';
+
+  @override
   String get settingsSectionNetwork => 'Сеть';
 
   @override

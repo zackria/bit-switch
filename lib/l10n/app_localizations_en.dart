@@ -452,6 +452,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
+  String get settingsSectionGeneral => 'General';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsSelectLanguage => 'Select Language';
+
+  @override
+  String get settingsLanguageSystemDefault => 'System Default';
+
+  @override
   String get settingsSectionNetwork => 'Network';
 
   @override

@@ -438,6 +438,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsTitle => '設定';
 
   @override
+  String get settingsSectionGeneral => '一般';
+
+  @override
+  String get settingsLanguage => '言語';
+
+  @override
+  String get settingsSelectLanguage => '言語を選択';
+
+  @override
+  String get settingsLanguageSystemDefault => 'システムのデフォルト';
+
+  @override
   String get settingsSectionNetwork => 'ネットワーク';
 
   @override

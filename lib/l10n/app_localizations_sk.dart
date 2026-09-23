@@ -455,6 +455,18 @@ class AppLocalizationsSk extends AppLocalizations {
   String get settingsTitle => 'Nastavenia';
 
   @override
+  String get settingsSectionGeneral => 'Všeobecné';
+
+  @override
+  String get settingsLanguage => 'Jazyk';
+
+  @override
+  String get settingsSelectLanguage => 'Vybrať jazyk';
+
+  @override
+  String get settingsLanguageSystemDefault => 'Predvolené systémom';
+
+  @override
   String get settingsSectionNetwork => 'sieť';
 
   @override

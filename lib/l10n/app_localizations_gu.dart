@@ -449,6 +449,18 @@ class AppLocalizationsGu extends AppLocalizations {
   String get settingsTitle => 'સેટિંગ્સ';
 
   @override
+  String get settingsSectionGeneral => 'સામાન્ય';
+
+  @override
+  String get settingsLanguage => 'ભાષા';
+
+  @override
+  String get settingsSelectLanguage => 'ભાષા પસંદ કરો';
+
+  @override
+  String get settingsLanguageSystemDefault => 'સિસ્ટમ ડિફૉલ્ટ';
+
+  @override
   String get settingsSectionNetwork => 'નેટવર્ક';
 
   @override

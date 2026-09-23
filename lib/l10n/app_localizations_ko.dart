@@ -437,6 +437,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsTitle => '설정';
 
   @override
+  String get settingsSectionGeneral => '일반';
+
+  @override
+  String get settingsLanguage => '언어';
+
+  @override
+  String get settingsSelectLanguage => '언어 선택';
+
+  @override
+  String get settingsLanguageSystemDefault => '시스템 기본값';
+
+  @override
   String get settingsSectionNetwork => '네트워크';
 
   @override

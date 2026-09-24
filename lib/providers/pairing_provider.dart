@@ -218,14 +218,66 @@ class PairingProvider extends ChangeNotifier {
     return candidates;
   }
 
+  /// Logs [message] via [debugPrint] outside release builds.
+  ///
+  /// [message] is a closure (not a plain String) so callers building the
+  /// text via interpolation don't pay that cost in release builds.
+  void _debugLog(String Function() message) {
+    if (kDebugMode) debugPrint(message());
+  }
+
+  /// Probes [candidateIps] in turn, returning the first device that
+  /// responds, or null if none do.
+  Future<WemoDevice?> _probeApCandidates(List<String> candidateIps) async {
+    for (final ip in candidateIps) {
+      final device = await _discoveryService.probeHost(
+        ip,
+        ports: WemoConstants.devicePorts,
+        timeout: WemoConstants.pairingApProbeTimeout,
+      );
+      if (device != null) return device;
+    }
+    return null;
+  }
+
+  Future<void> _handleDeviceFoundOnAp(WemoDevice device) async {
+    _debugLog(
+      () =>
+          '[Pairing] Device found: ${device.name} at ${device.host}:${device.port}',
+    );
+    _state = _state.copyWith(
+      device: device,
+      step: PairingStep.selectNetwork,
+      isLoading: false,
+      clearLoadingMessage: true,
+    );
+    notifyListeners();
+
+    // Fetch available networks from the device
+    await _fetchAvailableNetworks();
+  }
+
+  void _handleDeviceNotFoundOnAp(List<String> candidateIps) {
+    _debugLog(() => '[Pairing] No device found at $candidateIps');
+    _state = _state.copyWith(
+      isLoading: false,
+      clearLoadingMessage: true,
+      errorMessage: _l10n.pairingErrorDeviceAtDefaultIp(
+        candidateIps.join(', '),
+      ),
+    );
+    notifyListeners();
+  }
+
   /// Discover device on the Wemo AP network
   Future<void> _discoverDeviceOnAp() async {
     final candidateIps = await _buildApProbeCandidates();
     if (kDebugMode) {
       final localIps = await _wifiService.getLocalIpAddresses();
-      debugPrint('[Pairing] Local IP addresses: $localIps');
-      debugPrint(
-        '[Pairing] _discoverDeviceOnAp: probing $candidateIps ports ${WemoConstants.devicePorts}',
+      _debugLog(() => '[Pairing] Local IP addresses: $localIps');
+      _debugLog(
+        () =>
+            '[Pairing] _discoverDeviceOnAp: probing $candidateIps ports ${WemoConstants.devicePorts}',
       );
     }
     try {
@@ -233,57 +285,22 @@ class PairingProvider extends ChangeNotifier {
       // Do NOT fall back to SSDP here — SSDP would find already-paired devices
       // on the home network when the phone hasn't actually switched to the
       // WeMo AP, leading to GetApList being sent to the wrong device.
-      WemoDevice? device;
-      for (final ip in candidateIps) {
-        device = await _discoveryService.probeHost(
-          ip,
-          ports: WemoConstants.devicePorts,
-          timeout: WemoConstants.pairingApProbeTimeout,
-        );
-        if (device != null) break;
-      }
+      final device = await _probeApCandidates(candidateIps);
 
-      if (kDebugMode) {
-        debugPrint(
-          '[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at $candidateIps"}',
-        );
-      }
+      _debugLog(
+        () =>
+            '[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at $candidateIps"}',
+      );
 
       if (device != null) {
-        if (kDebugMode) {
-          debugPrint(
-            '[Pairing] Device found: ${device.name} at ${device.host}:${device.port}',
-          );
-        }
-        _state = _state.copyWith(
-          device: device,
-          step: PairingStep.selectNetwork,
-          isLoading: false,
-          clearLoadingMessage: true,
-        );
-        notifyListeners();
-
-        // Fetch available networks from the device
-        await _fetchAvailableNetworks();
+        await _handleDeviceFoundOnAp(device);
       } else {
-        if (kDebugMode) {
-          debugPrint('[Pairing] No device found at $candidateIps');
-        }
-        _state = _state.copyWith(
-          isLoading: false,
-          clearLoadingMessage: true,
-          errorMessage: _l10n.pairingErrorDeviceAtDefaultIp(
-            candidateIps.join(', '),
-          ),
-        );
-        notifyListeners();
+        _handleDeviceNotFoundOnAp(candidateIps);
       }
     } catch (e, st) {
-      if (kDebugMode) {
-        debugPrint(
-          '[Pairing] _discoverDeviceOnAp error: ${e.runtimeType}: $e\n$st',
-        );
-      }
+      _debugLog(
+        () => '[Pairing] _discoverDeviceOnAp error: ${e.runtimeType}: $e\n$st',
+      );
       _state = _state.copyWith(
         isLoading: false,
         clearLoadingMessage: true,

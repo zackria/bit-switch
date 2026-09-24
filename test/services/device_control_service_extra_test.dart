@@ -1,3 +1,5 @@
+import 'dart:io' show HttpException, SocketException;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:bit_switch/services/device_control_service.dart';
 import 'package:bit_switch/core/soap_client.dart';
@@ -268,12 +270,12 @@ void main() {
     });
 
     test(
-      'connectToHomeNetwork treats a dropped connection as delivered',
+      'connectToHomeNetwork treats a connection cut short as delivered',
       () {
-        // The device acts on this command immediately and tears down the AP
-        // we sent it over, so it closes the connection before answering.
-        // That's how success normally looks - failing here would abort
-        // pairing on a device that is already joining the network.
+        // The request went out and the device closed the connection while
+        // answering, because acting on the command means tearing down the AP
+        // we sent it over. That's how success normally looks - failing here
+        // would abort pairing on a device already joining the network.
         final mockClient = MockSoapClient((
           _,
           __,
@@ -286,6 +288,9 @@ void main() {
             'Failed to call ConnectHomeNetwork after 1 attempts',
             host: '10.22.22.1',
             port: 49153,
+            cause: const HttpException(
+              'Connection closed before full header was received',
+            ),
           );
         });
 
@@ -297,6 +302,26 @@ void main() {
         );
       },
     );
+
+    test('connectToHomeNetwork surfaces a refused connection', () {
+      // Nothing was listening, so the command never landed. Waiting this one
+      // out would poll a device that never got the credentials.
+      final mockClient = MockSoapClient((_, __, ___, ____, _____, ______) async {
+        throw NetworkException(
+          'Failed to call ConnectHomeNetwork after 1 attempts',
+          host: '10.22.22.1',
+          port: 49153,
+          cause: const SocketException('Connection refused'),
+        );
+      });
+
+      final svc = DeviceControlService(soapClient: mockClient);
+
+      expect(
+        () => svc.connectToHomeNetwork(device, ssid: 'MyNet', password: 'pass'),
+        throwsA(isA<NetworkException>()),
+      );
+    });
 
     test('connectToHomeNetwork surfaces a SOAP fault from the device', () {
       // Distinct from a dropped connection: the device answered and

@@ -76,6 +76,7 @@ class _FakeControlService extends DeviceControlService {
     required String password,
     String authMode = 'WPAPSK',
     String encryption = 'AES',
+    int encryptionMethod = 1,
   }) async {}
 
   @override
@@ -131,6 +132,7 @@ class _ThrowingControlService extends DeviceControlService {
     required String password,
     String authMode = 'WPAPSK',
     String encryption = 'AES',
+    int encryptionMethod = 1,
   }) async {}
 
   @override

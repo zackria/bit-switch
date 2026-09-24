@@ -732,6 +732,79 @@ void main() {
         expect(provider.state.errorMessage, contains('Failed to configure'));
       });
 
+      test(
+        'configureNetwork retries with the next password encryption scheme '
+        'when the device rejects the credentials',
+        () async {
+          // Firmware that only accepts method 2 (the RTOS scheme a Mini
+          // uses). Method 1 produces valid-looking but undecryptable
+          // ciphertext, which the device reports as a rejection.
+          final control = _EncryptionAwareControlService(acceptsMethod: 2);
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(getSsid: () async => 'WeMo.AP'),
+            controlService: control,
+            discoveryService: _FakeDiscoveryService(probeResult: _device),
+          );
+
+          await provider.confirmConnectedToDeviceAp();
+          provider.selectNetwork('HomeNet');
+          provider.setPassword('correct-horse');
+          await provider.configureNetwork();
+
+          expect(control.attemptedMethods, [1, 2]);
+          expect(provider.state.step, PairingStep.reconnectHome);
+          expect(provider.state.errorMessage, isNull);
+        },
+      );
+
+      test(
+        'configureNetwork reports a bad password once every scheme is '
+        'rejected',
+        () async {
+          // acceptsMethod: 0 matches nothing, i.e. the password really is wrong.
+          final control = _EncryptionAwareControlService(acceptsMethod: 0);
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(getSsid: () async => 'WeMo.AP'),
+            controlService: control,
+            discoveryService: _FakeDiscoveryService(probeResult: _device),
+          );
+
+          await provider.confirmConnectedToDeviceAp();
+          provider.selectNetwork('HomeNet');
+          provider.setPassword('wrong');
+          await provider.configureNetwork();
+
+          expect(control.attemptedMethods, [1, 2, 3]);
+          expect(provider.state.step, PairingStep.selectNetwork);
+          expect(provider.state.errorMessage, isNotNull);
+        },
+      );
+
+      test(
+        'configureNetwork keeps polling through transient status failures '
+        'instead of blaming the password',
+        () async {
+          // The device drops calls while it switches networks; that must not
+          // be read as "credentials rejected".
+          final control = _FlakyStatusControlService(failuresBeforeSuccess: 2);
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(getSsid: () async => 'WeMo.AP'),
+            controlService: control,
+            discoveryService: _FakeDiscoveryService(probeResult: _device),
+          );
+
+          await provider.confirmConnectedToDeviceAp();
+          provider.selectNetwork('HomeNet');
+          provider.setPassword('correct-horse');
+          await provider.configureNetwork();
+
+          expect(provider.state.step, PairingStep.reconnectHome);
+          expect(provider.state.errorMessage, isNull);
+          // One scheme was enough - the blips didn't trigger a retry.
+          expect(control.connectCalls.toSet(), {1});
+        },
+      );
+
       test('finalize setup handles discovery stream error', () async {
         final provider = PairingProvider(
           wifiService: _FakeWifiService(getSsid: () async => null),
@@ -747,6 +820,85 @@ void main() {
       });
     });
   });
+}
+
+/// Control service standing in for firmware that only accepts one password
+/// encryption scheme, recording which schemes were tried.
+class _EncryptionAwareControlService extends DeviceControlService {
+  final int acceptsMethod;
+  final List<int> attemptedMethods = [];
+  int? _lastMethod;
+
+  _EncryptionAwareControlService({required this.acceptsMethod});
+
+  @override
+  Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async => [];
+
+  @override
+  Future<void> connectToHomeNetwork(
+    WemoDevice device, {
+    required String ssid,
+    required String password,
+    String authMode = 'WPAPSK',
+    String encryption = 'AES',
+    int encryptionMethod = 1,
+  }) async {
+    // Credentials are sent twice per attempt; record each distinct scheme.
+    if (_lastMethod != encryptionMethod) attemptedMethods.add(encryptionMethod);
+    _lastMethod = encryptionMethod;
+  }
+
+  @override
+  Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
+    return _lastMethod == acceptsMethod
+        ? WifiSetupStatus.connected
+        : WifiSetupStatus.failed;
+  }
+
+  @override
+  Future<void> setSetupDoneStatus(WemoDevice device) async {}
+
+  @override
+  Future<void> closeSetup(WemoDevice device) async {}
+}
+
+/// Control service whose status calls throw a few times before reporting
+/// success, mimicking the device dropping calls as it changes networks.
+class _FlakyStatusControlService extends DeviceControlService {
+  final int failuresBeforeSuccess;
+  final List<int> connectCalls = [];
+  int _statusCalls = 0;
+
+  _FlakyStatusControlService({required this.failuresBeforeSuccess});
+
+  @override
+  Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async => [];
+
+  @override
+  Future<void> connectToHomeNetwork(
+    WemoDevice device, {
+    required String ssid,
+    required String password,
+    String authMode = 'WPAPSK',
+    String encryption = 'AES',
+    int encryptionMethod = 1,
+  }) async {
+    connectCalls.add(encryptionMethod);
+  }
+
+  @override
+  Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
+    if (_statusCalls++ < failuresBeforeSuccess) {
+      throw Exception('device unreachable while switching networks');
+    }
+    return WifiSetupStatus.connected;
+  }
+
+  @override
+  Future<void> setSetupDoneStatus(WemoDevice device) async {}
+
+  @override
+  Future<void> closeSetup(WemoDevice device) async {}
 }
 
 class _FakeWifiService extends WifiDetectionService {
@@ -870,6 +1022,7 @@ class _FakeControlService extends DeviceControlService {
     required String password,
     String authMode = 'WPAPSK',
     String encryption = 'AES',
+    int encryptionMethod = 1,
   }) async {
     return;
   }
@@ -933,6 +1086,7 @@ class _SequencedControlService extends DeviceControlService {
     required String password,
     String authMode = 'WPAPSK',
     String encryption = 'AES',
+    int encryptionMethod = 1,
   }) async {}
 
   @override
@@ -973,6 +1127,7 @@ class _ThrowingConnectControlService extends DeviceControlService {
     required String password,
     String authMode = 'WPAPSK',
     String encryption = 'AES',
+    int encryptionMethod = 1,
   }) async {
     throw Exception('connect failed');
   }

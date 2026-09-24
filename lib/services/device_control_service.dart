@@ -83,9 +83,22 @@ class DeviceControlService {
     );
   }
 
-  /// Encrypt [password] for [device], trying encryption method 1 (original)
-  /// first and falling back to method 2 (RTOS) if that fails.
-  String _encryptPasswordForDevice(WemoDevice device, String password) {
+  /// Encrypt [password] for [device] using encryption [method].
+  ///
+  /// Which method a device accepts depends on its firmware - RTOS builds
+  /// such as the Mini use method 2 - and nothing in the device description
+  /// says which. The caller therefore chooses, and retries with a different
+  /// method if the device rejects the credentials.
+  ///
+  /// This deliberately doesn't "try method 1 and fall back on throw":
+  /// method 1 only throws on a malformed MAC, which would fail the same way
+  /// for every method, so a wrong-but-valid ciphertext never triggered the
+  /// fallback and the device just rejected the password instead.
+  String _encryptPasswordForDevice(
+    WemoDevice device,
+    String password, {
+    int method = 1,
+  }) {
     final mac = device.macAddress ?? '';
     final serial = device.serialNumber ?? '';
 
@@ -96,21 +109,12 @@ class DeviceControlService {
       );
     }
 
-    try {
-      return WemoCrypto.encryptPassword(
-        password: password,
-        mac: mac,
-        serial: serial,
-        method: 1,
-      );
-    } catch (_) {
-      return WemoCrypto.encryptPassword(
-        password: password,
-        mac: mac,
-        serial: serial,
-        method: 2,
-      );
-    }
+    return WemoCrypto.encryptPassword(
+      password: password,
+      mac: mac,
+      serial: serial,
+      method: method,
+    );
   }
 
   /// Get the current binary state of a device
@@ -548,8 +552,19 @@ class DeviceControlService {
         default:
           return WifiSetupStatus.failed;
       }
-    } catch (e) {
-      return WifiSetupStatus.failed;
+    } catch (e, st) {
+      // Deliberately not reported as WifiSetupStatus.failed: the device is
+      // dropping off its own AP to join the home network while this is
+      // polled, so a failed call means "ask again", not "the credentials
+      // were rejected". Callers poll in a try/catch and would otherwise
+      // abort on the first blip and blame the user's password.
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to get WiFi status',
+        operation: 'getWifiStatus',
+      );
     }
   }
 
@@ -620,9 +635,14 @@ class DeviceControlService {
     required String password,
     String authMode = 'WPAPSK',
     String encryption = 'AES',
+    int encryptionMethod = 1,
   }) async {
     try {
-      final encryptedPassword = _encryptPasswordForDevice(device, password);
+      final encryptedPassword = _encryptPasswordForDevice(
+        device,
+        password,
+        method: encryptionMethod,
+      );
 
       // Send the connect command
       await _soapClient.call(

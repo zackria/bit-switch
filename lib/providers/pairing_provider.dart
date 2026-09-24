@@ -12,6 +12,9 @@ import '../services/device_discovery_service.dart';
 import '../services/wifi_detection_service.dart';
 import '../l10n/app_localizations.dart';
 
+/// What the device reported back after being handed WiFi credentials.
+enum _SetupOutcome { connected, credentialsRejected, passwordTooShort, timedOut }
+
 /// Provider for managing the device pairing wizard state
 class PairingProvider extends ChangeNotifier {
   final DeviceControlService _controlService;
@@ -202,6 +205,13 @@ class PairingProvider extends ChangeNotifier {
   static const List<int> _apSweepPorts = [49153, 49152, 49154];
   static const Duration _apSweepTimeout = Duration(milliseconds: 400);
   static const int _apSweepBatchSize = 32;
+
+  /// Password encryption schemes to try, in order. Which one a device
+  /// accepts depends on its firmware - RTOS builds such as the Mini use the
+  /// second - and nothing in the device description advertises it. A
+  /// rejection comes back quickly, so working through the list beats telling
+  /// someone their correct password is wrong.
+  static const List<int> _passwordEncryptionMethods = [1, 2, 3];
 
   /// How many times to ask the device for its WiFi scan results before
   /// showing "no networks". Each call can itself take up to 15 s, so this
@@ -649,37 +659,37 @@ class PairingProvider extends ChangeNotifier {
         ),
       );
 
-      // Send ConnectHomeNetwork command twice for reliability (pywemo trick)
-      await _controlService.connectToHomeNetwork(
-        _state.device!,
-        ssid: _state.selectedSsid!,
-        password: _state.password!,
-        authMode: selectedNetwork.authMode,
-        encryption: selectedNetwork.encryption,
-      );
+      for (var i = 0; i < _passwordEncryptionMethods.length; i++) {
+        final method = _passwordEncryptionMethods[i];
+        final hasAnotherMethod = i < _passwordEncryptionMethods.length - 1;
 
-      // Small delay, then send again for reliability
-      await Future.delayed(const Duration(milliseconds: 500));
+        await _sendCredentials(selectedNetwork, method);
 
-      try {
-        await _controlService.connectToHomeNetwork(
-          _state.device!,
-          ssid: _state.selectedSsid!,
-          password: _state.password!,
-          authMode: selectedNetwork.authMode,
-          encryption: selectedNetwork.encryption,
+        _state = _state.copyWith(
+          loadingMessage: _l10n.pairingLoadingWaitingConnection,
         );
-      } catch (_) {
-        // Second call may fail if device started reconnecting, that's OK
+        notifyListeners();
+
+        final outcome = await _pollForConnection();
+        _debugLog(
+          () => '[Pairing] Encryption method $method -> ${outcome.name}',
+        );
+
+        if (outcome == _SetupOutcome.connected) {
+          _onDeviceJoinedHomeNetwork();
+          return;
+        }
+
+        // A rejection may mean the password is wrong, or simply that this
+        // firmware expects a different encryption scheme - so try the next
+        // one before telling someone their correct password is wrong.
+        if (outcome == _SetupOutcome.credentialsRejected && hasAnotherMethod) {
+          continue;
+        }
+
+        _applySetupFailure(outcome);
+        return;
       }
-
-      _state = _state.copyWith(
-        loadingMessage: _l10n.pairingLoadingWaitingConnection,
-      );
-      notifyListeners();
-
-      // Poll for connection status
-      await _pollForConnection();
     } catch (e) {
       _state = _state.copyWith(
         step: PairingStep.selectNetwork,
@@ -691,8 +701,72 @@ class PairingProvider extends ChangeNotifier {
     }
   }
 
-  /// Poll the device for connection status
-  Future<void> _pollForConnection() async {
+  /// Send the credentials, encrypted with [encryptionMethod].
+  ///
+  /// Sent twice, as pywemo does: the first command can be lost as the device
+  /// starts tearing down its setup AP.
+  Future<void> _sendCredentials(
+    WifiNetwork network,
+    int encryptionMethod,
+  ) async {
+    await _controlService.connectToHomeNetwork(
+      _state.device!,
+      ssid: _state.selectedSsid!,
+      password: _state.password!,
+      authMode: network.authMode,
+      encryption: network.encryption,
+      encryptionMethod: encryptionMethod,
+    );
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    try {
+      await _controlService.connectToHomeNetwork(
+        _state.device!,
+        ssid: _state.selectedSsid!,
+        password: _state.password!,
+        authMode: network.authMode,
+        encryption: network.encryption,
+        encryptionMethod: encryptionMethod,
+      );
+    } catch (_) {
+      // Expected once the device has started reconnecting.
+    }
+  }
+
+  void _onDeviceJoinedHomeNetwork() {
+    _state = _state.copyWith(
+      step: PairingStep.reconnectHome,
+      isLoading: false,
+      clearLoadingMessage: true,
+    );
+    notifyListeners();
+
+    // Start watching for SSID to detect when user reconnects
+    _startSsidWatch();
+  }
+
+  void _applySetupFailure(_SetupOutcome outcome) {
+    final String message;
+    if (outcome == _SetupOutcome.passwordTooShort) {
+      message = _l10n.pairingErrorPasswordShort;
+    } else if (outcome == _SetupOutcome.credentialsRejected) {
+      message = _l10n.pairingErrorPasswordIncorrect;
+    } else {
+      message = _l10n.pairingErrorConnectionTimeout;
+    }
+
+    _state = _state.copyWith(
+      step: PairingStep.selectNetwork,
+      isLoading: false,
+      clearLoadingMessage: true,
+      errorMessage: message,
+    );
+    notifyListeners();
+  }
+
+  /// Poll the device until it reports the outcome of the join attempt.
+  Future<_SetupOutcome> _pollForConnection() async {
     final startTime = DateTime.now();
     const timeout = WemoConstants.wifiSetupTimeout;
 
@@ -702,58 +776,24 @@ class PairingProvider extends ChangeNotifier {
 
         switch (status) {
           case WifiSetupStatus.connected:
-            // Success! Move to reconnect step
-            _state = _state.copyWith(
-              step: PairingStep.reconnectHome,
-              isLoading: false,
-              clearLoadingMessage: true,
-            );
-            notifyListeners();
-
-            // Start watching for SSID to detect when user reconnects
-            _startSsidWatch();
-            return;
-
+            return _SetupOutcome.connected;
           case WifiSetupStatus.passwordShort:
-            _state = _state.copyWith(
-              step: PairingStep.selectNetwork,
-              isLoading: false,
-              clearLoadingMessage: true,
-              errorMessage: _l10n.pairingErrorPasswordShort,
-            );
-            notifyListeners();
-            return;
-
+            return _SetupOutcome.passwordTooShort;
           case WifiSetupStatus.failed:
-            _state = _state.copyWith(
-              step: PairingStep.selectNetwork,
-              isLoading: false,
-              clearLoadingMessage: true,
-              errorMessage: _l10n.pairingErrorPasswordIncorrect,
-            );
-            notifyListeners();
-            return;
-
+            return _SetupOutcome.credentialsRejected;
           case WifiSetupStatus.connecting:
           case WifiSetupStatus.handshake:
             // Still connecting, continue polling
             break;
         }
       } catch (_) {
-        // Device may be reconnecting, keep trying
+        // The device drops calls while it switches networks - keep polling.
       }
 
       await Future.delayed(const Duration(seconds: 2));
     }
 
-    // Timeout
-    _state = _state.copyWith(
-      step: PairingStep.selectNetwork,
-      isLoading: false,
-      clearLoadingMessage: true,
-      errorMessage: _l10n.pairingErrorConnectionTimeout,
-    );
-    notifyListeners();
+    return _SetupOutcome.timedOut;
   }
 
   /// Called when user confirms they've reconnected to home network

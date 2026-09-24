@@ -65,6 +65,12 @@ class WemoConstants {
     caseSensitive: false,
   );
   static const Duration pairingDiscoveryTimeout = Duration(seconds: 15);
+  // Per-port TCP-connect timeout when probing the device's own setup AP
+  // (e.g. at wemoApDefaultIp). A freshly reset device can be slow to accept
+  // new connections while busy with its own setup-mode startup work, so
+  // this is deliberately more generous than the general-purpose probe
+  // default used elsewhere (subnet scanning, known-device recovery).
+  static const Duration pairingApProbeTimeout = Duration(seconds: 30);
   static const Duration wifiSetupTimeout = Duration(seconds: 60);
   static const Duration ssidPollInterval = Duration(seconds: 2);
 }

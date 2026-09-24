@@ -385,6 +385,7 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
   Future<WemoDevice?> probeHost(
     String host, {
     List<int> ports = const [49153],
+    Duration? timeout,
   }) async {
     if (probeError != null) throw probeError!;
     return probeResult;
@@ -426,6 +427,7 @@ class _KnownDeviceFallbackDiscoveryService extends DeviceDiscoveryService {
   Future<WemoDevice?> probeHost(
     String host, {
     List<int> ports = const [49153],
+    Duration? timeout,
   }) async {
     return probeResultsByHost[host];
   }

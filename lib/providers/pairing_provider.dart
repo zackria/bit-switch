@@ -238,6 +238,7 @@ class PairingProvider extends ChangeNotifier {
         device = await _discoveryService.probeHost(
           ip,
           ports: WemoConstants.devicePorts,
+          timeout: WemoConstants.pairingApProbeTimeout,
         );
         if (device != null) break;
       }
@@ -317,6 +318,7 @@ class PairingProvider extends ChangeNotifier {
       final device = await _discoveryService.probeHost(
         ip,
         ports: WemoConstants.devicePorts,
+        timeout: WemoConstants.pairingApProbeTimeout,
       );
 
       if (device != null) {

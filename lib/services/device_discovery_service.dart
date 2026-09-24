@@ -260,8 +260,11 @@ class DeviceDiscoveryService {
   Future<WemoDevice?> probeHost(
     String host, {
     List<int> ports = WemoConstants.devicePorts,
+    Duration? timeout,
   }) async {
-    final ssdpResponse = await _ssdpClient.probe(host, ports: ports);
+    final ssdpResponse = timeout != null
+        ? await _ssdpClient.probe(host, ports: ports, timeout: timeout)
+        : await _ssdpClient.probe(host, ports: ports);
     if (ssdpResponse == null) {
       return null;
     }

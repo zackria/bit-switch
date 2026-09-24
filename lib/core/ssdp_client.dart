@@ -586,7 +586,7 @@ MX: $mx\r
   Future<SsdpResponse?> probe(
     String host, {
     List<int> ports = WemoConstants.devicePorts,
-    Duration timeout = const Duration(seconds: 2),
+    Duration timeout = const Duration(seconds: 5),
   }) async {
     for (final port in ports) {
       try {

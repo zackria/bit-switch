@@ -7,6 +7,7 @@ import 'package:bit_switch/services/device_control_service.dart';
 import 'package:bit_switch/services/device_discovery_service.dart';
 import 'package:bit_switch/services/wifi_detection_service.dart';
 import 'package:bit_switch/models/pairing_state.dart';
+import 'package:bit_switch/core/constants.dart';
 
 void main() {
   group('PairingProvider', () {
@@ -237,6 +238,28 @@ void main() {
 
           expect(discovery.probedHosts, ['10.22.22.5', '10.22.22.1']);
           expect(provider.state.device?.host, '10.22.22.1');
+        },
+      );
+
+      test(
+        'retryDiscovery probes the device AP with the extended pairing '
+        'timeout, not the general-purpose default',
+        () async {
+          final discovery = _HostAwareDiscoveryService({
+            '10.22.22.1': _device,
+          });
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(),
+            controlService: _FakeControlService(),
+            discoveryService: discovery,
+          );
+
+          await provider.retryDiscovery();
+
+          expect(
+            discovery.probedTimeouts,
+            everyElement(WemoConstants.pairingApProbeTimeout),
+          );
         },
       );
 
@@ -640,6 +663,7 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
 class _HostAwareDiscoveryService extends DeviceDiscoveryService {
   final Map<String, WemoDevice> resultsByHost;
   final List<String> probedHosts = [];
+  final List<Duration?> probedTimeouts = [];
 
   _HostAwareDiscoveryService(this.resultsByHost);
 
@@ -650,6 +674,7 @@ class _HostAwareDiscoveryService extends DeviceDiscoveryService {
     Duration? timeout,
   }) async {
     probedHosts.add(host);
+    probedTimeouts.add(timeout);
     return resultsByHost[host];
   }
 }

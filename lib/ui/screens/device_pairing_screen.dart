@@ -18,6 +18,19 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
   final _passwordController = TextEditingController();
   final _manualIpController = TextEditingController();
   final _manualSsidController = TextEditingController();
+
+  /// Keep the password field's element and focus alive across the
+  /// keyboard-visible layout switch.
+  ///
+  /// Showing the keyboard flips [_buildSelectNetworkStep] to its compact
+  /// branch, which is a structurally different subtree (a ListView rather
+  /// than a Column). Without a stable identity Flutter rebuilds the field
+  /// from scratch there, which drops focus and closes the keyboard - which
+  /// flips the layout back, reopening it, forever. The key lets the element
+  /// be reparented instead, and the focus node outlives any rebuild.
+  final _passwordFieldKey = GlobalKey();
+  final _passwordFocusNode = FocusNode();
+
   bool _obscurePassword = true;
   bool _showManualSsid = false;
 
@@ -35,6 +48,7 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
     _passwordController.dispose();
     _manualIpController.dispose();
     _manualSsidController.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -796,6 +810,8 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           child: Column(
             children: [
               TextField(
+                key: _passwordFieldKey,
+                focusNode: _passwordFocusNode,
                 controller: _passwordController,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(

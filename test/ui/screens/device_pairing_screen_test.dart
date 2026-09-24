@@ -732,6 +732,43 @@ void main() {
       });
     });
 
+    testWidgets('password field keeps focus when the keyboard opens', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
+
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        // startPairing() resets the whole state; make sure any in-flight run
+        // has finished before selecting, so this doesn't race it.
+        await provider.startPairing();
+        provider.goToStep(PairingStep.selectNetwork);
+        provider.selectNetwork('HomeNet');
+        await tester.pump();
+
+        final passwordField = find.widgetWithText(TextField, 'WiFi Password');
+        await tester.showKeyboard(passwordField);
+        await tester.pump();
+
+        // The keyboard appearing switches the step to its compact layout,
+        // which is a structurally different subtree. If the field loses
+        // focus in the move the keyboard closes, which switches the layout
+        // back and reopens it - the field becomes untypeable.
+        tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+        await tester.pump();
+
+        final field = tester.widget<TextField>(
+          find.widgetWithText(TextField, 'WiFi Password'),
+        );
+        expect(field.focusNode?.hasFocus, isTrue);
+      });
+    });
+
     testWidgets(
       'network list, manual entry, Use This Network (needs discovery)',
       (tester) async {

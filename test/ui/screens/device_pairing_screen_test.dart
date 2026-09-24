@@ -704,6 +704,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
 
       await tester.runAsync(() async {
         final provider = _makeProvider();
@@ -715,8 +716,15 @@ void main() {
         await tester.showKeyboard(
           find.widgetWithText(TextField, 'WiFi Password'),
         );
+        tester.view.viewInsets = const FakeViewPadding(bottom: 300);
         await tester.pump();
 
+        expect(
+          MediaQuery.of(
+            tester.element(find.byType(Scaffold)),
+          ).viewInsets.bottom,
+          300,
+        );
         expect(find.text('HomeNet'), findsOneWidget);
         expect(find.text('WiFi Password'), findsOneWidget);
         expect(find.byType(ListView), findsWidgets);

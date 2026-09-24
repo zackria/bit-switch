@@ -81,7 +81,13 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                     const Divider(),
                   ],
                   // Step content
-                  Expanded(child: _buildStepContent(context, provider)),
+                  Expanded(
+                    child: _buildStepContent(
+                      context,
+                      provider,
+                      keyboardVisible: keyboardVisible,
+                    ),
+                  ),
                 ],
               );
             },
@@ -91,7 +97,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
     );
   }
 
-  Widget _buildStepContent(BuildContext context, PairingProvider provider) {
+  Widget _buildStepContent(
+    BuildContext context,
+    PairingProvider provider, {
+    required bool keyboardVisible,
+  }) {
     final state = provider.state;
 
     switch (state.step) {
@@ -102,7 +112,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
       case PairingStep.discoverDevice:
         return _buildDiscoverDeviceStep(context, provider);
       case PairingStep.selectNetwork:
-        return _buildSelectNetworkStep(context, provider);
+        return _buildSelectNetworkStep(
+          context,
+          provider,
+          keyboardVisible: keyboardVisible,
+        );
       case PairingStep.configuring:
         return _buildConfiguringStep(context, provider);
       case PairingStep.reconnectHome:
@@ -584,11 +598,11 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
 
   Widget _buildSelectNetworkStep(
     BuildContext context,
-    PairingProvider provider,
-  ) {
+    PairingProvider provider, {
+    required bool keyboardVisible,
+  }) {
     final theme = Theme.of(context);
     final state = provider.state;
-    final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
 
     // Once the password field has focus, the keyboard leaves too little room
     // for the device card, network list, credentials, and any wrapped error
@@ -635,10 +649,13 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                context.l10n.pairingSelectHomeWifi,
-                style: theme.textTheme.titleSmall,
+              Expanded(
+                child: Text(
+                  context.l10n.pairingSelectHomeWifi,
+                  style: theme.textTheme.titleSmall,
+                ),
               ),
+              const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: state.isLoading

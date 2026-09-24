@@ -195,9 +195,11 @@ class PairingProvider extends ChangeNotifier {
 
   /// Ports swept when hunting for the device across the AP's whole subnet.
   /// The direct candidate probes try every port in
-  /// [WemoConstants.devicePorts]; a 254-host sweep sticks to the two ports
+  /// [WemoConstants.devicePorts]; a 254-host sweep sticks to the three ports
   /// Wemo setup mode actually listens on so the pass stays a few seconds.
-  static const List<int> _apSweepPorts = [49153, 49152];
+  /// 49154 belongs here: a Mini was observed serving its setup endpoint
+  /// there while refusing connections on 49153.
+  static const List<int> _apSweepPorts = [49153, 49152, 49154];
   static const Duration _apSweepTimeout = Duration(milliseconds: 400);
   static const int _apSweepBatchSize = 32;
 
@@ -283,6 +285,40 @@ class PairingProvider extends ChangeNotifier {
     }
 
     _debugLog(() => '[Pairing] Sweep of $subnet.0/24 found nothing');
+    return null;
+  }
+
+  /// Last resort: ask the setup AP's network over SSDP.
+  ///
+  /// Safe here, unlike during normal discovery, precisely because we've
+  /// confirmed the phone is associated with a Wemo setup AP: the only device
+  /// on that network is the one being paired, so there's no risk of
+  /// reconfiguring an already-paired device on the home network. It's also
+  /// the one method that lets the device tell us its own control port
+  /// instead of us guessing at it.
+  Future<WemoDevice?> _discoverOnApViaSsdp() async {
+    if (!_wifiService.isWemoApNetwork(_state.currentSsid)) {
+      _debugLog(
+        () => '[Pairing] Not on a Wemo AP SSID - skipping SSDP fallback',
+      );
+      return null;
+    }
+
+    _debugLog(() => '[Pairing] Asking the setup AP over SSDP');
+    try {
+      await for (final device in _discoveryService.discoverDevices(
+        timeout: WemoConstants.pairingDiscoveryTimeout,
+      )) {
+        _debugLog(
+          () =>
+              '[Pairing] SSDP found ${device.name} at ${device.host}:${device.port}',
+        );
+        return device;
+      }
+      _debugLog(() => '[Pairing] SSDP found nothing on the setup AP');
+    } catch (e) {
+      _debugLog(() => '[Pairing] SSDP on the setup AP failed: $e');
+    }
     return null;
   }
 
@@ -405,8 +441,10 @@ class PairingProvider extends ChangeNotifier {
       );
 
       // Nothing at the addresses we can guess: the device is still
-      // somewhere on the subnet it leased us, so go looking for it.
-      final device = probed ?? await _sweepApSubnet();
+      // somewhere on the subnet it leased us, so go looking for it - first
+      // by address, then by asking the network itself.
+      final device =
+          probed ?? await _sweepApSubnet() ?? await _discoverOnApViaSsdp();
 
       if (device != null) {
         await _handleDeviceFoundOnAp(device);

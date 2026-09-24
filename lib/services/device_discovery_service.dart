@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart';
 import '../core/ssdp_client.dart';
@@ -257,22 +258,36 @@ class DeviceDiscoveryService {
   ///
   /// Attempts to connect to the host on the specified ports and fetch device info.
   /// Returns null if no device is found or the connection fails.
+  ///
+  /// Each port is validated in turn: accepting a TCP connection isn't enough,
+  /// the port has to actually serve a parseable setup.xml. A Wemo in setup
+  /// mode may hold other ports in this range open without serving its device
+  /// description there, so a port that connects but doesn't describe a device
+  /// must not stop us checking the rest.
   Future<WemoDevice?> probeHost(
     String host, {
     List<int> ports = WemoConstants.devicePorts,
     Duration? timeout,
   }) async {
-    final ssdpResponse = timeout != null
-        ? await _ssdpClient.probe(host, ports: ports, timeout: timeout)
-        : await _ssdpClient.probe(host, ports: ports);
-    if (ssdpResponse == null) {
-      return null;
+    for (final port in ports) {
+      final ssdpResponse = timeout != null
+          ? await _ssdpClient.probe(host, ports: [port], timeout: timeout)
+          : await _ssdpClient.probe(host, ports: [port]);
+      if (ssdpResponse == null) continue;
+
+      try {
+        final device = await _fetchDeviceInfo(ssdpResponse, (_) {});
+        if (device != null) return device;
+        _probeLog('$host:$port served no usable device description');
+      } on DiscoveryException catch (e) {
+        _probeLog('$host:$port connected but setup.xml failed: ${e.message}');
+      }
     }
-    try {
-      return await _fetchDeviceInfo(ssdpResponse, (_) {});
-    } on DiscoveryException {
-      return null;
-    }
+    return null;
+  }
+
+  void _probeLog(String message) {
+    if (kDebugMode) debugPrint('[Discovery] $message');
   }
 
   void dispose() {

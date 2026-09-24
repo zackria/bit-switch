@@ -287,6 +287,88 @@ void main() {
         },
       );
 
+      test('subnet sweep covers the port a Mini was seen serving (49154)', () async {
+        final discovery = _HostAwareDiscoveryService({});
+        final provider = PairingProvider(
+          wifiService: _FakeWifiService(interfaceIp: '10.22.22.122'),
+          controlService: _FakeControlService(),
+          discoveryService: discovery,
+        );
+
+        await provider.retryDiscovery();
+
+        // The direct candidate probe uses the full port list; the sweep uses
+        // a trimmed one, which must still include the port the device was
+        // actually found on in the field.
+        final sweepPorts = discovery.probedPorts
+            .where((ports) => ports != null && ports.length < 9)
+            .toList();
+        expect(sweepPorts, isNotEmpty);
+        expect(sweepPorts.first, contains(49154));
+      });
+
+      test(
+        'falls back to SSDP on the setup AP when no address answers',
+        () async {
+          final deviceViaSsdp = _device.copyWith(host: '10.22.22.1', port: 49154);
+          final discovery = _HostAwareDiscoveryService(
+            {},
+            ssdpStream: Stream.value(deviceViaSsdp),
+          );
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(
+              getSsid: () async => 'Wemo.Mini.61C',
+              interfaceIp: '10.22.22.122',
+            ),
+            // Non-empty so the AP-list fetch doesn't sit through its
+            // empty-result retry delay.
+            controlService: _FakeControlService(
+              networks: [
+                WifiNetwork(
+                  ssid: 'AARYAN',
+                  channel: 6,
+                  signalStrength: 70,
+                  authMode: 'WPAPSK',
+                  encryption: 'AES',
+                ),
+              ],
+            ),
+            discoveryService: discovery,
+          );
+
+          await provider.confirmConnectedToDeviceAp();
+
+          expect(provider.state.device?.port, 49154);
+          expect(provider.state.step, PairingStep.selectNetwork);
+        },
+      );
+
+      test(
+        "doesn't fall back to SSDP unless the phone is on a Wemo AP SSID",
+        () async {
+          final strayDevice = _device.copyWith(host: '192.168.1.50');
+          final discovery = _HostAwareDiscoveryService(
+            {},
+            ssdpStream: Stream.value(strayDevice),
+          );
+          final provider = PairingProvider(
+            // A home-network SSID: SSDP here would happily return an
+            // already-paired device and we'd reconfigure the wrong one.
+            wifiService: _FakeWifiService(
+              getSsid: () async => 'AARYAN',
+              interfaceIp: '192.168.1.22',
+            ),
+            controlService: _FakeControlService(),
+            discoveryService: discovery,
+          );
+
+          await provider.confirmConnectedToDeviceAp();
+
+          expect(provider.state.device, isNull);
+          expect(provider.state.errorMessage, isNotNull);
+        },
+      );
+
       test('retryDiscovery reports failure when even the sweep finds nothing', () async {
         final discovery = _HostAwareDiscoveryService({});
         final provider = PairingProvider(
@@ -735,10 +817,12 @@ class _FakeDiscoveryService extends DeviceDiscoveryService {
 /// candidate fallback in [PairingProvider._buildApProbeCandidates].
 class _HostAwareDiscoveryService extends DeviceDiscoveryService {
   final Map<String, WemoDevice> resultsByHost;
+  final Stream<WemoDevice>? ssdpStream;
   final List<String> probedHosts = [];
   final List<Duration?> probedTimeouts = [];
+  final List<List<int>?> probedPorts = [];
 
-  _HostAwareDiscoveryService(this.resultsByHost);
+  _HostAwareDiscoveryService(this.resultsByHost, {this.ssdpStream});
 
   @override
   Future<WemoDevice?> probeHost(
@@ -748,7 +832,17 @@ class _HostAwareDiscoveryService extends DeviceDiscoveryService {
   }) async {
     probedHosts.add(host);
     probedTimeouts.add(timeout);
+    probedPorts.add(ports);
     return resultsByHost[host];
+  }
+
+  /// Stubbed so the SSDP fallback never reaches the real multicast client.
+  @override
+  Stream<WemoDevice> discoverDevices({
+    Duration? timeout = const Duration(seconds: 2),
+    void Function(String)? onDebugLog,
+  }) {
+    return ssdpStream ?? const Stream.empty();
   }
 }
 

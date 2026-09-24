@@ -183,6 +183,44 @@ void main() {
       expect(device!.name, 'Test Switch');
     });
 
+    test(
+      'probeHost keeps trying ports when an earlier one connects but serves '
+      'no setup.xml (a Wemo Mini was found doing exactly this on 49154)',
+      () async {
+        final mockSsdpClient = MockSsdpClient(
+          discoverHandler: () async* {},
+          // Every port in the range accepts a TCP connection...
+          probeHandler: (host, {ports = const []}) async => SsdpResponse(
+            location: 'http://$host:${ports.first}/setup.xml',
+            usn: 'probed',
+            server: 'probed',
+            address: InternetAddress(host),
+          ),
+        );
+
+        final requestedPorts = <int>[];
+        final mockHttpClient = MockClient((request) async {
+          requestedPorts.add(request.url.port);
+          // ...but only 49154 actually describes the device.
+          return request.url.port == 49154
+              ? http.Response(xmlBody, 200)
+              : http.Response('not found', 404);
+        });
+
+        final service = DeviceDiscoveryService(
+          ssdpClient: mockSsdpClient,
+          httpClient: mockHttpClient,
+        );
+
+        final device = await service.probeHost('10.22.22.1');
+
+        expect(device, isNotNull);
+        expect(device!.port, 49154);
+        // The earlier ports were tried first and didn't abort the probe.
+        expect(requestedPorts.first, 49153);
+      },
+    );
+
     test('_determineDeviceType should identify types correctly', () async {
       // Since _determineDeviceType is private, we test via discover with different XMLs
       // Helper to create service with XML

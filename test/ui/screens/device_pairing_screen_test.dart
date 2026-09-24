@@ -573,6 +573,24 @@ void main() {
 
         // Tapping it reveals a field to type the network name into.
         expect(find.text('Enter network name:'), findsOneWidget);
+
+        // Typing has to enable the confirm button: its enabled state is read
+        // from the controller at build time, so without a rebuild on input
+        // it stays disabled and the escape hatch is useless.
+        await tester.enterText(
+          find.widgetWithText(TextField, 'Network Name (SSID)'),
+          'AARYAN',
+        );
+        await tester.pump();
+
+        final useNetwork = find.widgetWithText(FilledButton, 'Use This Network');
+        expect(useNetwork, findsOneWidget);
+        expect(tester.widget<FilledButton>(useNetwork).onPressed, isNotNull);
+
+        await tester.tap(useNetwork);
+        await tester.pump();
+
+        expect(provider.state.selectedSsid, 'AARYAN');
       });
     });
 

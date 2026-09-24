@@ -813,6 +813,10 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
             const SizedBox(height: 8),
             TextField(
               controller: _manualSsidController,
+              // Without this the confirm button below, whose enabled state is
+              // read from the controller at build time, never re-evaluates:
+              // typing wouldn't rebuild anything and it would stay disabled.
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 labelText: context.l10n.pairingNetworkName,
                 border: const OutlineInputBorder(),

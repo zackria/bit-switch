@@ -242,6 +242,71 @@ void main() {
       );
 
       test(
+        'retryDiscovery derives the AP gateway from our own lease when the '
+        'OS reports no gateway IP',
+        () async {
+          final discovery = _HostAwareDiscoveryService({
+            '192.168.4.1': _device,
+          });
+          final provider = PairingProvider(
+            // No gateway from the OS - the DhcpInfo API behind it returns
+            // null on many Android builds.
+            wifiService: _FakeWifiService(interfaceIp: '192.168.4.37'),
+            controlService: _FakeControlService(),
+            discoveryService: discovery,
+          );
+
+          await provider.retryDiscovery();
+
+          expect(discovery.probedHosts, ['192.168.4.1', '10.22.22.1']);
+          expect(provider.state.device?.host, '192.168.4.1');
+        },
+      );
+
+      test(
+        'retryDiscovery sweeps the AP subnet when the device answers on '
+        "neither the guessable addresses nor the hardcoded default",
+        () async {
+          final deviceOffGateway = _device.copyWith(host: '10.22.22.57');
+          final discovery = _HostAwareDiscoveryService({
+            '10.22.22.57': deviceOffGateway,
+          });
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(interfaceIp: '10.22.22.122'),
+            controlService: _FakeControlService(),
+            discoveryService: discovery,
+          );
+
+          await provider.retryDiscovery();
+
+          expect(provider.state.device?.host, '10.22.22.57');
+          expect(provider.state.step, PairingStep.selectNetwork);
+          // The guessable address is still tried first; the sweep is the
+          // fallback, not the first resort.
+          expect(discovery.probedHosts.first, '10.22.22.1');
+        },
+      );
+
+      test('retryDiscovery reports failure when even the sweep finds nothing', () async {
+        final discovery = _HostAwareDiscoveryService({});
+        final provider = PairingProvider(
+          wifiService: _FakeWifiService(interfaceIp: '10.22.22.122'),
+          controlService: _FakeControlService(),
+          discoveryService: discovery,
+        );
+
+        await provider.retryDiscovery();
+
+        expect(provider.state.device, isNull);
+        expect(provider.state.errorMessage, isNotNull);
+        expect(provider.state.isLoading, isFalse);
+        // The whole /24 was swept before giving up...
+        expect(discovery.probedHosts, contains('10.22.22.254'));
+        // ...except our own address, which is pointless to probe.
+        expect(discovery.probedHosts, isNot(contains('10.22.22.122')));
+      });
+
+      test(
         'retryDiscovery probes the device AP with the extended pairing '
         'timeout, not the general-purpose default',
         () async {
@@ -602,14 +667,17 @@ void main() {
 class _FakeWifiService extends WifiDetectionService {
   final Future<String?> Function()? _getSsid;
   final Future<String?> Function()? _getGatewayIp;
+  final String? _interfaceIp;
   final Stream<String?>? _stream;
 
   _FakeWifiService({
     Future<String?> Function()? getSsid,
     Future<String?> Function()? getGatewayIp,
+    String? interfaceIp,
     Stream<String?>? streamSsid,
   }) : _getSsid = getSsid,
        _getGatewayIp = getGatewayIp,
+       _interfaceIp = interfaceIp,
        _stream = streamSsid,
        super();
 
@@ -624,6 +692,11 @@ class _FakeWifiService extends WifiDetectionService {
     if (_getGatewayIp != null) return _getGatewayIp();
     return null;
   }
+
+  /// Defaults to null so tests that don't care about the subnet sweep never
+  /// touch the host machine's real interfaces (and never sweep 254 hosts).
+  @override
+  Future<String?> getWifiInterfaceIp() async => _interfaceIp;
 
   @override
   Stream<String?> watchSsidChanges({

@@ -193,29 +193,139 @@ class PairingProvider extends ChangeNotifier {
     await _discoverDeviceOnAp();
   }
 
+  /// Ports swept when hunting for the device across the AP's whole subnet.
+  /// The direct candidate probes try every port in
+  /// [WemoConstants.devicePorts]; a 254-host sweep sticks to the two ports
+  /// Wemo setup mode actually listens on so the pass stays a few seconds.
+  static const List<int> _apSweepPorts = [49153, 49152];
+  static const Duration _apSweepTimeout = Duration(milliseconds: 400);
+  static const int _apSweepBatchSize = 32;
+
+  /// Upper bound on probing the handful of guessed addresses, so that a
+  /// silent host (which makes each port sit out the full
+  /// [WemoConstants.pairingApProbeTimeout]) can't stop us ever reaching the
+  /// subnet sweep below.
+  static const Duration _apCandidateBudget = Duration(seconds: 40);
+
   /// Build the list of IPs to try for the device's setup AP.
   ///
   /// Prefers the WiFi gateway IP reported by the OS - since the device is
-  /// itself the access point, that's its real control address - then falls
-  /// back to the well-known default used by older Wemo hardware. Different
-  /// Wemo generations (e.g. the Mini) don't all default to the same IP, so
-  /// relying solely on the hardcoded address isn't reliable across models.
+  /// itself the access point, that's its real control address - then the
+  /// `.1` of whatever subnet the AP leased us, then the well-known default
+  /// used by older Wemo hardware. Different Wemo generations (e.g. the
+  /// Mini) don't all default to the same IP, and the OS gateway lookup
+  /// returns null on many Android builds, so no single source is enough.
   Future<List<String>> _buildApProbeCandidates() async {
     final candidates = <String>[];
+
+    void add(String? ip) {
+      if (ip == null || ip.isEmpty || ip == '0.0.0.0') return;
+      if (!candidates.contains(ip)) candidates.add(ip);
+    }
+
     try {
-      final gatewayIp = await _wifiService.getWifiGatewayIP();
-      if (gatewayIp != null &&
-          gatewayIp.isNotEmpty &&
-          gatewayIp != '0.0.0.0') {
-        candidates.add(gatewayIp);
-      }
+      add(await _wifiService.getWifiGatewayIP());
     } catch (_) {
-      // Ignore - fall back to the default IP below.
+      // Ignore - the fallbacks below still apply.
     }
-    if (!candidates.contains(WemoConstants.wemoApDefaultIp)) {
-      candidates.add(WemoConstants.wemoApDefaultIp);
+
+    try {
+      add(_gatewayGuessFor(await _wifiService.getWifiInterfaceIp()));
+    } catch (_) {
+      // Ignore - the default below still applies.
     }
+
+    add(WemoConstants.wemoApDefaultIp);
     return candidates;
+  }
+
+  /// `.1` of [localIp]'s /24 - where the host handing out DHCP leases on a
+  /// setup AP almost always sits.
+  String? _gatewayGuessFor(String? localIp) {
+    if (localIp == null) return null;
+    final lastDot = localIp.lastIndexOf('.');
+    if (lastDot <= 0) return null;
+    return '${localIp.substring(0, lastDot)}.1';
+  }
+
+  /// Sweep the setup AP's subnet looking for the device.
+  ///
+  /// Runs only when none of the guessable addresses answered. The device is
+  /// the AP's DHCP server, so whatever address it kept for itself is on the
+  /// subnet it leased us - even when that isn't the `.1` we'd guess.
+  Future<WemoDevice?> _sweepApSubnet() async {
+    final localIp = await _wifiService.getWifiInterfaceIp();
+    final lastDot = localIp?.lastIndexOf('.') ?? -1;
+    if (localIp == null || lastDot <= 0) {
+      _debugLog(() => '[Pairing] No WiFi address - skipping subnet sweep');
+      return null;
+    }
+    final subnet = localIp.substring(0, lastDot);
+    _debugLog(() => '[Pairing] Sweeping $subnet.1-254 for the device');
+
+    for (var start = 1; start < 255; start += _apSweepBatchSize) {
+      final end = (start + _apSweepBatchSize).clamp(1, 255);
+      final hosts = <String>[
+        for (var i = start; i < end; i++)
+          if ('$subnet.$i' != localIp) '$subnet.$i',
+      ];
+
+      final results = await Future.wait(hosts.map(_sweepHost));
+      for (final device in results) {
+        if (device != null) {
+          _debugLog(
+            () =>
+                '[Pairing] Sweep found ${device.name} at ${device.host}:${device.port}',
+          );
+          return device;
+        }
+      }
+    }
+
+    _debugLog(() => '[Pairing] Sweep of $subnet.0/24 found nothing');
+    return null;
+  }
+
+  Future<WemoDevice?> _sweepHost(String host) async {
+    try {
+      return await _discoveryService.probeHost(
+        host,
+        ports: _apSweepPorts,
+        timeout: _apSweepTimeout,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Debug-only: report *why* the guessed addresses stayed silent.
+  ///
+  /// "Connection refused" means the device is there but isn't serving that
+  /// port; a timeout or "no route to host" means nothing answered at all -
+  /// on Android usually because app traffic is still going out over
+  /// cellular instead of the setup AP. The probe path swallows the
+  /// distinction, and it's the difference between two very different bugs.
+  Future<void> _logApReachability(List<String> candidateIps) async {
+    if (!kDebugMode) return;
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+    const port = 49153;
+    for (final ip in candidateIps) {
+      try {
+        final socket = await Socket.connect(
+          ip,
+          port,
+          timeout: const Duration(seconds: 3),
+        );
+        await socket.close();
+        debugPrint('[Pairing] $ip:$port accepted a connection after all');
+      } on SocketException catch (e) {
+        debugPrint(
+          '[Pairing] $ip:$port unreachable: ${e.osError ?? e.message}',
+        );
+      } catch (e) {
+        debugPrint('[Pairing] $ip:$port unreachable: $e');
+      }
+    }
   }
 
   /// Logs [message] via [debugPrint] outside release builds.
@@ -285,16 +395,23 @@ class PairingProvider extends ChangeNotifier {
       // Do NOT fall back to SSDP here — SSDP would find already-paired devices
       // on the home network when the phone hasn't actually switched to the
       // WeMo AP, leading to GetApList being sent to the wrong device.
-      final device = await _probeApCandidates(candidateIps);
+      final probed = await _probeApCandidates(
+        candidateIps,
+      ).timeout(_apCandidateBudget, onTimeout: () => null);
 
       _debugLog(
         () =>
-            '[Pairing] probeHost result: ${device != null ? "found ${device.name} at ${device.host}:${device.port}" : "null — device not reachable at $candidateIps"}',
+            '[Pairing] probeHost result: ${probed != null ? "found ${probed.name} at ${probed.host}:${probed.port}" : "null — device not reachable at $candidateIps"}',
       );
+
+      // Nothing at the addresses we can guess: the device is still
+      // somewhere on the subnet it leased us, so go looking for it.
+      final device = probed ?? await _sweepApSubnet();
 
       if (device != null) {
         await _handleDeviceFoundOnAp(device);
       } else {
+        await _logApReachability(candidateIps);
         _handleDeviceNotFoundOnAp(candidateIps);
       }
     } catch (e, st) {

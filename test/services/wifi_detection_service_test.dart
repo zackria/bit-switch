@@ -116,6 +116,28 @@ void main() {
       });
     });
 
+    group('getWifiInterfaceIp', () {
+      test('returns null or a private IPv4 address', () async {
+        // Reads the host's real interfaces, so the address itself can't be
+        // asserted - but whatever comes back must be usable as a subnet
+        // hint, i.e. RFC 1918 and never a carrier-assigned address.
+        final ip = await service.getWifiInterfaceIp();
+        if (ip == null) return;
+
+        final octets = ip.split('.');
+        expect(octets, hasLength(4));
+        final first = int.parse(octets[0]);
+        final second = int.parse(octets[1]);
+        expect(
+          first == 10 ||
+              (first == 192 && second == 168) ||
+              (first == 172 && second >= 16 && second <= 31),
+          isTrue,
+          reason: '$ip is not an RFC 1918 address',
+        );
+      });
+    });
+
     group('isWemoApNetwork', () {
       test('should return true for valid Wemo AP SSIDs', () {
         expect(service.isWemoApNetwork('WeMo.ABC123'), true);

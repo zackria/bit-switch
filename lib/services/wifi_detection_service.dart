@@ -263,6 +263,60 @@ class WifiDetectionService {
     }
   }
 
+  /// Wi-Fi interface names: `wlan0` on Android, `en0`/`en1` on iOS and
+  /// macOS, `ap0` for tethering. Cellular (`rmnet_data0`, `pdp_ip0`)
+  /// deliberately doesn't match - traffic to a setup AP never goes there.
+  static final RegExp _wifiInterfaceNamePattern = RegExp(
+    r'^(wlan|en|ap)\d',
+    caseSensitive: false,
+  );
+
+  /// True for RFC 1918 addresses. Excludes carrier-assigned addresses such
+  /// as the `192.0.0.2` Android hands its cellular interface, which look
+  /// private at a glance but aren't on any subnet we can reach devices on.
+  static bool _isPrivateIpv4(String address) {
+    final parts = address.split('.');
+    if (parts.length != 4) return false;
+    final first = int.tryParse(parts[0]);
+    final second = int.tryParse(parts[1]);
+    if (first == null || second == null) return false;
+    if (first == 10) return true;
+    if (first == 192 && second == 168) return true;
+    return first == 172 && second >= 16 && second <= 31;
+  }
+
+  /// This phone's own IPv4 address on the Wi-Fi interface, e.g.
+  /// `10.22.22.122`, or null when it isn't on a private Wi-Fi network.
+  ///
+  /// Pairing uses this to work out which subnet the device's setup AP put
+  /// us on. [getWifiGatewayIP] is the more direct answer but returns null
+  /// on many Android builds (the DhcpInfo API behind it is deprecated), and
+  /// Wemo generations don't share one default AP address - so the lease the
+  /// device just handed us is the most reliable clue to where it lives.
+  Future<String?> getWifiInterfaceIp() async {
+    try {
+      final interfaces = await NetworkInterface.list(
+        type: InternetAddressType.IPv4,
+      );
+      String? fallback;
+      for (final iface in interfaces) {
+        for (final addr in iface.addresses) {
+          if (!_isPrivateIpv4(addr.address)) continue;
+          if (_wifiInterfaceNamePattern.hasMatch(iface.name)) {
+            _log('WiFi interface IP: ${iface.name} -> ${addr.address}');
+            return addr.address;
+          }
+          fallback ??= addr.address;
+        }
+      }
+      _log('WiFi interface IP: falling back to $fallback');
+      return fallback;
+    } catch (e) {
+      _log('Error resolving WiFi interface IP: $e');
+      return null;
+    }
+  }
+
   /// Check if the given SSID matches the Wemo AP pattern (WeMo.XXXXX)
   bool isWemoApNetwork(String? ssid) {
     if (ssid == null) return false;

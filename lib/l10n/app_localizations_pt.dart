@@ -214,6 +214,18 @@ class AppLocalizationsPt extends AppLocalizations {
   String get commonRefresh => 'Atualizar';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'Tente novamente';
 
   @override

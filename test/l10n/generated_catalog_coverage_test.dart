@@ -39,6 +39,7 @@ void _touchAll(AppLocalizations l) {
     buffer.write(l.commonOpenSettings);
     buffer.write(l.commonPassword);
     buffer.write(l.commonRefresh);
+    buffer.write(l.commonSave);
     buffer.write(l.commonSeconds(1));
     buffer.write(l.commonSecondsShort(1));
     buffer.write(l.commonSerial);
@@ -58,6 +59,7 @@ void _touchAll(AppLocalizations l) {
     buffer.write(l.detailConnectionFailed);
     buffer.write(l.detailDeviceInfo);
     buffer.write(l.detailDeviceInformation);
+    buffer.write(l.detailDeviceName);
     buffer.write(l.detailEnterNetworkBelow);
     buffer.write(l.detailEnterNetworkNameError);
     buffer.write(l.detailEnterPasswordError);
@@ -71,6 +73,8 @@ void _touchAll(AppLocalizations l) {
     buffer.write(l.detailPasswordShort);
     buffer.write(l.detailPermissionScan);
     buffer.write(l.detailRefreshState);
+    buffer.write(l.detailRenameDevice);
+    buffer.write(l.detailRenameSuccess);
     buffer.write(l.detailReset);
     buffer.write(l.detailResetDevice);
     buffer.write(l.detailResetFailed);

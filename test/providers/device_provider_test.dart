@@ -15,9 +15,20 @@ import 'package:bit_switch/core/exceptions.dart';
 class MockControlService extends DeviceControlService {
   final Future<DeviceState> Function(WemoDevice)? getStateHandler;
   final Future<void> Function(WemoDevice, bool)? setStateHandler;
+  final Future<void> Function(WemoDevice, String)? setFriendlyNameHandler;
 
-  MockControlService({this.getStateHandler, this.setStateHandler})
-    : super(soapClient: SoapClient()); // Base soap client unused
+  MockControlService({
+    this.getStateHandler,
+    this.setStateHandler,
+    this.setFriendlyNameHandler,
+  }) : super(soapClient: SoapClient()); // Base soap client unused
+
+  @override
+  Future<void> setFriendlyName(WemoDevice device, String name) async {
+    if (setFriendlyNameHandler != null) {
+      await setFriendlyNameHandler!(device, name);
+    }
+  }
 
   @override
   Future<DeviceState> getState(WemoDevice device) async {
@@ -97,6 +108,41 @@ void main() {
       await provider.discoverDevices(timeout: Duration.zero);
       expect(provider.devices.length, 1);
       expect(provider.devices.first.id, device.id);
+    });
+
+    test('renameDevice renames on the device and updates the list', () async {
+      final renames = <String>[];
+      final provider = DeviceProvider(
+        controlService: MockControlService(
+          setFriendlyNameHandler: (device, name) async => renames.add(name),
+        ),
+        discoveryService: MockDiscoveryService([device]),
+      );
+      await provider.discoverDevices(timeout: Duration.zero);
+
+      await provider.renameDevice(device.id, '  Kitchen Lamp  ');
+
+      // Trimmed before it reaches the device, and reflected locally.
+      expect(renames, ['Kitchen Lamp']);
+      expect(provider.deviceById(device.id)?.name, 'Kitchen Lamp');
+    });
+
+    test('renameDevice keeps the old name when the device rejects it', () async {
+      final provider = DeviceProvider(
+        controlService: MockControlService(
+          setFriendlyNameHandler: (device, name) async {
+            throw DeviceException('nope');
+          },
+        ),
+        discoveryService: MockDiscoveryService([device]),
+      );
+      await provider.discoverDevices(timeout: Duration.zero);
+
+      await expectLater(
+        provider.renameDevice(device.id, 'Kitchen Lamp'),
+        throwsA(isA<DeviceException>()),
+      );
+      expect(provider.deviceById(device.id)?.name, 'Test Device');
     });
 
     test('refreshDeviceState updates state', () async {

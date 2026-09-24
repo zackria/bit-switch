@@ -617,6 +617,26 @@ class DeviceProvider extends ChangeNotifier {
     _log('Subnet scan complete: ${_devices.length} devices total');
   }
 
+  /// The known device with [deviceId], if it has been discovered.
+  WemoDevice? deviceById(String deviceId) => _devices[deviceId];
+
+  /// Rename [deviceId] on the device itself.
+  ///
+  /// The name lives on the hardware, so the local copy is only updated once
+  /// the device has accepted it - a failure leaves the old name in place and
+  /// is thrown for the caller to report.
+  Future<void> renameDevice(String deviceId, String name) async {
+    final device = _devices[deviceId];
+    if (device == null) return;
+
+    final trimmed = name.trim();
+    await _controlService.setFriendlyName(device, trimmed);
+
+    _devices[deviceId] = device.copyWith(name: trimmed);
+    _log('Renamed ${device.name} to $trimmed');
+    notifyListeners();
+  }
+
   /// Refresh the state of a specific device
   Future<void> refreshDeviceState(String deviceId) async {
     final device = _devices[deviceId];

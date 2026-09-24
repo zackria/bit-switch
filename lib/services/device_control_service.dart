@@ -158,6 +158,32 @@ class DeviceControlService {
     }
   }
 
+  /// Change the device's friendly name.
+  ///
+  /// The name is stored on the device itself, so this is the same call the
+  /// official app and pywemo make, and the new name shows up for every
+  /// client once they rediscover it.
+  Future<void> setFriendlyName(WemoDevice device, String name) async {
+    try {
+      await _soapClient.call(
+        host: device.host,
+        port: device.port,
+        serviceName: 'basicevent1',
+        action: 'ChangeFriendlyName',
+        serviceType: WemoConstants.basicEventService,
+        arguments: {'FriendlyName': name},
+      );
+    } catch (e, st) {
+      _wrapError(
+        e,
+        st,
+        device,
+        message: 'Failed to rename device',
+        operation: 'setFriendlyName',
+      );
+    }
+  }
+
   /// Turn a device on
   Future<void> turnOn(WemoDevice device) => setState(device, true);
 

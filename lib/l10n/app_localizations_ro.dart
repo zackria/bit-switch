@@ -215,6 +215,18 @@ class AppLocalizationsRo extends AppLocalizations {
   String get commonRefresh => 'Reîmprospătați';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'Încercați din nou';
 
   @override

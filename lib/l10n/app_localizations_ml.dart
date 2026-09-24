@@ -212,6 +212,18 @@ class AppLocalizationsMl extends AppLocalizations {
   String get commonRefresh => 'പുതുക്കുക';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'വീണ്ടും ശ്രമിക്കുക';
 
   @override

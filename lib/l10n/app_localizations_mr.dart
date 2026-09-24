@@ -212,6 +212,18 @@ class AppLocalizationsMr extends AppLocalizations {
   String get commonRefresh => 'रिफ्रेश करा';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'पुन्हा प्रयत्न करा';
 
   @override

@@ -24,8 +24,18 @@ class DeviceDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(device.name),
+        // Read the name back from the provider so a rename shows here
+        // immediately, rather than the value captured when we were pushed.
+        title: Consumer<DeviceProvider>(
+          builder: (context, provider, child) =>
+              Text(provider.deviceById(device.id)?.name ?? device.name),
+        ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.drive_file_rename_outline),
+            onPressed: () => _showRenameDialog(context),
+            tooltip: context.l10n.detailRenameDevice,
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -252,6 +262,72 @@ class DeviceDetailScreen extends StatelessWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.detailFailedToggle(e.toString()))),
+      );
+    }
+  }
+
+  Future<void> _showRenameDialog(BuildContext context) async {
+    final provider = context.read<DeviceProvider>();
+    final currentName = provider.deviceById(device.id)?.name ?? device.name;
+    final controller = TextEditingController(text: currentName);
+
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(dialogContext.l10n.detailRenameDevice),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: InputDecoration(
+            labelText: dialogContext.l10n.detailDeviceName,
+            border: const OutlineInputBorder(),
+          ),
+          onSubmitted: (value) {
+            final trimmed = value.trim();
+            if (trimmed.isNotEmpty) Navigator.pop(dialogContext, trimmed);
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(dialogContext.l10n.commonCancel),
+          ),
+          // Listening to the controller keeps Save disabled until the name
+          // is both non-empty and actually different.
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (context, value, child) {
+              final trimmed = value.text.trim();
+              return FilledButton(
+                onPressed: trimmed.isEmpty || trimmed == currentName
+                    ? null
+                    : () => Navigator.pop(dialogContext, trimmed),
+                child: Text(dialogContext.l10n.commonSave),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    controller.dispose();
+    if (newName == null || !context.mounted) return;
+
+    try {
+      await provider.renameDevice(device.id, newName);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.detailRenameSuccess)),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            ErrorHandler.getUserFriendlyMessage(e, context: context),
+          ),
+        ),
       );
     }
   }

@@ -213,6 +213,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get commonRefresh => 'புதுப்பிக்கவும்';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'மீண்டும் முயற்சிக்கவும்';
 
   @override

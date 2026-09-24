@@ -511,6 +511,30 @@ abstract class AppLocalizations {
   /// **'Refresh'**
   String get commonRefresh;
 
+  /// No description provided for @commonSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get commonSave;
+
+  /// No description provided for @detailDeviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Device name'**
+  String get detailDeviceName;
+
+  /// No description provided for @detailRenameDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Device'**
+  String get detailRenameDevice;
+
+  /// No description provided for @detailRenameSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Device renamed'**
+  String get detailRenameSuccess;
+
   /// No description provided for @commonTryAgain.
   ///
   /// In en, this message translates to:

@@ -323,6 +323,46 @@ void main() {
       );
     });
 
+    test('setFriendlyName sends ChangeFriendlyName with the new name', () async {
+      String? capturedAction;
+      String? capturedService;
+      String? capturedName;
+
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
+        capturedAction = action;
+        capturedService = service;
+        capturedName = args?['FriendlyName'];
+        return <String, String>{};
+      });
+
+      final svc = DeviceControlService(soapClient: mockClient);
+      await svc.setFriendlyName(device, 'Kitchen Lamp');
+
+      expect(capturedAction, 'ChangeFriendlyName');
+      expect(capturedService, 'basicevent1');
+      expect(capturedName, 'Kitchen Lamp');
+    });
+
+    test('setFriendlyName wraps a failure as DeviceException', () {
+      final mockClient = MockSoapClient((_, __, ___, ____, _____, ______) async {
+        throw Exception('device refused');
+      });
+
+      final svc = DeviceControlService(soapClient: mockClient);
+
+      expect(
+        () => svc.setFriendlyName(device, 'Kitchen Lamp'),
+        throwsA(isA<DeviceException>()),
+      );
+    });
+
     test('connectToHomeNetwork surfaces a SOAP fault from the device', () {
       // Distinct from a dropped connection: the device answered and
       // complained, so the caller needs to know.

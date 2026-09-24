@@ -210,6 +210,18 @@ class AppLocalizationsDa extends AppLocalizations {
   String get commonRefresh => 'Opdater';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'Prøv igen';
 
   @override

@@ -205,6 +205,18 @@ class AppLocalizationsGu extends AppLocalizations {
   String get commonRefresh => 'તાજું કરો';
 
   @override
+  String get commonSave => 'Save';
+
+  @override
+  String get detailDeviceName => 'Device name';
+
+  @override
+  String get detailRenameDevice => 'Rename Device';
+
+  @override
+  String get detailRenameSuccess => 'Device renamed';
+
+  @override
   String get commonTryAgain => 'ફરી પ્રયાસ કરો';
 
   @override

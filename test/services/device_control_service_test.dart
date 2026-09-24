@@ -310,6 +310,56 @@ void main() {
       expect(networks[1].ssid, 'GuestWiFi');
     });
 
+    test(
+      'getAvailableNetworks tolerates newline-separated entries and a '
+      'trailing separator',
+      () async {
+        final mockClient = MockSoapClient((
+          host,
+          port,
+          service,
+          action,
+          type,
+          args,
+        ) async {
+          // Shape observed from real hardware: entries delimited by ",\n"
+          // with a trailing comma and surrounding whitespace.
+          return {
+            'ApList':
+                'HomeWiFi|6|80|WPA2PSK/AES|0,\n'
+                'GuestWiFi|11|50|OPEN|NONE,\n',
+          };
+        });
+
+        final service = DeviceControlService(soapClient: mockClient);
+        final networks = await service.getAvailableNetworks(device);
+
+        expect(networks.length, 2);
+        expect(networks[0].ssid, 'HomeWiFi');
+        expect(networks[1].ssid, 'GuestWiFi');
+        expect(networks[1].channel, 11);
+      },
+    );
+
+    test('getAvailableNetworks returns empty for a blank AP list', () async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
+        // A device that hasn't finished scanning answers successfully with
+        // nothing in it - that's not a parse failure.
+        return {'ApList': '\n  \n'};
+      });
+
+      final service = DeviceControlService(soapClient: mockClient);
+
+      expect(await service.getAvailableNetworks(device), isEmpty);
+    });
+
     test('setupWifi should try to connect', () async {
       var statusCallCount = 0;
 

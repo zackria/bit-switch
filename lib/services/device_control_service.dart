@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import '../core/soap_client.dart';
 import '../core/constants.dart';
 import '../core/exceptions.dart';
@@ -378,7 +379,20 @@ class DeviceControlService {
       );
 
       final apList = response['ApList'] ?? '';
-      return _parseApList(apList);
+      final networks = _parseApList(apList);
+      if (kDebugMode) {
+        // An empty result is ambiguous without this: it can mean the device
+        // hasn't finished scanning, or that it answered in a shape we don't
+        // parse. Log enough of the raw value to tell those apart.
+        final preview = apList.length > 400
+            ? '${apList.substring(0, 400)}…'
+            : apList;
+        debugPrint(
+          '[Control] GetApList fields=${response.keys.toList()} '
+          'parsed=${networks.length} raw="$preview"',
+        );
+      }
+      return networks;
     } catch (e, st) {
       _wrapError(
         e,
@@ -392,23 +406,30 @@ class DeviceControlService {
 
   /// Parse the AP list response
   /// Format: "SSID|Channel|SignalStrength|AuthMode|EncryptType,..."
+  ///
+  /// Devices aren't consistent about how they delimit entries: commas,
+  /// newlines, or ",\n", usually with a trailing separator, and fields can
+  /// carry surrounding whitespace. Anything that doesn't yield a usable
+  /// entry is skipped rather than dragging the whole list down.
   List<WifiNetwork> _parseApList(String apList) {
-    if (apList.isEmpty) return [];
+    if (apList.trim().isEmpty) return [];
 
     final networks = <WifiNetwork>[];
-    final entries = apList.split(',');
 
-    for (final entry in entries) {
-      final parts = entry.split('|');
-      if (parts.length >= 5) {
-        networks.add(WifiNetwork(
-          ssid: parts[0],
-          channel: int.tryParse(parts[1]) ?? 0,
-          signalStrength: int.tryParse(parts[2]) ?? 0,
-          authMode: parts[3],
-          encryption: parts[4],
-        ));
-      }
+    for (final entry in apList.split(RegExp(r'[,\n]'))) {
+      final parts = entry.trim().split('|');
+      if (parts.length < 5) continue;
+
+      final ssid = parts[0].trim();
+      if (ssid.isEmpty) continue;
+
+      networks.add(WifiNetwork(
+        ssid: ssid,
+        channel: int.tryParse(parts[1].trim()) ?? 0,
+        signalStrength: int.tryParse(parts[2].trim()) ?? 0,
+        authMode: parts[3].trim(),
+        encryption: parts[4].trim(),
+      ));
     }
 
     return networks;

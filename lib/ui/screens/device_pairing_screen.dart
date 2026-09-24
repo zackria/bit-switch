@@ -659,7 +659,10 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
 
     if (state.availableNetworks.isEmpty) {
       return Expanded(
-        child: Center(
+        // Scrollable because the manual-entry card below opens a text field:
+        // with the keyboard up this column no longer fits.
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -689,6 +692,10 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
                 onPressed: () => provider.refreshNetworks(),
                 child: Text(context.l10n.pairingScanAgain),
               ),
+              // Without this the empty state is a dead end: some devices
+              // never report a scan result, and the user knows their own
+              // network name even when the device can't see it.
+              _buildManualSsidEntry(context, provider),
             ],
           ),
         ),

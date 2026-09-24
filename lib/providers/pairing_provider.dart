@@ -203,6 +203,13 @@ class PairingProvider extends ChangeNotifier {
   static const Duration _apSweepTimeout = Duration(milliseconds: 400);
   static const int _apSweepBatchSize = 32;
 
+  /// How many times to ask the device for its WiFi scan results before
+  /// showing "no networks". Each call can itself take up to 15 s, so this
+  /// trades a longer wait for not stranding the user on an empty list
+  /// simply because the device hadn't finished scanning yet.
+  static const int _apListAttempts = 4;
+  static const Duration _apListRetryDelay = Duration(seconds: 3);
+
   /// Upper bound on probing the handful of guessed addresses, so that a
   /// silent host (which makes each port sit out the full
   /// [WemoConstants.pairingApProbeTimeout]) can't stop us ever reaching the
@@ -546,34 +553,26 @@ class PairingProvider extends ChangeNotifier {
     await Future.delayed(const Duration(seconds: 2));
 
     try {
-      if (kDebugMode) {
-        debugPrint('[Pairing] Calling getAvailableNetworks (attempt 1)...');
-      }
-      List<WifiNetwork> networks = await _controlService.getAvailableNetworks(
-        device,
-      );
-      if (kDebugMode) {
-        debugPrint(
-          '[Pairing] getAvailableNetworks attempt 1 returned ${networks.length} networks',
+      // GetApList reports whatever the device's own WiFi scan has collected
+      // so far, and a freshly reset device routinely answers with an empty
+      // list for the first several seconds. Poll rather than giving up after
+      // one retry - the call succeeds either way, so an empty answer is a
+      // "not yet", not a failure.
+      var networks = <WifiNetwork>[];
+      for (var attempt = 1; attempt <= _apListAttempts; attempt++) {
+        if (attempt > 1) {
+          await Future.delayed(_apListRetryDelay);
+        }
+        _debugLog(
+          () => '[Pairing] Calling getAvailableNetworks '
+              '(attempt $attempt/$_apListAttempts)...',
         );
-      }
-
-      // If the first call returned an empty list the device may still be
-      // populating results. Wait briefly and try once more.
-      if (networks.isEmpty) {
-        if (kDebugMode) {
-          debugPrint('[Pairing] Empty list — waiting 3 s then retrying...');
-        }
-        await Future.delayed(const Duration(seconds: 3));
-        if (kDebugMode) {
-          debugPrint('[Pairing] Calling getAvailableNetworks (attempt 2)...');
-        }
         networks = await _controlService.getAvailableNetworks(device);
-        if (kDebugMode) {
-          debugPrint(
-            '[Pairing] getAvailableNetworks attempt 2 returned ${networks.length} networks',
-          );
-        }
+        _debugLog(
+          () => '[Pairing] getAvailableNetworks attempt $attempt returned '
+              '${networks.length} networks',
+        );
+        if (networks.isNotEmpty) break;
       }
 
       // Sort by signal strength (highest first)

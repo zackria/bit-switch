@@ -556,6 +556,26 @@ void main() {
       });
     });
 
+    testWidgets('offers manual SSID entry so the empty state is not a dead end', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.selectNetwork);
+        await tester.pump();
+
+        final manualEntry = find.text('Enter network manually');
+        expect(manualEntry, findsOneWidget);
+
+        await tester.tap(manualEntry);
+        await tester.pump();
+
+        // Tapping it reveals a field to type the network name into.
+        expect(find.text('Enter network name:'), findsOneWidget);
+      });
+    });
+
     testWidgets('tapping Scan Again triggers a refresh', (tester) async {
       await tester.runAsync(() async {
         final provider = _makeProvider();

@@ -311,8 +311,8 @@ void main() {
     });
 
     test(
-      'getAvailableNetworks tolerates newline-separated entries and a '
-      'trailing separator',
+      'getAvailableNetworks parses the page-header/four-field format real '
+      'hardware returns',
       () async {
         final mockClient = MockSoapClient((
           host,
@@ -322,24 +322,64 @@ void main() {
           type,
           args,
         ) async {
-          // Shape observed from real hardware: entries delimited by ",\n"
-          // with a trailing comma and surrounding whitespace.
+          // Verbatim shape captured from a Wemo Mini: a "Page:" header, one
+          // entry per line, a trailing comma, and auth/encryption combined
+          // into a single slash-separated field.
           return {
             'ApList':
-                'HomeWiFi|6|80|WPA2PSK/AES|0,\n'
-                'GuestWiFi|11|50|OPEN|NONE,\n',
+                'Page:1/1/3\$\n'
+                'AARYAN|6|100|WPA2PSK/AES,\n'
+                'Meross_SW_3BBF|1|24|OPEN/NONE,\n'
+                'hakim_ASUS|1|15|WPA2PSK/TKIPAES,\n',
           };
         });
 
         final service = DeviceControlService(soapClient: mockClient);
         final networks = await service.getAvailableNetworks(device);
 
-        expect(networks.length, 2);
-        expect(networks[0].ssid, 'HomeWiFi');
-        expect(networks[1].ssid, 'GuestWiFi');
-        expect(networks[1].channel, 11);
+        expect(networks.length, 3);
+
+        expect(networks[0].ssid, 'AARYAN');
+        expect(networks[0].channel, 6);
+        expect(networks[0].signalStrength, 100);
+        // Split, not passed through: both halves are sent back to the device
+        // when connecting.
+        expect(networks[0].authMode, 'WPA2PSK');
+        expect(networks[0].encryption, 'AES');
+
+        expect(networks[1].authMode, 'OPEN');
+        expect(networks[1].encryption, 'NONE');
+        expect(networks[2].encryption, 'TKIPAES');
       },
     );
+
+    test('getAvailableNetworks keeps the strongest entry per SSID', () async {
+      final mockClient = MockSoapClient((
+        host,
+        port,
+        service,
+        action,
+        type,
+        args,
+      ) async {
+        // The same network shows up once per channel/band it's heard on.
+        return {
+          'ApList':
+              'Page:1/1/4\$\n'
+              'AARYAN|6|42|WPA2PSK/AES,\n'
+              'AARYAN|1|100|WPA2PSK/AES,\n'
+              'AARYAN|11|76|WPA2PSK/AES,\n'
+              'ZACK_GUEST|6|65|WPA2PSK/AES,\n',
+        };
+      });
+
+      final service = DeviceControlService(soapClient: mockClient);
+      final networks = await service.getAvailableNetworks(device);
+
+      expect(networks.map((n) => n.ssid), ['AARYAN', 'ZACK_GUEST']);
+      expect(networks.first.signalStrength, 100);
+      expect(networks.first.channel, 1);
+    });
 
     test('getAvailableNetworks returns empty for a blank AP list', () async {
       final mockClient = MockSoapClient((

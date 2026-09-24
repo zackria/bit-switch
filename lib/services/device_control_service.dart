@@ -379,7 +379,7 @@ class DeviceControlService {
       );
 
       final apList = response['ApList'] ?? '';
-      final networks = _parseApList(apList);
+      final networks = _dedupeBySsid(_parseApList(apList));
       if (kDebugMode) {
         // An empty result is ambiguous without this: it can mean the device
         // hasn't finished scanning, or that it answered in a shape we don't
@@ -404,35 +404,73 @@ class DeviceControlService {
     }
   }
 
-  /// Parse the AP list response
-  /// Format: "SSID|Channel|SignalStrength|AuthMode|EncryptType,..."
+  /// Parse the AP list response.
   ///
-  /// Devices aren't consistent about how they delimit entries: commas,
-  /// newlines, or ",\n", usually with a trailing separator, and fields can
-  /// carry surrounding whitespace. Anything that doesn't yield a usable
-  /// entry is skipped rather than dragging the whole list down.
+  /// Hardware answers with a page header and one entry per line:
+  ///
+  ///     Page:1/1/12$
+  ///     AARYAN|6|100|WPA2PSK/AES,
+  ///     Meross_SW_3BBF|1|24|OPEN/NONE,
+  ///
+  /// so an entry is `SSID|Channel|Signal|Auth/Encryption` - four fields,
+  /// with auth and encryption joined by a slash, rather than the five
+  /// separate fields older documentation describes. Both shapes are
+  /// accepted. Anything unparseable is skipped instead of dragging the
+  /// whole list down with it.
   List<WifiNetwork> _parseApList(String apList) {
     if (apList.trim().isEmpty) return [];
 
+    // Drop the "Page:1/1/12$" header. Anchored so a '$' inside an SSID
+    // further down can't truncate the list.
+    final body = apList.replaceFirst(RegExp(r'^\s*Page:[^$]*\$'), '');
+
     final networks = <WifiNetwork>[];
 
-    for (final entry in apList.split(RegExp(r'[,\n]'))) {
+    for (final entry in body.split(RegExp(r'[,\n]'))) {
       final parts = entry.trim().split('|');
-      if (parts.length < 5) continue;
+      if (parts.length < 4) continue;
 
       final ssid = parts[0].trim();
       if (ssid.isEmpty) continue;
+
+      final String authMode;
+      final String encryption;
+      if (parts.length >= 5) {
+        authMode = parts[3].trim();
+        encryption = parts[4].trim();
+      } else {
+        // The device is told these back when connecting, so the combined
+        // "WPA2PSK/AES" field has to be split rather than passed through.
+        final security = parts[3].trim().split('/');
+        authMode = security.first.trim();
+        encryption = security.length > 1 ? security[1].trim() : '';
+      }
 
       networks.add(WifiNetwork(
         ssid: ssid,
         channel: int.tryParse(parts[1].trim()) ?? 0,
         signalStrength: int.tryParse(parts[2].trim()) ?? 0,
-        authMode: parts[3].trim(),
-        encryption: parts[4].trim(),
+        authMode: authMode,
+        encryption: encryption,
       ));
     }
 
     return networks;
+  }
+
+  /// Collapse repeated SSIDs - the same network seen on several channels or
+  /// bands - keeping the strongest reading for each, so the picker shows one
+  /// row per network instead of four "AARYAN"s.
+  List<WifiNetwork> _dedupeBySsid(List<WifiNetwork> networks) {
+    final strongest = <String, WifiNetwork>{};
+    for (final network in networks) {
+      final existing = strongest[network.ssid];
+      if (existing == null ||
+          network.signalStrength > existing.signalStrength) {
+        strongest[network.ssid] = network;
+      }
+    }
+    return strongest.values.toList();
   }
 
   /// Setup WiFi on the device

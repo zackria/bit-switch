@@ -256,148 +256,184 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settingsTitle)),
       body: Consumer2<SettingsProvider, DeviceProvider>(
-        builder: (context, settings, devices, child) {
-          return ListView(
-            children: [
-              _buildSectionHeader(context, context.l10n.settingsSectionGeneral),
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: Text(context.l10n.settingsLanguage),
-                subtitle: Text(
-                  settings.locale == null
-                      ? context.l10n.settingsLanguageSystemDefault
-                      : nativeLanguageName(settings.locale!),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showLanguageDialog(context, settings),
-              ),
-              const Divider(),
-
-              // Network information and permissions
-              if (_isMobile) ...[
-                _buildSectionHeader(
-                  context,
-                  context.l10n.settingsSectionNetwork,
-                ),
-                _buildWifiInfoTile(context),
-                _buildPermissionStatusTile(context),
-                const Divider(),
-              ],
-
-              // Device pairing (iOS and Android only)
-              if (_isMobile) ...[
-                _buildSectionHeader(
-                  context,
-                  context.l10n.settingsSectionDeviceSetup,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.add_circle_outline),
-                  title: Text(context.l10n.settingsPairNewDevice),
-                  subtitle: Text(context.l10n.settingsPairNewDeviceSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _openPairingScreen(context),
-                ),
-                const Divider(),
-              ],
-              _buildSectionHeader(
-                context,
-                context.l10n.settingsSectionDiscovery,
-              ),
-              ListTile(
-                leading: const Icon(Icons.timer_outlined),
-                title: Text(context.l10n.settingsDiscoveryTimeout),
-                subtitle: Text(
-                  context.l10n.commonSeconds(settings.discoveryTimeoutSeconds),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showDiscoveryTimeoutDialog(context, settings),
-              ),
-              ListTile(
-                leading: const Icon(Icons.network_ping),
-                title: Text(context.l10n.settingsRequestTimeout),
-                subtitle: Text(
-                  context.l10n.settingsSecondsPerRequest(
-                    settings.requestTimeoutSeconds,
-                  ),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showRequestTimeoutDialog(context, settings),
-              ),
-              SwitchListTile(
-                secondary: const Icon(Icons.autorenew),
-                title: Text(context.l10n.settingsAutoRefresh),
-                subtitle: Text(
-                  settings.autoRefreshEnabled
-                      ? context.l10n.settingsRefreshingEvery(
-                          settings.autoRefreshIntervalSeconds,
-                        )
-                      : context.l10n.settingsAutoRefreshOff,
-                ),
-                value: settings.autoRefreshEnabled,
-                onChanged: (value) async {
-                  await settings.setAutoRefreshEnabled(value);
-                  if (value) {
-                    devices.startPeriodicRefresh(
-                      interval: Duration(
-                        seconds: settings.autoRefreshIntervalSeconds,
-                      ),
-                    );
-                  } else {
-                    devices.stopPeriodicRefresh();
-                  }
-                },
-              ),
-              if (settings.autoRefreshEnabled)
-                ListTile(
-                  leading: const Icon(Icons.schedule),
-                  title: Text(context.l10n.settingsAutoRefreshInterval),
-                  subtitle: Text(
-                    context.l10n.commonSeconds(
-                      settings.autoRefreshIntervalSeconds,
-                    ),
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () =>
-                      _showRefreshIntervalDialog(context, settings, devices),
-                ),
-              const Divider(),
-              _buildSectionHeader(context, context.l10n.settingsSectionAbout),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(context.l10n.settingsAbout),
-                onTap: () => _showAboutDialog(context),
-              ),
-              ListTile(
-                leading: const Icon(Icons.code),
-                title: Text(context.l10n.settingsVersion),
-                subtitle: const Text('1.0.1'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(context.l10n.settingsNetworkDiagnostics),
-                onTap: () => _showDiagnosticsDialog(context),
-              ),
-              const Divider(),
-              _buildSectionHeader(context, context.l10n.settingsSectionDebug),
-              SwitchListTile(
-                secondary: const Icon(Icons.bug_report),
-                title: Text(context.l10n.settingsShowDebug),
-                subtitle: Text(context.l10n.settingsShowDebugHomeSubtitle),
-                value: settings.showDebugOption,
-                onChanged: (value) async {
-                  await settings.setShowDebugOption(value);
-                  if (!value) {
-                    // Turn off debug mode in device provider when hiding the option
-                    devices.setDebugMode(false);
-                  }
-                },
-              ),
-              // Removed stray empty info ListTile that showed an unexplained icon
-            ],
-          );
-        },
+        builder: (context, settings, devices, child) => ListView(
+          children: [
+            ..._buildGeneralSection(context, settings),
+            if (_isMobile) ..._buildNetworkSection(context),
+            if (_isMobile) ..._buildDeviceSetupSection(context),
+            ..._buildDiscoverySection(context, settings, devices),
+            ..._buildAboutSection(context),
+            ..._buildDebugSection(context, settings, devices),
+          ],
+        ),
       ),
     );
+  }
+
+  List<Widget> _buildGeneralSection(
+    BuildContext context,
+    SettingsProvider settings,
+  ) {
+    return [
+      _buildSectionHeader(context, context.l10n.settingsSectionGeneral),
+      ListTile(
+        leading: const Icon(Icons.language),
+        title: Text(context.l10n.settingsLanguage),
+        subtitle: Text(
+          settings.locale == null
+              ? context.l10n.settingsLanguageSystemDefault
+              : nativeLanguageName(settings.locale!),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => _showLanguageDialog(context, settings),
+      ),
+      const Divider(),
+    ];
+  }
+
+  List<Widget> _buildNetworkSection(BuildContext context) {
+    return [
+      _buildSectionHeader(context, context.l10n.settingsSectionNetwork),
+      _buildWifiInfoTile(context),
+      _buildPermissionStatusTile(context),
+      const Divider(),
+    ];
+  }
+
+  List<Widget> _buildDeviceSetupSection(BuildContext context) {
+    return [
+      _buildSectionHeader(context, context.l10n.settingsSectionDeviceSetup),
+      ListTile(
+        leading: const Icon(Icons.add_circle_outline),
+        title: Text(context.l10n.settingsPairNewDevice),
+        subtitle: Text(context.l10n.settingsPairNewDeviceSubtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => _openPairingScreen(context),
+      ),
+      const Divider(),
+    ];
+  }
+
+  List<Widget> _buildDiscoverySection(
+    BuildContext context,
+    SettingsProvider settings,
+    DeviceProvider devices,
+  ) {
+    return [
+      _buildSectionHeader(context, context.l10n.settingsSectionDiscovery),
+      ListTile(
+        leading: const Icon(Icons.timer_outlined),
+        title: Text(context.l10n.settingsDiscoveryTimeout),
+        subtitle: Text(
+          context.l10n.commonSeconds(settings.discoveryTimeoutSeconds),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => _showDiscoveryTimeoutDialog(context, settings),
+      ),
+      ListTile(
+        leading: const Icon(Icons.network_ping),
+        title: Text(context.l10n.settingsRequestTimeout),
+        subtitle: Text(
+          context.l10n.settingsSecondsPerRequest(
+            settings.requestTimeoutSeconds,
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => _showRequestTimeoutDialog(context, settings),
+      ),
+      SwitchListTile(
+        secondary: const Icon(Icons.autorenew),
+        title: Text(context.l10n.settingsAutoRefresh),
+        subtitle: Text(
+          settings.autoRefreshEnabled
+              ? context.l10n.settingsRefreshingEvery(
+                  settings.autoRefreshIntervalSeconds,
+                )
+              : context.l10n.settingsAutoRefreshOff,
+        ),
+        value: settings.autoRefreshEnabled,
+        onChanged: (value) =>
+            _handleAutoRefreshChanged(settings, devices, value),
+      ),
+      if (settings.autoRefreshEnabled)
+        ListTile(
+          leading: const Icon(Icons.schedule),
+          title: Text(context.l10n.settingsAutoRefreshInterval),
+          subtitle: Text(
+            context.l10n.commonSeconds(settings.autoRefreshIntervalSeconds),
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () =>
+              _showRefreshIntervalDialog(context, settings, devices),
+        ),
+      const Divider(),
+    ];
+  }
+
+  Future<void> _handleAutoRefreshChanged(
+    SettingsProvider settings,
+    DeviceProvider devices,
+    bool enabled,
+  ) async {
+    await settings.setAutoRefreshEnabled(enabled);
+    if (enabled) {
+      devices.startPeriodicRefresh(
+        interval: Duration(seconds: settings.autoRefreshIntervalSeconds),
+      );
+    } else {
+      devices.stopPeriodicRefresh();
+    }
+  }
+
+  List<Widget> _buildAboutSection(BuildContext context) {
+    return [
+      _buildSectionHeader(context, context.l10n.settingsSectionAbout),
+      ListTile(
+        leading: const Icon(Icons.info_outline),
+        title: Text(context.l10n.settingsAbout),
+        onTap: () => _showAboutDialog(context),
+      ),
+      ListTile(
+        leading: const Icon(Icons.code),
+        title: Text(context.l10n.settingsVersion),
+        subtitle: const Text('1.0.1'),
+      ),
+      ListTile(
+        leading: const Icon(Icons.info_outline),
+        title: Text(context.l10n.settingsNetworkDiagnostics),
+        onTap: () => _showDiagnosticsDialog(context),
+      ),
+      const Divider(),
+    ];
+  }
+
+  List<Widget> _buildDebugSection(
+    BuildContext context,
+    SettingsProvider settings,
+    DeviceProvider devices,
+  ) {
+    return [
+      _buildSectionHeader(context, context.l10n.settingsSectionDebug),
+      SwitchListTile(
+        secondary: const Icon(Icons.bug_report),
+        title: Text(context.l10n.settingsShowDebug),
+        subtitle: Text(context.l10n.settingsShowDebugHomeSubtitle),
+        value: settings.showDebugOption,
+        onChanged: (value) => _handleShowDebugChanged(settings, devices, value),
+      ),
+    ];
+  }
+
+  Future<void> _handleShowDebugChanged(
+    SettingsProvider settings,
+    DeviceProvider devices,
+    bool enabled,
+  ) async {
+    await settings.setShowDebugOption(enabled);
+    if (!enabled) {
+      // Turn off debug mode in device provider when hiding the option
+      devices.setDebugMode(false);
+    }
   }
 
   Widget _buildWifiInfoTile(BuildContext context) {
@@ -726,25 +762,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: SizedBox(
           width: double.maxFinite,
           height: 400,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: options.length,
-            itemBuilder: (context, index) {
-              final locale = options[index];
-              return RadioListTile<Locale?>(
-                value: locale,
-                groupValue: settings.locale,
-                title: Text(
-                  locale == null
-                      ? context.l10n.settingsLanguageSystemDefault
-                      : nativeLanguageName(locale),
-                ),
-                onChanged: (value) {
-                  settings.setLocale(value);
-                  Navigator.pop(context);
-                },
-              );
+          child: RadioGroup<Locale?>(
+            groupValue: settings.locale,
+            onChanged: (value) {
+              settings.setLocale(value);
+              Navigator.pop(context);
             },
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: options.length,
+              itemBuilder: (context, index) {
+                final locale = options[index];
+                return RadioListTile<Locale?>(
+                  value: locale,
+                  title: Text(
+                    locale == null
+                        ? context.l10n.settingsLanguageSystemDefault
+                        : nativeLanguageName(locale),
+                  ),
+                );
+              },
+            ),
           ),
         ),
         actions: [

@@ -40,6 +40,8 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
@@ -62,16 +64,22 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
           top: false,
           child: Consumer<PairingProvider>(
             builder: (context, provider, child) {
+              final useCompactHeader =
+                  keyboardVisible &&
+                  provider.state.step == PairingStep.selectNetwork;
+
               return Column(
                 children: [
                   // Progress indicator
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: PairingStepIndicator(
-                      currentStep: provider.state.step,
+                  if (!useCompactHeader) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: PairingStepIndicator(
+                        currentStep: provider.state.step,
+                      ),
                     ),
-                  ),
-                  const Divider(),
+                    const Divider(),
+                  ],
                   // Step content
                   Expanded(child: _buildStepContent(context, provider)),
                 ],
@@ -580,6 +588,35 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
   ) {
     final theme = Theme.of(context);
     final state = provider.state;
+    final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
+
+    // Once the password field has focus, the keyboard leaves too little room
+    // for the device card, network list, credentials, and any wrapped error
+    // message. Switch to a focused, scrollable credentials layout instead of
+    // squeezing the regular flex layout until it overflows.
+    if (keyboardVisible && state.selectedSsid != null) {
+      return ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        children: [
+          Card(
+            margin: EdgeInsets.zero,
+            child: ListTile(
+              leading: Icon(Icons.wifi, color: theme.colorScheme.primary),
+              title: Text(
+                state.selectedSsid!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium,
+              ),
+              subtitle: Text(context.l10n.pairingStepSelectNetwork),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildPasswordSection(context, provider, compact: true),
+        ],
+      );
+    }
 
     return Column(
       children: [
@@ -726,15 +763,19 @@ class _DevicePairingScreenState extends State<DevicePairingScreen> {
     );
   }
 
-  Widget _buildPasswordSection(BuildContext context, PairingProvider provider) {
+  Widget _buildPasswordSection(
+    BuildContext context,
+    PairingProvider provider, {
+    bool compact = false,
+  }) {
     final theme = Theme.of(context);
     final state = provider.state;
 
     return Column(
       children: [
-        const Divider(),
+        if (!compact) const Divider(),
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: compact ? EdgeInsets.zero : const EdgeInsets.all(16),
           child: Column(
             children: [
               TextField(

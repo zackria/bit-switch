@@ -267,16 +267,49 @@ void main() {
       expect(capturedSsid, 'MyNet');
     });
 
-    test('connectToHomeNetwork rethrows WemoException without wrapping', () {
+    test(
+      'connectToHomeNetwork treats a dropped connection as delivered',
+      () {
+        // The device acts on this command immediately and tears down the AP
+        // we sent it over, so it closes the connection before answering.
+        // That's how success normally looks - failing here would abort
+        // pairing on a device that is already joining the network.
+        final mockClient = MockSoapClient((
+          _,
+          __,
+          ___,
+          ____,
+          _____,
+          ______,
+        ) async {
+          throw NetworkException(
+            'Failed to call ConnectHomeNetwork after 1 attempts',
+            host: '10.22.22.1',
+            port: 49153,
+          );
+        });
+
+        final svc = DeviceControlService(soapClient: mockClient);
+
+        expect(
+          svc.connectToHomeNetwork(device, ssid: 'MyNet', password: 'pass'),
+          completes,
+        );
+      },
+    );
+
+    test('connectToHomeNetwork surfaces a SOAP fault from the device', () {
+      // Distinct from a dropped connection: the device answered and
+      // complained, so the caller needs to know.
       final mockClient = MockSoapClient((_, __, ___, ____, _____, ______) async {
-        throw NetworkException('network failure', host: '10.22.22.1', port: 49153);
+        throw SoapException('bad arguments', action: 'ConnectHomeNetwork');
       });
 
       final svc = DeviceControlService(soapClient: mockClient);
 
       expect(
         () => svc.connectToHomeNetwork(device, ssid: 'MyNet', password: 'pass'),
-        throwsA(isA<NetworkException>()),
+        throwsA(isA<SoapException>()),
       );
     });
 

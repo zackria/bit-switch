@@ -693,6 +693,33 @@ void main() {
       });
     });
 
+    testWidgets('password entry remains scrollable with the keyboard open', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.runAsync(() async {
+        final provider = _makeProvider();
+        await _pumpAndStart(tester, provider);
+        provider.goToStep(PairingStep.selectNetwork);
+        provider.selectNetwork('HomeNet');
+        await tester.pump();
+
+        await tester.showKeyboard(
+          find.widgetWithText(TextField, 'WiFi Password'),
+        );
+        await tester.pump();
+
+        expect(find.text('HomeNet'), findsOneWidget);
+        expect(find.text('WiFi Password'), findsOneWidget);
+        expect(find.byType(ListView), findsWidgets);
+        expect(tester.takeException(), isNull);
+      });
+    });
+
     testWidgets(
       'network list, manual entry, Use This Network (needs discovery)',
       (tester) async {

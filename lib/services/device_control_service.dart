@@ -637,14 +637,15 @@ class DeviceControlService {
     String encryption = 'AES',
     int encryptionMethod = 1,
   }) async {
-    try {
-      final encryptedPassword = _encryptPasswordForDevice(
-        device,
-        password,
-        method: encryptionMethod,
-      );
+    final encryptedPassword = _encryptPasswordForDevice(
+      device,
+      password,
+      method: encryptionMethod,
+    );
 
-      // Send the connect command
+    try {
+      // One attempt, not three: the device drops off its setup AP the moment
+      // it acts on this, so retries can only ever hit a closed AP.
       await _soapClient.call(
         host: device.host,
         port: device.port,
@@ -657,8 +658,28 @@ class DeviceControlService {
           'password': encryptedPassword,
           'encrypt': encryption,
         },
+        options: const SoapCallOptions(maxRetriesOverride: 1),
       );
+    } on NetworkException catch (e) {
+      // Expected, not exceptional. The device acts on this command
+      // immediately and tears down the AP we're talking to it over, so it
+      // routinely closes the connection before finishing its HTTP response
+      // ("Connection closed before full header was received") and refuses
+      // anything after. That means the command landed - whether it worked
+      // is answered by polling GetNetworkStatus, not by this call.
+      //
+      // A SoapException is different: the device answered and complained,
+      // so that still propagates.
+      if (kDebugMode) {
+        debugPrint(
+          '[Control] ConnectHomeNetwork transport ended early '
+          '(${e.message}) - treating the command as delivered',
+        );
+      }
     } catch (e, st) {
+      // Anything else is unexpected. _wrapError passes a SoapException
+      // through untouched, so a device that answered with a fault still
+      // surfaces as one.
       _wrapError(
         e,
         st,

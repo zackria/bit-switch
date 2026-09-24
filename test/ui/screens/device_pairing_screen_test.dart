@@ -558,43 +558,47 @@ void main() {
       });
     });
 
-    testWidgets('offers manual SSID entry so the empty state is not a dead end', (
-      tester,
-    ) async {
-      await tester.runAsync(() async {
-        final provider = _makeProvider();
-        await _pumpAndStart(tester, provider);
-        provider.goToStep(PairingStep.selectNetwork);
-        await tester.pump();
+    testWidgets(
+      'offers manual SSID entry so the empty state is not a dead end',
+      (tester) async {
+        await tester.runAsync(() async {
+          final provider = _makeProvider();
+          await _pumpAndStart(tester, provider);
+          provider.goToStep(PairingStep.selectNetwork);
+          await tester.pump();
 
-        final manualEntry = find.text('Enter network manually');
-        expect(manualEntry, findsOneWidget);
+          final manualEntry = find.text('Enter network manually');
+          expect(manualEntry, findsOneWidget);
 
-        await tester.tap(manualEntry);
-        await tester.pump();
+          await tester.tap(manualEntry);
+          await tester.pump();
 
-        // Tapping it reveals a field to type the network name into.
-        expect(find.text('Enter network name:'), findsOneWidget);
+          // Tapping it reveals a field to type the network name into.
+          expect(find.text('Enter network name:'), findsOneWidget);
 
-        // Typing has to enable the confirm button: its enabled state is read
-        // from the controller at build time, so without a rebuild on input
-        // it stays disabled and the escape hatch is useless.
-        await tester.enterText(
-          find.widgetWithText(TextField, 'Network Name (SSID)'),
-          'AARYAN',
-        );
-        await tester.pump();
+          // Typing has to enable the confirm button: its enabled state is read
+          // from the controller at build time, so without a rebuild on input
+          // it stays disabled and the escape hatch is useless.
+          await tester.enterText(
+            find.widgetWithText(TextField, 'Network Name (SSID)'),
+            'AARYAN',
+          );
+          await tester.pump();
 
-        final useNetwork = find.widgetWithText(FilledButton, 'Use This Network');
-        expect(useNetwork, findsOneWidget);
-        expect(tester.widget<FilledButton>(useNetwork).onPressed, isNotNull);
+          final useNetwork = find.widgetWithText(
+            FilledButton,
+            'Use This Network',
+          );
+          expect(useNetwork, findsOneWidget);
+          expect(tester.widget<FilledButton>(useNetwork).onPressed, isNotNull);
 
-        await tester.tap(useNetwork);
-        await tester.pump();
+          await tester.tap(useNetwork);
+          await tester.pump();
 
-        expect(provider.state.selectedSsid, 'AARYAN');
-      });
-    });
+          expect(provider.state.selectedSsid, 'AARYAN');
+        });
+      },
+    );
 
     testWidgets('tapping Scan Again triggers a refresh', (tester) async {
       await tester.runAsync(() async {

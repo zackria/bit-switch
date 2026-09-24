@@ -222,6 +222,28 @@ class WifiDetectionService {
     }
   }
 
+  /// List this device's own IPv4 addresses across all network interfaces.
+  ///
+  /// Diagnostic helper: reveals what address DHCP actually assigned on the
+  /// current WiFi network (interface name + address), independent of what
+  /// the OS reports as the gateway - useful for telling apart "DHCP never
+  /// completed" from "DHCP worked but the socket isn't routed correctly."
+  Future<List<String>> getLocalIpAddresses() async {
+    try {
+      final interfaces = await NetworkInterface.list(
+        type: InternetAddressType.IPv4,
+        includeLinkLocal: true,
+      );
+      return [
+        for (final iface in interfaces)
+          for (final addr in iface.addresses) '${iface.name}: ${addr.address}',
+      ];
+    } catch (e) {
+      _log('Error listing network interfaces: $e');
+      return [];
+    }
+  }
+
   /// Get the gateway IP address of the current WiFi connection.
   ///
   /// When connected to a device's own setup AP (e.g. during pairing), the

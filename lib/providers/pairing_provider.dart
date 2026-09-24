@@ -222,6 +222,8 @@ class PairingProvider extends ChangeNotifier {
   Future<void> _discoverDeviceOnAp() async {
     final candidateIps = await _buildApProbeCandidates();
     if (kDebugMode) {
+      final localIps = await _wifiService.getLocalIpAddresses();
+      debugPrint('[Pairing] Local IP addresses: $localIps');
       debugPrint(
         '[Pairing] _discoverDeviceOnAp: probing $candidateIps ports ${WemoConstants.devicePorts}',
       );

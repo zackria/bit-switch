@@ -495,6 +495,11 @@ void main() {
 
         await tester.tap(find.text('Try Again'));
         await tester.pump();
+        // retryDiscovery() now looks up the WiFi gateway IP before probing,
+        // which is a real (non-fake-clock) platform-channel round trip in
+        // this test environment - give it a real tick to resolve before
+        // pumping for the resulting rebuild.
+        await Future.delayed(const Duration(milliseconds: 50));
         await tester.pump();
 
         expect(provider.state.step, PairingStep.discoverDevice);

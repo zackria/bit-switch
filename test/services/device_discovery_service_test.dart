@@ -190,12 +190,17 @@ void main() {
         final mockSsdpClient = MockSsdpClient(
           discoverHandler: () async* {},
           // Every port in the range accepts a TCP connection...
-          probeHandler: (host, {ports = const []}) async => SsdpResponse(
-            location: 'http://$host:${ports.first}/setup.xml',
-            usn: 'probed',
-            server: 'probed',
-            address: InternetAddress(host),
-          ),
+          probeHandler: (host, {ports}) async {
+            // `single` rather than `first`: probeHost has to ask about one
+            // port at a time for per-port validation to mean anything.
+            final port = (ports ?? const <int>[]).single;
+            return SsdpResponse(
+              location: 'http://$host:$port/setup.xml',
+              usn: 'probed',
+              server: 'probed',
+              address: InternetAddress(host),
+            );
+          },
         );
 
         final requestedPorts = <int>[];

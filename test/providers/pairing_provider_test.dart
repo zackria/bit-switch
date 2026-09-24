@@ -245,8 +245,9 @@ void main() {
         'retryDiscovery derives the AP gateway from our own lease when the '
         'OS reports no gateway IP',
         () async {
+          final deviceOnApSubnet = _device.copyWith(host: '192.168.4.1');
           final discovery = _HostAwareDiscoveryService({
-            '192.168.4.1': _device,
+            '192.168.4.1': deviceOnApSubnet,
           });
           final provider = PairingProvider(
             // No gateway from the OS - the DhcpInfo API behind it returns
@@ -258,7 +259,9 @@ void main() {
 
           await provider.retryDiscovery();
 
-          expect(discovery.probedHosts, ['192.168.4.1', '10.22.22.1']);
+          // Only the derived address is probed: it's tried ahead of the
+          // hardcoded default and answers, so the default is never needed.
+          expect(discovery.probedHosts, ['192.168.4.1']);
           expect(provider.state.device?.host, '192.168.4.1');
         },
       );

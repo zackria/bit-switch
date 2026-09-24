@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show HttpException;
 import 'package:flutter/foundation.dart';
 import '../core/soap_client.dart';
 import '../core/constants.dart';
@@ -660,20 +661,27 @@ class DeviceControlService {
         },
         options: const SoapCallOptions(maxRetriesOverride: 1),
       );
-    } on NetworkException catch (e) {
-      // Expected, not exceptional. The device acts on this command
-      // immediately and tears down the AP we're talking to it over, so it
-      // routinely closes the connection before finishing its HTTP response
-      // ("Connection closed before full header was received") and refuses
-      // anything after. That means the command landed - whether it worked
-      // is answered by polling GetNetworkStatus, not by this call.
+    } on NetworkException catch (e, st) {
+      // A connection cut short *after* the request went out means the device
+      // received the command and then tore down the AP we sent it over,
+      // which is how success normally looks here - whether the join worked
+      // is answered by polling, not by this call.
       //
-      // A SoapException is different: the device answered and complained,
-      // so that still propagates.
+      // A refused or unreachable socket is the opposite: nothing was
+      // listening, so the command never landed and the caller has to know.
+      if (e.cause is! HttpException) {
+        _wrapError(
+          e,
+          st,
+          device,
+          message: 'Failed to connect to home network',
+          operation: 'connectToHomeNetwork',
+        );
+      }
       if (kDebugMode) {
         debugPrint(
-          '[Control] ConnectHomeNetwork transport ended early '
-          '(${e.message}) - treating the command as delivered',
+          '[Control] ConnectHomeNetwork connection cut short '
+          '(${e.message}) - the device took the command and dropped the AP',
         );
       }
     } catch (e, st) {

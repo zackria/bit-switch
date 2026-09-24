@@ -805,6 +805,36 @@ void main() {
         },
       );
 
+      test(
+        'configureNetwork treats the setup AP disappearing as the device '
+        'having left to join the network',
+        () async {
+          // The device takes its AP down the moment it starts joining, so it
+          // can never answer the status call that would confirm success.
+          // Polling to a timeout here would report failure on a device that
+          // did exactly what it was told.
+          final control = _UnreachableStatusControlService();
+          final provider = PairingProvider(
+            wifiService: _FakeWifiService(
+              // Back on the home network: the Wemo AP is gone.
+              getSsid: () async => 'AARYAN',
+            ),
+            controlService: control,
+            discoveryService: _FakeDiscoveryService(probeResult: _device),
+          );
+
+          await provider.confirmConnectedToDeviceAp();
+          provider.selectNetwork('AARYAN');
+          provider.setPassword('correct-horse');
+          await provider.configureNetwork();
+
+          expect(provider.state.step, PairingStep.reconnectHome);
+          expect(provider.state.errorMessage, isNull);
+          // One scheme only: a vanished AP isn't a rejected password.
+          expect(control.connectCalls.toSet(), {1});
+        },
+      );
+
       test('finalize setup handles discovery stream error', () async {
         final provider = PairingProvider(
           wifiService: _FakeWifiService(getSsid: () async => null),
@@ -820,6 +850,38 @@ void main() {
       });
     });
   });
+}
+
+/// Control service whose status calls always fail, standing in for a device
+/// that has already torn down its setup AP.
+class _UnreachableStatusControlService extends DeviceControlService {
+  final List<int> connectCalls = [];
+
+  @override
+  Future<List<WifiNetwork>> getAvailableNetworks(WemoDevice device) async => [];
+
+  @override
+  Future<void> connectToHomeNetwork(
+    WemoDevice device, {
+    required String ssid,
+    required String password,
+    String authMode = 'WPAPSK',
+    String encryption = 'AES',
+    int encryptionMethod = 1,
+  }) async {
+    connectCalls.add(encryptionMethod);
+  }
+
+  @override
+  Future<WifiSetupStatus> getWifiStatus(WemoDevice device) async {
+    throw Exception('Machine is not on the network');
+  }
+
+  @override
+  Future<void> setSetupDoneStatus(WemoDevice device) async {}
+
+  @override
+  Future<void> closeSetup(WemoDevice device) async {}
 }
 
 /// Control service standing in for firmware that only accepts one password

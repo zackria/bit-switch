@@ -13,7 +13,18 @@ import '../services/wifi_detection_service.dart';
 import '../l10n/app_localizations.dart';
 
 /// What the device reported back after being handed WiFi credentials.
-enum _SetupOutcome { connected, credentialsRejected, passwordTooShort, timedOut }
+enum _SetupOutcome {
+  connected,
+
+  /// The setup AP is gone. The device only takes it down to go join the
+  /// network it was just given, so this counts as success even though the
+  /// device can no longer be asked to confirm it.
+  deviceLeftSetupAp,
+
+  credentialsRejected,
+  passwordTooShort,
+  timedOut,
+}
 
 /// Provider for managing the device pairing wizard state
 class PairingProvider extends ChangeNotifier {
@@ -675,7 +686,8 @@ class PairingProvider extends ChangeNotifier {
           () => '[Pairing] Encryption method $method -> ${outcome.name}',
         );
 
-        if (outcome == _SetupOutcome.connected) {
+        if (outcome == _SetupOutcome.connected ||
+            outcome == _SetupOutcome.deviceLeftSetupAp) {
           _onDeviceJoinedHomeNetwork();
           return;
         }
@@ -787,13 +799,38 @@ class PairingProvider extends ChangeNotifier {
             break;
         }
       } catch (_) {
-        // The device drops calls while it switches networks - keep polling.
+        // The device drops calls while it switches networks, so a single
+        // failure means "ask again" - unless the setup AP itself is gone,
+        // in which case there is nothing left to ask.
+        if (await _setupApIsGone()) {
+          _debugLog(
+            () => '[Pairing] Setup AP is gone - the device has left to join '
+                'the home network',
+          );
+          return _SetupOutcome.deviceLeftSetupAp;
+        }
       }
 
       await Future.delayed(const Duration(seconds: 2));
     }
 
     return _SetupOutcome.timedOut;
+  }
+
+  /// Whether the phone has dropped off the device's setup AP.
+  ///
+  /// Only meaningful once a status call has already failed: the device takes
+  /// its AP down as soon as it starts joining the home network, so from that
+  /// moment it's unreachable by design and polling can only ever time out.
+  Future<bool> _setupApIsGone() async {
+    try {
+      final ssid = await _wifiService.getCurrentSsid(requestPermission: false);
+      // A null read tells us nothing - keep polling rather than guessing.
+      if (ssid == null) return false;
+      return !_wifiService.isWemoApNetwork(ssid);
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Called when user confirms they've reconnected to home network
